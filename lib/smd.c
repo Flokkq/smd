@@ -14,19 +14,23 @@
 
 int parse_md(char *input, char *output_type, char *specific);
 
+int check_requirements();
+
 int validate_input(char *input, char *output_type, char *specific);
 
 char *read_file(char *filename);
 
 int md_to_html(char *filename, char *input);
 
+int generate_css();
+
 int inject_css(char *filename);
 
-int check_requirements();
+int handle_requirement_check(FILE *fp, char *cmd);
 
 int parse_md(char *input, char *output_type, char *specific) {
     if (check_requirements() == 1) {
-        noc_print(E, "Error checking requirements");
+        noc_print(E, "Permission denied!\n");
         return 1;
     }
 
@@ -36,24 +40,30 @@ int parse_md(char *input, char *output_type, char *specific) {
     }
 
     noc_print(I, "Parsing markdown file...");
-
     char *md = read_file(input);
-
     if (md == NULL) {
         noc_print(E, "Could not read input not read file");
+        free(md);
         return 1;
     }
 
     if (md_to_html(input, md) == 1) {
         noc_print(E, "Could not convert markdown to html");
+        free(md);
+        return 1;
+    }
+
+    if (generate_css() == 1) {
+        noc_print(E, "Could not generate css");
+        free(md);
         return 1;
     }
 
     if (inject_css(input) == 1) {
         noc_print(E, "Could not inject css");
+        free(md);
         return 1;
     }
-
 
     return 0;
 }
@@ -61,21 +71,22 @@ int parse_md(char *input, char *output_type, char *specific) {
 int check_requirements() {
     noc_print(I, "Checking requirements...");
 
-    int result;
-#if defined(_WIN32) || defined(_WIN64)
-    result = system("npm i -g github-markdown-css > NUL 2>&1");
-#else
-    result = system("npm i -g github-markdown-css > /dev/null 2>&1");
-#endif
+    char *cmd = "npm ls -g";
+    FILE *fp;
 
+    int result = handle_requirement_check(fp, cmd);
+
+    printf("Result: %d\n", result);
     if (result != 0) {
         noc_print(I, "Package 'github-markdown-css' is not installed globally. Installing...");
 
-#if defined(_WIN32) || defined(_WIN64)
-        result = system("npm i -g github-markdown-css > NUL 2>&1");
-#else
-        result = system("npm i -g github-markdown-css > /dev/null 2>&1");
-#endif
+        #if defined(_WIN32) || defined(_WIN64)
+            system("npm install -g github-markdown-css >> NULL 2>&1");
+        #else
+            system("sudo npm install -g github-markdown-css >> /dev/null 2>&1");
+        #endif
+
+        result = handle_requirement_check(fp, cmd);
 
         if (result != 0) {
             return 1;
@@ -86,6 +97,29 @@ int check_requirements() {
         noc_print(I, "'github-markdown-css' is already installed.");
     }
     return 0;
+}
+
+
+int handle_requirement_check(FILE *fp, char *cmd) {
+    char buffer[1024];
+
+#if defined(_WIN32) || defined(_WIN64)
+    char fullCmd[1024];
+    snprintf(fullCmd, sizeof(fullCmd), "%s | findstr github-markdown-css", cmd);
+    fp = _popen(fullCmd, "r");
+#else
+    char fullCmd[1024];
+    snprintf(fullCmd, sizeof(fullCmd), "%s | grep github-markdown-css", cmd);
+    fp = popen(fullCmd, "r");
+#endif
+
+    if (fp == NULL) {
+        noc_print(E, "Failed running commands to check requirements.");
+        pclose(fp);
+        exit(1);
+    }
+
+    return strcmp(fgets(buffer, sizeof(buffer), fp), "") == 0;
 }
 
 int validate_input(char *input, char *output, char *specific) {
@@ -107,7 +141,7 @@ int validate_input(char *input, char *output, char *specific) {
 char *read_file(char *filename) {
     FILE *fp;
     char *buffer;
-    size_t buffer_size = 16384;
+    size_t buffer_size = 2048;
     size_t total_size = 0;
     size_t bytes_read;
 
@@ -161,7 +195,6 @@ int md_to_html(char *filename, char *input) {
     int commandLength = 16384;
     char *command = malloc(commandLength);
 
-    // remove .md extension
     strtok(filename, ".");
 
     if (command == NULL) {
@@ -176,9 +209,6 @@ int md_to_html(char *filename, char *input) {
     }
 
     snprintf(parsed_filename, strlen(filename) + 32, "%s_pre.html", filename);
-    char *abs_path = _fullpath(NULL, parsed_filename, _MAX_PATH);
-
-    //printf("path: %s\n", abs_path);
 
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -199,11 +229,12 @@ int md_to_html(char *filename, char *input) {
         "  -H \"X-GitHub-Api-Version: 2022-11-28\" \\\n"
         "  /markdown \\\n"
         "  -f text='%s' \\\n"
-        "  -f mode='gfm' >> %s_pre.html",
-        input, filename);
+        "  -f mode='gfm' > %s",
+        input, parsed_filename);
+
 #endif
 
-    //printf("Command: %s\n", command);
+    printf("Command: %s\n", command);
 
     system(command);
     free(command);
@@ -242,7 +273,7 @@ int inject_css(char *filename) {
              "    <meta charset=\"UTF-8\">\n"
              "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
              "    <title>%s</title>\n"
-             "    <link rel=\"stylesheet\" href=\"https://cdnjs.cloud>\n"
+             "    <link rel=\"stylesheet\" href=\"github-markdown-css\">\n"
              "</head>\n"
              "<body>\n"
              "    <article class=\"markdown-body\">\n"
@@ -251,9 +282,23 @@ int inject_css(char *filename) {
              "</body>\n"
              "</html>", filename, html_file);
 
-    printf("%s\n", html_structure);
+    snprintf(html_file_name, strlen(filename) + 32, "%s.html", filename);
 
+    char *cmd = malloc(strlen(html_file_name) + 32);
 
+    #if defined(_WIN32) || defined(_WIN64)
+        snprintf(cmd, strlen(html_file_name) + 32, "del %s_pre.html", filename);
+        system(cmd);
+    #else
+        snprintf(cmd, strlen(html_file_name) + 32, "rm %s_pre.html", filename);
+        system(cmd);
+    #endif
+
+    write_file(html_file_name, html_structure);
 
     return 0;
+}
+
+int generate_css() {
+    noc_print(I, "Generating css file...");
 }

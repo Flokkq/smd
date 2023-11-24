@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compile the C program along with noc.c from the /lib directory
-gcc -I/lib smd.c /lib/noc.c -o smd
+gcc -I/lib main.c lib/nec.c lib/smd.c -o smd
 
 # Check if compilation was successful
 if [ $? -ne 0 ]; then

@@ -8,4 +8,5 @@ include_directories(lib)
 add_executable(smd
         lib/smd.c
         lib/smd.h
-        main.c lib/nec.h lib/nec.c)
+        main.c lib/nec.h lib/nec.c
+)

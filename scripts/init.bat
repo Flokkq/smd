@@ -13,8 +13,6 @@ IF %ERRORLEVEL% NEQ 0 (
 REM Assuming smd.exe is in the current directory
 setx /M PATH "%PATH%;%CD%"
 
-echo "%PATH%;%CD%"
-
 REM Verify if the update to PATH was successful
 IF %ERRORLEVEL% EQU 0 (
     echo Installation successful. You can run the program using 'smd' command.
