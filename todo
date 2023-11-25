@@ -1,0 +1,9 @@
+wkhtmltopdf support
+
+res > md_flavour -> config.json
+
+config.json: {
+    "md_flavour": "markdown flavour name",
+    "initial": true,
+    ...
+}

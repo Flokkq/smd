@@ -12,13 +12,13 @@
 #include <unistd.h>
 #endif
 
+int set_md_flavour(char* flavour);
+
 int parse_md(char *input, char *output_type, char *specific);
 
 int check_requirements();
 
 int validate_input(char *input, char *output_type, char *specific);
-
-char *read_file(char *filename);
 
 int md_to_html(char *filename, char *input);
 
@@ -28,39 +28,63 @@ int inject_css(char *filename);
 
 int handle_requirement_check(FILE *fp, char *cmd);
 
+
+int set_md_flavour(char *flavour) {
+    char *flavours[] = {"dark", "light", "auto"};
+
+    for (size_t i = 0; i < sizeof(flavours) / sizeof(flavours[0]); i++) {
+        if (strcmp(flavour, flavours[i]) == 0) {
+            nec_print(NEC_INFO, "Setting flavour to %s", flavour);
+            nec_write_file("res\\md_flavour", flavour);
+            return 0;
+        }
+    }
+
+    int i_flavour = strtol(flavour, NULL, 10);
+    if (i_flavour < 1 || i_flavour > 3) {
+        nec_print(NEC_ERROR, "Invalid flavour");
+        return 1;
+    }
+
+    nec_print(NEC_INFO, "Setting flavour to %s", flavours[i_flavour - 1]);
+    nec_write_file("res\\md_flavour", flavours[i_flavour - 1]);
+
+    return 0;
+}
+
 int parse_md(char *input, char *output_type, char *specific) {
     if (check_requirements() == 1) {
-        noc_print(E, "Permission denied!\n");
+        nec_print(NEC_ERROR, "Permission denied!\n");
         return 1;
     }
 
     if (validate_input(input, output_type, specific) == 1) {
-        noc_print(E, "Invalid input");
+        nec_print(NEC_ERROR, "Invalid input");
         return 1;
     }
 
-    noc_print(I, "Parsing markdown file...");
-    char *md = read_file(input);
+    nec_print(NEC_INFO, "Parsing markdown file...");
+    char *md = nec_read_file(input);
     if (md == NULL) {
-        noc_print(E, "Could not read input not read file");
+        nec_print(NEC_ERROR, "Could not read input not read file");
         free(md);
         return 1;
     }
 
     if (md_to_html(input, md) == 1) {
-        noc_print(E, "Could not convert markdown to html");
+        nec_print(NEC_ERROR, "Could not convert markdown to html");
         free(md);
         return 1;
     }
 
     if (generate_css() == 1) {
-        noc_print(E, "Could not generate css");
+        nec_print(NEC_ERROR, "Could not generate css");
         free(md);
         return 1;
     }
 
     if (inject_css(input) == 1) {
-        noc_print(E, "Could not inject css");
+        nec_print(NEC_ERROR, "Could not inject css");
         free(md);
         return 1;
     }
@@ -69,16 +93,15 @@ int parse_md(char *input, char *output_type, char *specific) {
 }
 
 int check_requirements() {
-    noc_print(I, "Checking requirements...");
+    nec_print(NEC_INFO, "Checking requirements...");
 
     char *cmd = "npm ls -g";
     FILE *fp;
 
     int result = handle_requirement_check(fp, cmd);
 
-    printf("Result: %d\n", result);
     if (result != 0) {
-        noc_print(I, "Package 'github-markdown-css' is not installed globally. Installing...");
+        nec_print(NEC_INFO, "Package 'github-markdown-css' is not installed globally. Installing...");
 
         #if defined(_WIN32) || defined(_WIN64)
             system("npm install -g github-markdown-css >> NULL 2>&1");
@@ -91,10 +114,10 @@ int check_requirements() {
         if (result != 0) {
             return 1;
         } else {
-            noc_print(I, "'github-markdown-css' installed successfully.");
+            nec_print(NEC_INFO, "'github-markdown-css' installed successfully.");
         }
     } else {
-        noc_print(I, "'github-markdown-css' is already installed.");
+        nec_print(NEC_INFO, "'github-markdown-css' is already installed.");
     }
     return 0;
 }
@@ -114,7 +137,7 @@ int handle_requirement_check(FILE *fp, char *cmd) {
 #endif
 
     if (fp == NULL) {
-        noc_print(E, "Failed running commands to check requirements.");
+        nec_print(NEC_ERROR, "Failed running commands to check requirements.");
         pclose(fp);
         exit(1);
     }
@@ -124,73 +147,22 @@ int handle_requirement_check(FILE *fp, char *cmd) {
 
 int validate_input(char *input, char *output, char *specific) {
     if (strcmp(input, "") == 0) {
-        noc_print(E, "No input file specified.");
+        nec_print(NEC_ERROR, "No input file specified.");
         return 1;
     }
     if (strcmp(output, "") == 0) {
-        noc_print(E, "No output type specified.");
+        nec_print(NEC_ERROR, "No output type specified.");
         return 1;
     }
     if (strcmp(specific, "") == 0) {
-        noc_print(E, "No specific output type specified.");
+        nec_print(NEC_ERROR, "No specific output type specified.");
         return 1;
     }
     return 0;
 }
 
-char *read_file(char *filename) {
-    FILE *fp;
-    char *buffer;
-    size_t buffer_size = 2048;
-    size_t total_size = 0;
-    size_t bytes_read;
-
-    printf("Reading file: %s\n", filename);
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
-        noc_print(E, "Could not open file %s.", filename);
-        exit(1);
-    }
-
-    buffer = (char *) malloc(buffer_size);
-    if (buffer == NULL) {
-        noc_print(E, "Memory allocation failed for reading file %s.", filename);
-        fclose(fp);
-        exit(1);
-    }
-
-    while ((bytes_read = fread(buffer + total_size, 1, buffer_size - total_size, fp)) > 0) {
-        total_size += bytes_read;
-        char *new_buffer = realloc(buffer, total_size + buffer_size);
-        if (new_buffer == NULL) {
-            noc_print(E, "Memory reallocation failed for reading file %s.", filename);
-            free(buffer);
-            fclose(fp);
-            exit(1);
-        }
-    }
-
-    fclose(fp);
-
-    buffer[total_size] = '\0';
-
-    return buffer;
-}
-
-char *write_file(char *filename, char *content) {
-    FILE *fp;
-    fp = fopen(filename, "w");
-
-    if (fp == NULL) {
-        noc_print(E, "Could not open file %s.", filename);
-        exit(1);
-    }
-
-    fprintf(fp, "%s", content);
-}
-
 int md_to_html(char *filename, char *input) {
-    noc_print(I, "Creating html file...");
+    nec_print(NEC_INFO, "Creating html file...");
 
     int commandLength = 16384;
     char *command = malloc(commandLength);
@@ -198,17 +170,17 @@ int md_to_html(char *filename, char *input) {
     strtok(filename, ".");
 
     if (command == NULL) {
-        noc_print(E, "Could not allocate memory.");
+        nec_print(NEC_ERROR, "Could not allocate memory.");
         return 1;
     }
 
     char *parsed_filename = malloc(strlen(filename) + 5);
     if (parsed_filename == NULL) {
-        noc_print(E, "Could not allocate memory.");
+        nec_print(NEC_ERROR, "Could not allocate memory.");
         return 1;
     }
 
-    snprintf(parsed_filename, strlen(filename) + 32, "%s_pre.html", filename);
+    snprintf(parsed_filename, strlen(filename) + 32, "%s_tmp.html", filename);
 
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -220,7 +192,7 @@ int md_to_html(char *filename, char *input) {
              "  /markdown `"
              "  -f text=\"%s\" `"
              "  -f mode=\"gfm\" | Out-File -FilePath \"%s\"",
-             input, abs_path);
+             input, parsed_filename);
 #else
     snprintf(command, commandLength,
         "gh api \\\n"
@@ -242,19 +214,19 @@ int md_to_html(char *filename, char *input) {
 }
 
 int inject_css(char *filename) {
-    noc_print(I, "Injecting css...");
+    nec_print(NEC_INFO, "Injecting css...");
 
     char *html_file_name = malloc(strlen(filename) + 32);
     if (html_file_name == NULL) {
-        noc_print(E, "Could not allocate memory.");
+        nec_print(NEC_ERROR, "Could not allocate memory.");
         return 1;
     }
 
-    snprintf(html_file_name, strlen(filename) + 32, "%s_pre.html", filename);
+    snprintf(html_file_name, strlen(filename) + 32, "%s_tmp.html", filename);
 
-    char *html_file = read_file(html_file_name);
+    char *html_file = nec_read_file(html_file_name);
     if (html_file == NULL) {
-        noc_print(E, "Could not read html file");
+        nec_print(NEC_ERROR, "Could not read html file");
         return 1;
     }
 
@@ -262,7 +234,7 @@ int inject_css(char *filename) {
 
     char *html_structure = malloc(strlen(html_file) + 1024);
     if (html_structure == NULL) {
-        noc_print(E, "Could not allocate memory.");
+        nec_print(NEC_ERROR, "Could not allocate memory.");
         return 1;
     }
 
@@ -287,18 +259,20 @@ int inject_css(char *filename) {
     char *cmd = malloc(strlen(html_file_name) + 32);
 
     #if defined(_WIN32) || defined(_WIN64)
-        snprintf(cmd, strlen(html_file_name) + 32, "del %s_pre.html", filename);
-        system(cmd);
+        snprintf(cmd, strlen(html_file_name) + 32, "del %s_tmp.html", filename);
+        //system(cmd);
     #else
-        snprintf(cmd, strlen(html_file_name) + 32, "rm %s_pre.html", filename);
+        snprintf(cmd, strlen(html_file_name) + 32, "rm %s_tmp.html", filename);
         system(cmd);
     #endif
 
-    write_file(html_file_name, html_structure);
+    nec_write_file(html_file_name, html_structure);
 
     return 0;
 }
 
 int generate_css() {
-    noc_print(I, "Generating css file...");
+    nec_print(NEC_INFO, "Generating css file...");
+
+    return 0;
 }

@@ -1,7 +1,7 @@
 @echo off
 
 REM Compile the C program along with noc.c from the /lib directory
-gcc -I/lib main.c ./lib/noc.c ./lib/smd.c -o smd.exe
+gcc -NEC_INFO/lib main.c ./lib/noc.c ./lib/smd.c -o smd.exe
 
 REM Check if compilation was successful
 IF %ERRORLEVEL% NEQ 0 (
