@@ -1,0 +1,80 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node_modules/github-markdown-css/github-markdown.css">
+<style>
+.markdown-body {
+box-sizing: border-box;
+margin: 0 auto;
+padding: 45px;
+}
+
+@media (max-width: 767px) {
+.markdown-body {
+padding: 15px;
+}
+}
+</style>
+<body class="markdown-body">
+<h1><a id="user-content-sweet-markdown" class="anchor" aria-hidden="true" tabindex="-1" href="#sweet-markdown"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sweet Markdown</h1>
+<h2><a id="user-content-code-preview-test" class="anchor" aria-hidden="true" tabindex="-1" href="#code-preview-test"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code Preview Test</h2>
+<div class="highlight highlight-source-rust"><pre><span class="pl-k">fn</span> <span class="pl-en">main</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-en">println</span><span class="pl-en">!</span><span class="pl-kos">(</span><span class="pl-s">"Hello, world!"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span></pre></div>
+<h2><a id="user-content-introduction" class="anchor" aria-hidden="true" tabindex="-1" href="#introduction"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
+<p>Sweet Markdown is a versatile command-line tool designed to convert GitHub-flavored Markdown files into PDF, HTML, or image formats while retaining the distinctive GitHub CSS styling. It's perfect for developers, content creators, and anyone looking to share their Markdown documents in various formats while maintaining the familiar GitHub aesthetic.</p>
+<h2><a id="user-content-requirements" class="anchor" aria-hidden="true" tabindex="-1" href="#requirements"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+<p>Before proceeding, ensure that <a href="https://www.npmjs.com/" rel="nofollow">npm</a> is installed on your system.</p>
+<h3><a id="user-content-changing-npm-rights-from-root-to-user" class="anchor" aria-hidden="true" tabindex="-1" href="#changing-npm-rights-from-root-to-user"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changing npm Rights from Root to User</h3>
+<p>To change the ownership of npm directories to the current user, follow these steps:</p>
+<p>First, confirm your username by running the following command in your terminal:</p>
+<div class="highlight highlight-source-shell"><pre>whoami</pre></div>
+<p>Once you have your username, use it to change the ownership of the npm directories. Replace <code>&lt;username&gt;</code> with your actual username in the command below:</p>
+<div class="highlight highlight-source-shell"><pre>sudo chown -R <span class="pl-k">&lt;</span>username<span class="pl-k">&gt;</span>: /usr/local/lib/node_modules</pre></div>
+<p>This command changes the ownership of the npm directory to your user, ensuring that you can run npm commands without needing root permissions.</p>
+<h2><a id="user-content-installation" class="anchor" aria-hidden="true" tabindex="-1" href="#installation"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+<p>Sweet Markdown can be either installed via the binaries on the <a href="https://github.com/Flokkq/SweetMarkdown">github</a> or with a corresponding package manager.</p>
+<h3><a id="user-content-linux" class="anchor" aria-hidden="true" tabindex="-1" href="#linux"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linux</h3>
+<div class="highlight highlight-source-shell"><pre>apt-get install smd</pre></div>
+<h3><a id="user-content-macos" class="anchor" aria-hidden="true" tabindex="-1" href="#macos"><span aria-hidden="true" class="octicon octicon-link"></span></a>MacOS</h3>
+<div class="highlight highlight-source-shell"><pre>brew install smd</pre></div>
+<h3><a id="user-content-windows" class="anchor" aria-hidden="true" tabindex="-1" href="#windows"><span aria-hidden="true" class="octicon octicon-link"></span></a>Windows</h3>
+<div class="highlight highlight-source-shell"><pre>choco install smd</pre></div>
+<h2><a id="user-content-usage" class="anchor" aria-hidden="true" tabindex="-1" href="#usage"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+<h3><a id="user-content-basic-command" class="anchor" aria-hidden="true" tabindex="-1" href="#basic-command"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic Command</h3>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Convert a Markdown file to the desired format</span>
+smd <span class="pl-k">&lt;</span>input_file.md<span class="pl-k">&gt;</span> <span class="pl-k">&lt;</span>output_format<span class="pl-k">&gt;</span></pre></div>
+<h3><a id="user-content-help-command" class="anchor" aria-hidden="true" tabindex="-1" href="#help-command"><span aria-hidden="true" class="octicon octicon-link"></span></a>Help Command</h3>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Display help information</span>
+smd --help</pre></div>
+<h3><a id="user-content-supported-output-formats" class="anchor" aria-hidden="true" tabindex="-1" href="#supported-output-formats"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Output Formats</h3>
+<ul>
+<li>
+<strong>PDF</strong>: Portable Document Format</li>
+<li>
+<strong>HTML</strong>: HyperText Markup Language</li>
+<li>
+<strong>IMG</strong>: Image file (JPG, PNG, etc.)</li>
+</ul>
+<h2><a id="user-content-features" class="anchor" aria-hidden="true" tabindex="-1" href="#features"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+<ul>
+<li>
+<strong>GitHub CSS Styling</strong>: Maintains the GitHub-flavored CSS styling in all output formats.</li>
+<li>
+<strong>Multiple Output Formats</strong>: Convert Markdown files to PDF, HTML, or various image formats.</li>
+<li>
+<strong>Command-Line Interface</strong>: Easy-to-use CLI for quick conversions.</li>
+<li>
+<strong>Batch Conversion</strong>: Support for converting multiple files at once.</li>
+</ul>
+<h3><a id="user-content-examples" class="anchor" aria-hidden="true" tabindex="-1" href="#examples"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h3>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Convert Markdown to PDF</span>
+smd example.md pdf
+
+<span class="pl-c"><span class="pl-c">#</span> Convert Markdown to HTML</span>
+smd example.md html
+
+<span class="pl-c"><span class="pl-c">#</span> Convert Markdown to an Image</span>
+smd example.md img jpg</pre></div>
+<h2><a id="user-content-license" class="anchor" aria-hidden="true" tabindex="-1" href="#license"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+<p>This tool is released under the <a href="LICENSE">MIT License</a>.</p>
+
+</body>

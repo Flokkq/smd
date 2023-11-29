@@ -1,12 +1,8 @@
-# Swet Markdown
+# Sweet Markdown
 
 ## Introduction
 
 Sweet Markdown is a versatile command-line tool designed to convert GitHub-flavored Markdown files into PDF, HTML, or image formats while retaining the distinctive GitHub CSS styling. It's perfect for developers, content creators, and anyone looking to share their Markdown documents in various formats while maintaining the familiar GitHub aesthetic.
-
-Sure, NEC_INFO can help you improve the explanation and formatting of the instructions in your README.md for changing npm rights from root to user. Here's a revised version:
-
----
 
 ## Requirements
 
@@ -30,10 +26,8 @@ sudo chown -R <username>: /usr/local/lib/node_modules
 
 This command changes the ownership of the npm directory to your user, ensuring that you can run npm commands without needing root permissions.
 
----
-
 ## Installation
-Sweet Markdown can be either installed via the binaries on the [github](https://github.com/Flokkq/SweetMarkdown) or with a corresponding package manager.
+Sweet Markdown can be either installed via the binaries on the [GitHub](https://github.com/Flokkq/SweetMarkdown) or with a corresponding package manager.
 
 ### Linux
 ```bash
@@ -49,8 +43,6 @@ brew install smd
 ```bash
 choco install smd
 ```
-
----
 
 ## Usage
 
@@ -74,8 +66,6 @@ smd --help
 - **HTML**: HyperText Markup Language
 - **IMG**: Image file (JPG, PNG, etc.)
 
----
-
 ## Features
 
 - **GitHub CSS Styling**: Maintains the GitHub-flavored CSS styling in all output formats.
@@ -95,8 +85,6 @@ smd example.md html
 # Convert Markdown to an Image
 smd example.md img jpg
 ```
-
----
 
 ## License
 
