@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "generate-github-markdown-css": "^6.1.0",
-    "github-markdown-css": "^5.4.0",
-    "source-map-resolve": "^0.6.0"
-  }
-}
