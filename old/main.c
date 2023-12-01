@@ -11,7 +11,6 @@
 
 #endif
 
-
 #define VERSION "0.0.1"
 
 char *absolute_path(char *filename);
@@ -139,7 +138,6 @@ char *absolute_path(char *filename) {
 
 #if defined(_WIN32) || defined(_WIN64)
     abs_path = _fullpath(NULL, filename, _MAX_PATH);
-
 #else
     buffer = getcwd(NULL, 0);
     abs_path = (char *) malloc(strlen(buffer) + strlen(filename) + 2); // +2 for the slash and null terminator

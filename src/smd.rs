@@ -4,6 +4,8 @@ use std::fs::{File};
 use std::io::Write;
 use std::path::PathBuf;
 use std::process::{Command, exit};
+use std::result::Result;
+
 
 pub enum MdFlavour {
     Light,
@@ -45,6 +47,30 @@ pub fn parse_md(filename: &str, output_type: &str, specific_type: Option<&str>) 
 
     let html_filename = format!("{}.html", filename.split(".").next().unwrap());
     parse_md_to_html(&md_content, &html_filename);
+
+    match output_type {
+        "html" => (),
+        "pdf" => {
+            use headless_chrome::*;
+            let browser = Browser::default().expect("TODO: panic message");
+
+            let tab = browser.new_tab().unwrap();
+            tab.navigate_to(&format!("file://{}", html_filename)).expect("TODO: panic message");
+            tab.wait_until_navigated().expect("TODO: panic message");
+
+            match tab.print_to_pdf(None) {
+                Ok(pdf_data) => {
+                    std::fs::write("output.pdf", pdf_data).expect("TODO: panic message");
+                },
+                Err(err) => {
+                    eprintln!("ERROR: could not generate pdf: {}", err);
+                    exit(1);
+                }
+            }
+        },
+        "img" => (),
+        _ => ()
+    }
 }
 
 pub fn check_requirements() {
@@ -156,9 +182,29 @@ fn parse_md_to_html(md_content: &str, filename: &str) {
     match command {
         Ok(output) => {
             let html_content = String::from_utf8_lossy(&output.stdout);
+            let css_path;
+
+            match Command::new("npm").arg("root").arg("-g").output() {
+                Ok(output) => {
+                    let npm_root = String::from_utf8_lossy(&output.stdout);
+                    let npm_root = npm_root.trim();
+                    let css_path_str = format!("{}/github-markdown-css/github-markdown.css", npm_root);
+
+                    css_path = PathBuf::from(css_path_str);
+                    if !css_path.exists() {
+                        eprintln!("ERROR: github-markdown-css not found");
+                        exit(1);
+                    }
+                },
+                _ => {
+                    eprintln!("ERROR: unable to retrieve npm root");
+                    exit(1);
+                }
+            }
+
             let html_structure = format!(
                  "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\
-                 <link rel=\"stylesheet\" href=\"/node_modules/github-markdown-css/github-markdown.css\">\n\
+                 <link rel=\"stylesheet\" href={:?}>\n\
                  <style>\n\
                      .markdown-body {{\n\
                          box-sizing: border-box;\n\
@@ -175,7 +221,7 @@ fn parse_md_to_html(md_content: &str, filename: &str) {
              <body class=\"markdown-body\">\n\
                      {}\n\
              </body>\n\
-             ", html_content);
+             ", css_path, html_content);
 
             write_file(&filename, &html_structure);
         },

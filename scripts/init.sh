@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Compile the C program along with noc.c from the /lib directory
-gcc -I/lib main.c lib/nec.c lib/smd.c -o smd
+cargo build --release
 
 # Check if compilation was successful
 if [ $? -ne 0 ]; then
@@ -9,11 +8,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Optionally, you can add checks to see if the binary already exists in the target directory
-
 # Move the binary to a directory in PATH (e.g., /usr/local/bin)
 # Requires sudo privileges to move to such directories
-sudo mv smd /usr/local/bin/
+sudo mv target/release/smd /usr/local/bin/
 
 # Verify if the move was successful
 if [ $? -eq 0 ]; then
