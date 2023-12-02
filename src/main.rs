@@ -1,14 +1,13 @@
-mod smd;
+pub mod utils;
+pub mod mdflavour;
+pub mod fio;
+pub mod config;
+mod lib;
 
 use std::env;
 use std::process;
-use crate::smd::MdFlavour;
-
-const VERSION: &str = "0.0.1";
-const RED_CODE: &str = "\x1b[31m";
-const BLUE_CODE: &str = "\x1b[34m";
-const MAGENTA_CODE: &str = "\x1b[35m";
-const NORMAL_CODE: &str = "\x1b[0m";
+use lib::parse_md;
+use utils::{VERSION, RED_CODE, BLUE_CODE, MAGENTA_CODE, NORMAL_CODE};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -38,8 +37,8 @@ fn main() {
                 }
                 "--init" => {
                     println!("INFO Initializing {}smd{}...", BLUE_CODE, NORMAL_CODE);
-                    smd::check_requirements();
-                    smd::set_md_flavour(MdFlavour::Auto);
+                    config::check_requirements();
+                    mdflavour::set_md_flavour(mdflavour::MdFlavour::Auto);
                     println!("{}smd{} initialized! Use {}smd{} --help ", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
                 }
                 "--flavour" => {
@@ -54,9 +53,9 @@ fn main() {
                     std::io::stdin().read_line(&mut flavour).expect("ERROR Failed reading input");
 
                     match flavour.trim() {
-                        "1" | "dark" => smd::set_md_flavour(MdFlavour::Dark),
-                        "2" | "light" => smd::set_md_flavour(MdFlavour::Light),
-                        "3" | "auto" => smd::set_md_flavour(MdFlavour::Auto),
+                        "1" | "dark" => mdflavour::set_md_flavour(mdflavour::MdFlavour::Dark),
+                        "2" | "light" => mdflavour::set_md_flavour(mdflavour::MdFlavour::Light),
+                        "3" | "auto" => mdflavour::set_md_flavour(mdflavour::MdFlavour::Auto),
                         _ => {
                             println!("{}Invalid flavour!{}", RED_CODE, NORMAL_CODE);
                             process::exit(1);
@@ -71,14 +70,14 @@ fn main() {
             match args.get(1).unwrap().as_str() {
                 "--input" => {
                     if args.get(3).unwrap().as_str() == "--output" {
-                        smd::parse_md(args.get(2).unwrap().as_str(), args.get(4).unwrap().as_str(), None);
+                        parse_md(args.get(2).unwrap().as_str(), args.get(4).unwrap().as_str(), None);
                     } else {
                         invalid_argument_message();
                     }
                 }
                 "--output" => {
                     if args.get(3).unwrap().as_str() == "--input" {
-                        smd::parse_md(args.get(4).unwrap().as_str(), args.get(2).unwrap().as_str(), None);
+                        parse_md(args.get(4).unwrap().as_str(), args.get(2).unwrap().as_str(), None);
                     } else {
                         invalid_argument_message();
                     }
@@ -91,14 +90,14 @@ fn main() {
             match args.get(1).unwrap().as_str() {
                 "--input" => {
                     if args.get(3).unwrap().as_str() == "--output" && args.get(5).unwrap().as_str() == "--specific" {
-                        smd::parse_md(args.get(2).unwrap().as_str(), args.get(4).unwrap().as_str(), Some(args.get(6).unwrap().as_str()));
+                        parse_md(args.get(2).unwrap().as_str(), args.get(4).unwrap().as_str(), Some(args.get(6).unwrap().as_str()));
                     } else {
                         invalid_argument_message();
                     }
                 }
                 "--output" => {
                     if args.get(3).unwrap().as_str() == "--input" && args.get(5).unwrap().as_str() == "--specific" {
-                        smd::parse_md(args.get(4).unwrap().as_str(), args.get(2).unwrap().as_str(), Some(args.get(6).unwrap().as_str()));
+                        parse_md(args.get(4).unwrap().as_str(), args.get(2).unwrap().as_str(), Some(args.get(6).unwrap().as_str()));
                     } else {
                         invalid_argument_message();
                     }

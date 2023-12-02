@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/main.rs"
+name = "smd"
 
 [dependencies]
 dirs = "5.0.1"
 headless_chrome = "1.0.8"
+
