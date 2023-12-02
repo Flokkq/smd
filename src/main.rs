@@ -53,7 +53,7 @@ fn main() {
                     let mut flavour = String::new();
                     std::io::stdin().read_line(&mut flavour).expect("ERROR Failed reading input");
 
-                    match flavour.trim().as_str() {
+                    match flavour.trim() {
                         "1" | "dark" => smd::set_md_flavour(MdFlavour::Dark),
                         "2" | "light" => smd::set_md_flavour(MdFlavour::Light),
                         "3" | "auto" => smd::set_md_flavour(MdFlavour::Auto),

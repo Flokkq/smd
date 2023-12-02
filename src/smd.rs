@@ -5,6 +5,9 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::process::{Command, exit};
 use std::result::Result;
+use headless_chrome::{Browser, types, Tab};
+use std::sync::Arc;
+
 
 
 pub enum MdFlavour {
@@ -47,30 +50,90 @@ pub fn parse_md(filename: &str, output_type: &str, specific_type: Option<&str>) 
 
     let html_filename = format!("{}.html", filename.split(".").next().unwrap());
     parse_md_to_html(&md_content, &html_filename);
-
+    
     match output_type {
         "html" => (),
-        "pdf" => {
-            use headless_chrome::*;
-            let browser = Browser::default().expect("TODO: panic message");
+        "pdf" => { 
+            let (_browser, tab) = initialize_browser(&html_filename);
+            let options = types::PrintToPdfOptions {
+                print_background: Some(true),
+                margin_top: Some(0.0),
+                margin_bottom: Some(0.0),
+                margin_left: Some(0.0),
+                margin_right: Some(0.0),
+                ..Default::default()
+            };
 
-            let tab = browser.new_tab().unwrap();
-            tab.navigate_to(&format!("file://{}", html_filename)).expect("TODO: panic message");
-            tab.wait_until_navigated().expect("TODO: panic message");
-
-            match tab.print_to_pdf(None) {
+            match tab.print_to_pdf(Some(options)) {
                 Ok(pdf_data) => {
-                    std::fs::write("output.pdf", pdf_data).expect("TODO: panic message");
+                    std::fs::write(format!("{}.pdf", filename.split(".").next().unwrap()), pdf_data).expect("Failed writing Pdf");
                 },
                 Err(err) => {
-                    eprintln!("ERROR: could not generate pdf: {}", err);
+                    eprintln!("ERROR: could not generate pdf data: {}", err);
                     exit(1);
                 }
             }
         },
-        "img" => (),
+        "img" => {
+            use headless_chrome::protocol::cdp::Page;
+            match specific_type {
+                Some("png") => {
+                    let (_browser, tab) = initialize_browser(&html_filename);
+                    match tab.capture_screenshot(Page::CaptureScreenshotFormatOption::Png, None, None, true) {
+                        Ok(png_data) => {
+                            std::fs::write(format!("{}.png", filename.split(".").next().unwrap()), png_data).expect("Failed drawing Image");
+                        },
+                        Err(err) => {
+                            eprintln!("ERROR: could not generate image data: {}", err);
+                        }
+                    }
+                },
+                Some("jpeg") => {
+                    let (_browser, tab) = initialize_browser(&html_filename);
+                    match tab.capture_screenshot(Page::CaptureScreenshotFormatOption::Jpeg, None, None, true) {
+                        Ok(jpeg_data) => {
+                            std::fs::write(format!("{}.jpeg", filename.split(".").next().unwrap()), jpeg_data).expect("Failed drawing Image");
+                        },
+                        Err(err) => {
+                            eprintln!("ERROR: could not generate image data: {}", err);
+                        }
+                    }
+                },
+                Some("webp") => {
+                    let (_browser, tab) = initialize_browser(&html_filename);
+                    match tab.capture_screenshot(Page::CaptureScreenshotFormatOption::Webp, None, None, true) {
+                        Ok(webp_data) => {
+                            std::fs::write(format!("{}.webp", filename.split(".").next().unwrap()), webp_data).expect("Failed drawing Image");
+                        },
+                        Err(err) => {
+                            eprintln!("ERROR: could not generate image data: {}", err);
+                        }
+                    }
+                },
+                Some(&_) => (),
+                None => ()
+            }
+        },
         _ => ()
     }
+}
+
+fn initialize_browser(html_filename: &str) -> (Browser, Arc<Tab>) { 
+    let browser = Browser::default().expect("Failed to start browser");
+    
+    let current_dir = env::current_dir().expect("Failed to get current directory");
+    let html_file_path = current_dir.join(html_filename);
+
+    if !html_file_path.exists() {
+        eprintln!("ERROR: HTML file not found");
+        exit(1);
+     }
+    let file_url = format!("file://{}", html_file_path.to_string_lossy());
+
+     let tab = browser.new_tab().unwrap();
+     tab.navigate_to(&file_url).expect("Failed to navigate to URL");
+     tab.wait_until_navigated().expect("Failed to wait for navigation");
+     return (browser, tab);
 }
 
 pub fn check_requirements() {
@@ -131,7 +194,7 @@ fn validate_inputs(filename: &str, output_type: &str, specific_type: Option<&str
     match specific_type {
         Some(str) => {
             match str {
-                "jpg" | "png" | "svg" => (),
+                "jpeg" | "png" | "webp" => (),
                 &_ => return Err("ERROR: invalid specific type".into())
             }
         },
@@ -188,13 +251,18 @@ fn parse_md_to_html(md_content: &str, filename: &str) {
                 Ok(output) => {
                     let npm_root = String::from_utf8_lossy(&output.stdout);
                     let npm_root = npm_root.trim();
-                    let css_path_str = format!("{}/github-markdown-css/github-markdown.css", npm_root);
-
-                    css_path = PathBuf::from(css_path_str);
-                    if !css_path.exists() {
-                        eprintln!("ERROR: github-markdown-css not found");
-                        exit(1);
+                    let css_path_str = format!("{}/github-markdown-css/github-markdown-dark.css", npm_root);
+                    
+                    // only iterates to ~
+                    let mut absolute_css_path = String::new();
+                    for _ in css_path_str.split('/') {
+                        absolute_css_path.push_str("../");
                     }
+                    #[cfg(unix)]
+                        absolute_css_path.push_str("../../");
+
+                    css_path = absolute_css_path.clone() + css_path_str.trim_start_matches("/");
+                    println!("{}", css_path);
                 },
                 _ => {
                     eprintln!("ERROR: unable to retrieve npm root");
