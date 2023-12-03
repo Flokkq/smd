@@ -55,7 +55,7 @@ pub fn parse_md_to_html(md_content: &str, filename: &str) {
                 Ok(output) => {
                     let npm_root = String::from_utf8_lossy(&output.stdout);
                     let npm_root = npm_root.trim();
-                    let css_path_str = format!("{}/github-markdown-css/github-markdown-dark.css", npm_root);
+                    let css_path_str = format!("{}/github-markdown-css/github-markdown-light.css", npm_root);
                     
                     // only iterates to ~
                     let mut absolute_css_path = String::new();

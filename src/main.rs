@@ -38,7 +38,7 @@ fn main() {
                 "--init" => {
                     println!("INFO Initializing {}smd{}...", BLUE_CODE, NORMAL_CODE);
                     config::check_requirements();
-                    mdflavour::set_md_flavour(mdflavour::MdFlavour::Auto);
+                    mdflavour::set_md_flavour(mdflavour::MdFlavour::Dark);
                     println!("{}smd{} initialized! Use {}smd{} --help ", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
                 }
                 "--flavour" => {
