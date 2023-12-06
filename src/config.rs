@@ -6,9 +6,8 @@ use std::error::Error;
 use std::fs::File;
 use std::fs;
 
-
 pub fn check_requirements() {
-    println!("INFO Checking requirements...");
+    // println!("INFO Checking requirements...");
 
     let npm_check = Command::new("npm")
         .arg("ls")
@@ -25,14 +24,14 @@ pub fn check_requirements() {
                     .arg("-g")
                     .arg("github-markdown-css")
                     .output() {
-                    Ok(_) => println!("INFO All requirements are fulfilled! Continuing..."),
+                    Ok(_) => /*println!("INFO All requirements are fulfilled! Continuing...")*/ (),
                     Err(err) => {
                         eprintln!("ERROR installing github-markdown-css: {}", err);
                         exit(1);
                     }
                 }
             }
-            println!("INFO All requirements are fulfilled! Continuing...");
+            //println!("INFO All requirements are fulfilled! Continuing...");
         }
         Err(err) => {
             eprintln!("ERROR checking requirements: {}", err)
@@ -81,7 +80,5 @@ pub fn get_path_to_config_file() -> PathBuf {
         let dir_path = home_dir.join("Library/Smd");
     #[cfg(windows)]
         let dir_path = home_dir.join("AppData/Roaming/Smd");
-    let file_path = dir_path.join("md_flavour.txt");
-
-    return file_path
+     return dir_path.join("md_flavour.txt");
 }

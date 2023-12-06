@@ -4,7 +4,7 @@ use std::env;
 use std::path::PathBuf;
 use std::process::exit;
 use std::process::Command;
-use crate::fio;
+use crate::{fio, mdflavour};
 
 pub const VERSION: &str = "0.0.1";
 pub const RED_CODE: &str = "\x1b[31m";
@@ -31,7 +31,7 @@ pub fn initialize_browser(html_filename: &str) -> (Browser, Arc<Tab>) {
 }
 
 pub fn parse_md_to_html(md_content: &str, filename: &str) {
-    println!("INFO Parsing {} to html", filename);
+    // println!("INFO Parsing {} to html", filename);
 
     let command = Command::new("gh")
         .arg("api")
@@ -55,7 +55,8 @@ pub fn parse_md_to_html(md_content: &str, filename: &str) {
                 Ok(output) => {
                     let npm_root = String::from_utf8_lossy(&output.stdout);
                     let npm_root = npm_root.trim();
-                    let css_path_str = format!("{}/github-markdown-css/github-markdown-light.css", npm_root);
+                    let md_flavour = mdflavour::get_md_flavour();
+                    let css_path_str = format!("{}/github-markdown-css/github-markdown{}.css", npm_root, md_flavour);
                     
                     // only iterates to ~
                     let mut absolute_css_path = String::new();
@@ -104,3 +105,9 @@ pub fn parse_md_to_html(md_content: &str, filename: &str) {
     };
 }
 
+pub fn remove_html_file(filepath: PathBuf) {
+    match std::fs::remove_file(filepath) {
+        Ok(_) => (),
+        Err(err) => eprintln!("ERROR removing file: {}", err)
+    }
+}

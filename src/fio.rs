@@ -6,18 +6,18 @@ use std::result::Result;
 use std::process::exit;
 
 pub fn read_file(filename: PathBuf) -> Result<String, ()> {
-    println!("INFO Reading file: {:?}", filename.file_name().unwrap());
-    return fs::read_to_string(filename.file_name().unwrap()).map_err(|err| {
-        eprintln!("ERROR: could not open file {:?}: {err}", filename.file_name().unwrap());
+    // println!("INFO Reading file: {:?}", filename.file_name().unwrap());
+    return fs::read_to_string(&filename).map_err(|err| {
+        eprintln!("ERROR: could not open file {:?}: {err}", filename);
     })
 }
 
 pub fn write_file(filename: PathBuf, content: &str) {
-    println!("INFO Writing file: {:?}", filename.file_name().unwrap());
+    // println!("INFO Writing file: {:?}", filename.file_name().unwrap());
     let mut file = match File::create(&filename) {
         Ok(file) => file,
         Err(err) => {
-            eprintln!("ERROR: could not create file {:?}: {}", filename.file_name().unwrap(), err);
+            eprintln!("ERROR: could not create file {:?}: {}", filename, err);
             exit(1);
         }
     };

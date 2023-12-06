@@ -39,6 +39,7 @@ pub fn parse_md(filename: &str, output_type: &str, specific_type: Option<&str>) 
                     exit(1);
                 }
             }
+        utils::remove_html_file(html_filename.into());    
         },
         "img" => {
             use headless_chrome::protocol::cdp::Page;
@@ -79,6 +80,7 @@ pub fn parse_md(filename: &str, output_type: &str, specific_type: Option<&str>) 
                 Some(&_) => (),
                 None => ()
             }
+        utils::remove_html_file(html_filename.into());    
         },
         _ => ()
     }

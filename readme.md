@@ -6,13 +6,14 @@ Sweet Markdown is a versatile command-line tool designed to convert Markdown fil
 
 ## Requirements
 
+Before proceeding, ensure that [npm](https://www.npmjs.com/) is installed on your system.
+
+
 ### Windows
 
-Before proceeding, ensure that [npm](https://www.npmjs.com/) is installed on your system.
+Windows does not need any additional configuration.
 
 ### Linux & MacOS
-
-Before proceeding, ensure that [npm](https://www.npmjs.com/) is installed on your system.
 
 #### Changing npm Rights from Root to User
 
@@ -33,22 +34,17 @@ This command changes the ownership of the npm directory to your user, ensuring t
 
 ## Installation
 
-Sweet Markdown can be either installed via the binaries on the [GitHub](https://github.com/Flokkq/SweetMarkdown) or with a corresponding package manager.
+Sweet Markdown can be installed by cloning the [GitHub-Repository](https://github.com/Flokkq/SweetMarkdown) and running the init script.
 
-### Linux
 ```bash
-apt-get install smd
+# Clone the repository
+git clone https://github.com/Flokkq/SweetMarkdown --depth 1
+
+# Change directory and run the init script
+cd smd && ./scripts/init.sh
 ```
 
-### MacOS
-```bash
-brew install smd
-```
-
-### Windows
-```bash
-choco install smd
-```
+After the installation, the `smd` command should be available in your terminal.
 
 ## Usage
 
@@ -57,7 +53,6 @@ choco install smd
 ```bash
 # Convert a Markdown file to the desired format
 smd --input <path/to/file.md> --output <format> --specifc <specifc-format>
-
 ```
 
 ### Help Command
