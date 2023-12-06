@@ -8,7 +8,7 @@ Sweet Markdown is a versatile command-line tool designed to convert Markdown fil
 
 Before proceeding, ensure that the following are installed on your system:
 - [Node.js and npm](https://nodejs.org/)
-- [Rust and Cargo](https://www.rust-lang.org/)
+- [Rust and Cargo](https://www.rust-lang.org/) (only required for installation with the `install` script)
 
 ### Cross-Platform Installation Notes
 
@@ -22,7 +22,11 @@ Before proceeding, ensure that the following are installed on your system:
 
 ## Installation
 
-Clone and install Sweet Markdown:
+Sweet Markdown can be installed by
+- Cloning the repository and running the `install` script
+- Downloading the latest release from the [Github]()
+
+### Installation Script
 
 ```bash
 # Clone the repository
@@ -32,8 +36,15 @@ git clone https://github.com/Flokkq/SweetMarkdown --depth 1
 cd SweetMarkdown
 
 # Run the installation script
-./scripts/install.sh
+./scripts/install
 ```
+
+### Manual Installation
+
+After downloading the latest release, run the following commands:
+
++ **Linux & MacOS** `sudo mv path/to/smd /usr/local/bin/smd`
++ **Windows** `copy path\to\smd.exe C:\Windows\System32\smd.exe`
 
 After the installation, the `smd` command should be available in your terminal.
 
@@ -54,6 +65,7 @@ smd --help
 ```
 
 ### Markdown flavour Command
+
 ```bash
 # Set desired Markdown flavour
 smd --flavour
@@ -75,10 +87,10 @@ smd --flavour
 
 ```bash
 # Convert Markdown to pdf
-smd --input readme.md --output html
+smd --input path/to/file.md --output html
 
 # Convert Markdown to png
-smd --input readne.md --output img --specific png
+smd --input path/to/file.md --output img --specific png
 ```
 
 ## License

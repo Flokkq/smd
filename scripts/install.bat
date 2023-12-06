@@ -9,9 +9,8 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-
 REM Assuming smd.exe is in the current directory
-setx /M PATH "%PATH%;%CD%"
+copy target/release/smd.exe C:\Windows\System32\smd.exe
 
 REM Verify if the update to PATH was successful
 IF %ERRORLEVEL% EQU 0 (

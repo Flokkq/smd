@@ -6,7 +6,7 @@ use std::process::exit;
 use std::process::Command;
 use crate::{fio, mdflavour};
 
-pub const VERSION: &str = "0.0.1";
+pub const VERSION: &str = "0.1.0";
 pub const RED_CODE: &str = "\x1b[31m";
 pub const BLUE_CODE: &str = "\x1b[34m";
 pub const MAGENTA_CODE: &str = "\x1b[35m";
@@ -68,8 +68,8 @@ pub fn parse_md_to_html(md_content: &str, filename: &str) {
 
                     css_path = absolute_css_path.clone() + css_path_str.trim_start_matches("/");
                 },
-                _ => {
-                    eprintln!("ERROR: unable to retrieve npm root");
+                Err(err) => {
+                    eprintln!("ERROR: unable to retrieve npm root: {}", err);
                     exit(1);
                 }
             }

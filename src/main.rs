@@ -42,6 +42,7 @@ fn main() {
                     println!("{}smd{} initialized! Use {}smd{} --help ", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
                 }
                 "--flavour" => {
+                    handle_init_not_called();
                     // TODO: fix problem with stdin reading before last print
                     println!("What flavour do you want to use?");
                     println!("  {}1{} > dark", MAGENTA_CODE, NORMAL_CODE);
@@ -67,6 +68,7 @@ fn main() {
             }
         }
         5 => {
+            handle_init_not_called();
             match args.get(1).unwrap().as_str() {
                 "--input" => {
                     if args.get(3).unwrap().as_str() == "--output" {
@@ -87,6 +89,7 @@ fn main() {
 
         }
         7 => {
+            handle_init_not_called();
             match args.get(1).unwrap().as_str() {
                 "--input" => {
                     if args.get(3).unwrap().as_str() == "--output" && args.get(5).unwrap().as_str() == "--specific" {
@@ -108,6 +111,14 @@ fn main() {
         _ => invalid_argument_message()
     }
 }
+
+fn handle_init_not_called() {
+    if !config::get_path_to_config_file().exists() {
+        println!("{}smd{} is not initialized! Use {}smd --init{} to initialize", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
+        process::exit(1);
+    }
+}
+
 
 fn invalid_argument_message() {
     println!("Invalid arguments! Please use smd --help for more information");
