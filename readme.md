@@ -8,6 +8,7 @@ Sweet Markdown is a versatile command-line tool designed to convert Markdown fil
 
 Before proceeding, ensure that the following are installed on your system:
 - [Node.js and npm](https://nodejs.org/)
+- [Rust and Cargo](https://www.rust-lang.org/)
 
 ### Cross-Platform Installation Notes
 
@@ -33,22 +34,6 @@ cd SweetMarkdown
 # Run the installation script
 ./scripts/install.sh
 ```
-
-Install binaries:
-
-You can install the binaries from the [release](https://github.com/Flokkq/smd/edit/main/readme.md) or via the cli
-```bash
-# Install the executable
-curl -o https://pathtobinary
-
-#Install the init script (Linux)
-curl -o https://pathtoinstallscript
-
-#Install the init script (Linux)
-curl -o https://pathtoinstallscript
-```
-
-After getting the files run the init script: `./init.sh`
 
 After the installation, the `smd` command should be available in your terminal.
 
