@@ -6,42 +6,33 @@ Sweet Markdown is a versatile command-line tool designed to convert Markdown fil
 
 ## Requirements
 
-Before proceeding, ensure that [npm](https://www.npmjs.com/) is installed on your system.
+Before proceeding, ensure that the following are installed on your system:
+- [Node.js and npm](https://nodejs.org/)
+- [Rust and Cargo](https://www.rust-lang.org/)
 
+### Cross-Platform Installation Notes
 
-### Windows
+- **Windows**: No additional configuration required.
+- **Linux & MacOS**: You may need to change npm rights from root to user.
 
-Windows does not need any additional configuration.
+#### Changing npm Rights (Linux & MacOS)
 
-### Linux & MacOS
-
-#### Changing npm Rights from Root to User
-
-To change the ownership of npm directories to the current user, follow these steps:
-1. First, confirm your username by running the following command in your terminal:
-
-```bash
-whoami
-```
-
-2. Once you have your username, use it to change the ownership of the npm directories. Replace `<username>` with your actual username in the command below:
-
-```bash
-sudo chown -R <username>: /usr/local/lib/node_modules
-```
-
-This command changes the ownership of the npm directory to your user, ensuring that you can run npm commands without needing root permissions.
+1. Confirm your username: `whoami`
+2. Change ownership of npm directories: `sudo chown -R $(whoami) /usr/local/lib/node_modules`
 
 ## Installation
 
-Sweet Markdown can be installed by cloning the [GitHub-Repository](https://github.com/Flokkq/SweetMarkdown) and running the init script.
+Clone and install Sweet Markdown:
 
 ```bash
 # Clone the repository
 git clone https://github.com/Flokkq/SweetMarkdown --depth 1
 
-# Change directory and run the init script
-cd smd && ./scripts/init.sh
+# Change directory
+cd SweetMarkdown
+
+# Run the installation script
+./scripts/install.sh
 ```
 
 After the installation, the `smd` command should be available in your terminal.
