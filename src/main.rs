@@ -1,8 +1,8 @@
 pub mod utils;
 pub mod mdflavour;
 pub mod fio;
-pub mod config;
 mod lib;
+pub mod config;
 
 use std::env;
 use std::process;
@@ -37,7 +37,13 @@ fn main() {
                 }
                 "--init" => {
                     println!("INFO Initializing {}smd{}...", BLUE_CODE, NORMAL_CODE);
+                    if config::get_path_to_config_file().exists() {
+                        println!("{}smd{} already initialized! Use {}smd --help{} for more information.", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
+                        process::exit(1);
+                    }
+
                     config::check_requirements();
+                    config::create_config_file();
                     mdflavour::set_md_flavour(mdflavour::MdFlavour::Dark);
                     println!("{}smd{} initialized! Use {}smd{} --help ", BLUE_CODE, NORMAL_CODE, BLUE_CODE, NORMAL_CODE);
                 }

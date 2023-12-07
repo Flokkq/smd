@@ -19,12 +19,10 @@ impl MdFlavour {
 
 pub fn set_md_flavour(flavour: MdFlavour) {
     let filepath = config::get_path_to_config_file();
-    eprintln!("{:?}", filepath);
-    fio::write_file(filepath, &*flavour.to_string())
+    fio::write_file(filepath, &flavour.to_string())
 }
 pub fn get_md_flavour() -> String {
     let filepath = config::get_path_to_config_file();
-    eprintln!("{:?}", filepath);
     let content = match fio::read_file(filepath) {
         Ok(content) => content,
         Err(_) => {

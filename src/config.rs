@@ -18,7 +18,7 @@ pub fn check_requirements() {
         Ok(output) => {
             let response = String::from_utf8_lossy(&output.stdout);
             if !response.contains(" github-markdown-css") {
-                println!("INFO Installing github-markdown-css...");
+                // println!("INFO Installing github-markdown-css...");
                 match Command::new("npm")
                     .arg("install")
                     .arg("-g")
@@ -36,12 +36,6 @@ pub fn check_requirements() {
         Err(err) => {
             eprintln!("ERROR checking requirements: {}", err)
         }
-    }
-
-    let file_path = get_path_to_config_file();
-    if !file_path.exists() {
-        fs::create_dir(&file_path).expect("ERROR creating directory");
-        File::create(file_path.join("md_flavour.txt")).expect("ERROR creating file");
     }
 }
 
@@ -81,4 +75,10 @@ pub fn get_path_to_config_file() -> PathBuf {
     #[cfg(windows)]
         let dir_path = home_dir.join("AppData/Roaming/Smd");
      return dir_path.join("md_flavour.txt");
+}
+
+pub fn create_config_file() {
+    let file_path = get_path_to_config_file();
+    fs::create_dir(&file_path.parent().unwrap()).expect("ERROR creating directory");
+    File::create(file_path).expect("ERROR creating file");
 }
