@@ -24,7 +24,7 @@ Before proceeding, ensure that the following are installed on your system:
 
 Sweet Markdown can be installed by
 - Cloning the repository and running the `install` script
-- Downloading the latest release from the [Github]()
+- Downloading the latest release from the [Github](https://github.com/Flokkq/smd)
 
 ### Installation Script
 
