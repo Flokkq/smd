@@ -17,6 +17,7 @@ Sweet Markdown is a versatile command-line tool designed to convert Markdown fil
 
 Before proceeding, ensure that the following are installed on your system:
 - [Node.js and npm](https://nodejs.org/)
+- [Github CLI](https://cli.github.com/)
 - [Rust and Cargo](https://www.rust-lang.org/) (only required for installation with the `install` script)
 
 ### Cross-Platform Installation Notes
