@@ -1,8 +1,5 @@
+# Added by cargo
+
 /target
-/old
-readme.html
-readme.pdf
-readme.png
-readme.jpeg
-readme.webp
-/scripts/build.sh
+/scripts
+

@@ -1,5 +1,14 @@
 # Sweet Markdown
 
+## Table of Content
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+  - [Cross-Platform Installation Notes](#cross-platform-installation-notes)
+    - [Changing npm Rights (Linux & MacOS)](#changing-npm-rights-linux--macos)
+    - [Installation Script](#installation-script)
+    - [Manual Installation](#manual-installation)
+- [Usage](#usage)
+
 ## Introduction
 
 Sweet Markdown is a versatile command-line tool designed to convert Markdown files into GitHub-flavored PDF, HTML, or image formats while retaining the distinctive GitHub CSS styling. It's perfect for developers, content creators, and anyone looking to share their Markdown documents in various formats while maintaining the familiar GitHub aesthetic.

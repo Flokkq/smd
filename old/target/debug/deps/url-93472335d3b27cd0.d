@@ -1,0 +1,11 @@
+/Users/clemensweber/Library/Mobile Documents/com~apple~CloudDocs/privat/Code/rust/smd/old/target/debug/deps/url-93472335d3b27cd0.rmeta: /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/lib.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/host.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/origin.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/parser.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/path_segments.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/slicing.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/quirks.rs
+
+/Users/clemensweber/Library/Mobile Documents/com~apple~CloudDocs/privat/Code/rust/smd/old/target/debug/deps/url-93472335d3b27cd0.d: /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/lib.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/host.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/origin.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/parser.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/path_segments.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/slicing.rs /Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/quirks.rs
+
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/lib.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/host.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/origin.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/parser.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/path_segments.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/slicing.rs:
+/Users/clemensweber/.cargo/registry/src/index.crates.io-6f17d22bba15001f/url-2.5.0/src/quirks.rs:
