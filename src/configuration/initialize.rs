@@ -1,10 +1,10 @@
+use crate::configuration::get_flavours_from_config_folder;
+use crate::io::write_file;
+use reqwest::{Client, Url};
 use std::fs::{copy, File};
 use std::io::Write;
 use std::path::PathBuf;
 use std::str::FromStr;
-use reqwest::{Client, Url};
-use crate::configuration::{get_flavours_from_config_folder};
-use crate::io::write_file;
 
 pub async fn initialize() {
     let config_folder = dirs::config_dir().unwrap().join("smd");
@@ -24,12 +24,14 @@ pub async fn initialize() {
         download_file(Url::from_str(url).unwrap(), save_path).await;
     }
 
-    let flavours = get_flavours_from_config_folder(config_folder.join("flavours")
-        .clone())
+    let flavours = get_flavours_from_config_folder(config_folder.join("flavours").clone())
         .unwrap()
         .join("\n");
 
-    write_file(config_folder.join("current-flavour.css"), "auto".to_string());
+    write_file(
+        config_folder.join("current-flavour.css"),
+        "auto".to_string(),
+    );
     write_file(config_folder.join("flavours.txt"), flavours);
     log::info!("Initialization complete! Run smd --help for more information.");
     std::process::exit(0);
@@ -37,7 +39,7 @@ pub async fn initialize() {
 
 async fn download_file(url: Url, save_path: PathBuf) {
     let client = Client::new();
-
+    
     let response = client.get(url).send().await.unwrap();
     if !response.status().is_success() {
         reset_initialization();

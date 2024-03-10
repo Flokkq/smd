@@ -1,4 +1,5 @@
-mod parser;
 mod flavour;
+mod parser;
 
-pub use flavour::Flavour;
+pub use flavour::{Flavour, FlavourSettings};
+pub use parser::parse;

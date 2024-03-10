@@ -1,108 +1,156 @@
 # Sweet Markdown
 
-## Table of Content
+## Table of Contents
+
 - [Introduction](#introduction)
 - [Requirements](#requirements)
   - [Cross-Platform Installation Notes](#cross-platform-installation-notes)
-    - [Changing npm Rights (Linux & MacOS)](#changing-npm-rights-linux--macos)
-    - [Installation Script](#installation-script)
-    - [Manual Installation](#manual-installation)
+- [Installation](#installation)
+  - [Installation Script](#installation-script)
+  - [Manual Installation](#manual-installation)
 - [Usage](#usage)
+  - [Rendering Markdown](#rendering-markdown)
+    - [Supported Output Formats](#supported-output-formats)
+    - [Rendering Markdown with Sweet Markdown](#rendering-markdown-with-sweet-markdown)
+  - [Flavors (Color Themes)](#flavors-color-themes)
+    - [Changing Flavor](#changing-flavor)
+    - [Creating Custom Flavors](#creating-custom-flavors)
+    - [Editing Custom Flavors](#editing-custom-flavors)
+    - [Updating Custom Flavors](#updating-custom-flavors)
+- [License](#license)
 
 ## Introduction
 
-Sweet Markdown is a versatile command-line tool designed to convert Markdown files into GitHub-flavored PDF, HTML, or image formats while retaining the distinctive GitHub CSS styling. It's perfect for developers, content creators, and anyone looking to share their Markdown documents in various formats while maintaining the familiar GitHub aesthetic.
+Sweet Markdown is a command-line utility designed for converting Markdown files into various formats including PDF, HTML, or images, all while applying the familiar GitHub CSS styling. This tool is ideal for developers, content creators, and anyone interested in distributing their Markdown content in multiple formats without losing the GitHub look and feel.
 
 ## Requirements
 
-Before proceeding, ensure that the following are installed on your system:
-- [Node.js and npm](https://nodejs.org/)
-- [Github CLI](https://cli.github.com/)
-- [Rust and Cargo](https://www.rust-lang.org/) (only required for installation with the `install` script)
+Ensure the following prerequisites are met before installation:
 
-### Cross-Platform Installation Notes
-
-- **Windows**: No additional configuration required.
-- **Linux & MacOS**: You may need to change npm rights from root to user.
-
-#### Changing npm Rights (Linux & MacOS)
-
-1. Confirm your username: `whoami`
-2. Change ownership of npm directories: `sudo chown -R $(whoami) /usr/local/lib/node_modules`
+- [Rust and Cargo](https://www.rust-lang.org/) (required for the installation script)
 
 ## Installation
 
-Sweet Markdown can be installed by
-- Cloning the repository and running the `install` script
-- Downloading the latest release from the [Github](https://github.com/Flokkq/smd)
+Sweet Markdown can be installed via:
+
+- Cloning the repository and executing the installation script.
+- Downloading the latest release from [GitHub](https://github.com/Flokkq/smd/release).
 
 ### Installation Script
 
 ```bash
 # Clone the repository
-git clone https://github.com/Flokkq/SweetMarkdown --depth 1
+git clone https://github.com/Flokkq/SweetMarkdown/release --depth 1
 
-# Change directory
-cd SweetMarkdown
+# Navigate to the directory
+cd smd
 
-# Run the installation script
+# Execute the installation script
 ./scripts/install
 ```
 
 ### Manual Installation
 
-After downloading the latest release, run the following commands:
+After downloading the latest release, execute the following commands based on your operating system:
 
-+ **Linux & MacOS** `sudo mv path/to/smd /usr/local/bin/smd`
-+ **Windows** `copy path\to\smd.exe C:\Windows\System32\smd.exe`
+- **Linux & MacOS**: `sudo mv path/to/smd /usr/local/bin/smd`
+- **Windows**: `copy path\to\smd.exe C:\Windows\System32\smd.exe`
 
-After the installation, the `smd` command should be available in your terminal.
+The `smd` command will now be accessible from your terminal.
 
 ## Usage
 
-### Basic Command
+### Rendering Markdown
 
-```bash
-# Convert a Markdown file to the desired format
-smd --input <path/to/file.md> --output <format> --specifc <specifc-format>
-```
-
-### Help Command
-
-```bash
-# Display help information
-smd --help
-```
-
-### Markdown flavour Command
-
-```bash
-# Set desired Markdown flavour
-smd --flavour
-```
-
-### Supported Output Formats
+#### Supported Output Formats
 
 - **PDF**: Portable Document Format
 - **HTML**: HyperText Markup Language
-- **IMG**: Image file (JPG, PNG, WEBP)
+- **Image**: JPG, PNG, WEBP formats
 
-## Features
-
-- **GitHub CSS Styling**: Maintains the GitHub-flavored CSS styling in all output formats.
-- **Multiple Output Formats**: Convert Markdown files to PDF, HTML, or various image formats.
-- **Command-Line Interface**: Easy-to-use CLI for quick conversions.
-
-### Examples
+#### Rendering Markdown with Sweet Markdown
 
 ```bash
-# Convert Markdown to pdf
-smd --input path/to/file.md --output html
+# Convert a Markdown file to the specified format
+smd --input <path/to/file.md> --output <format> --specific <specific-format>
 
-# Convert Markdown to png
-smd --input path/to/file.md --output img --specific png
+# Example:
+smd --input README.md --output pdf
+
+# Or:
+smd --input README.md --output img --specific jpg
 ```
+
+### Flavors (Color Themes)
+
+Sweet Markdown allows for easy customization of markdown rendering through the use of flavors, including the option to create custom ones.
+
+#### Changing Flavor
+
+Change the global flavor setting to apply to all markdown renderings:
+
+```bash
+smd --flavor --set
+
+Select a flavor:
+        1 > light
+        2 > dark
+        3 > auto
+flavor:
+```
+
+Alternatively, specify a flavor for a single rendering:
+
+```bash
+smd --input README.md --output pdf --flavor light
+```
+
+#### Creating Custom Flavors
+
+Generate your own custom flavors with `--flavor --create [flavor-name]`, starting from a template:
+
+```yaml
+# Flavor name
+color-scheme: dark
+syntax:
+  comment: "#8b949e"
+  constant: "#79c0ff"
+  entity: "#d2a8ff"
+[...]
+```
+
+After customization, add your flavor to the available options with `smd --flavor --add /path/to/file`. The `.yaml` file will be integrated into Sweet Markdown's configuration directory.
+
+#### Editing Custom Flavors
+
+To modify a custom flavor:
+
+```bash
+smd --flavor --edit [flavor-name]
+
+# Or choose from a list of available flavours
+
+smd --flavour --edit
+
+Select a flavor:
+        1 > light
+        2 > dark
+        3 > auto
+flavor:
+```
+
+This command opens the `.yaml` configuration file for editing.
+
+#### Updating Custom Flavors
+
+After editing, apply the changes with:
+
+```bash
+smd --flavor --update /path/to/your/file
+```
+
+Note: Sweet Markdown will incorporate the updated `.yaml` file into its configuration directory.
 
 ## License
 
-This tool is released under the [MIT License](LICENSE).
+Sweet Markdown is available under the [MIT License](LICENSE)

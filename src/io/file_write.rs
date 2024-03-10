@@ -7,20 +7,18 @@ pub fn write_file(filename: PathBuf, content: String) {
     let mut file = match File::create(&filename) {
         Ok(file) => file,
         Err(err) => {
-            log::error!(
-                "Could not create file {:?}: {}",
-                filename,
-                err,
-            );
+            log::error!("Could not create file {:?}: {}", filename, err,);
             exit(1);
         }
     };
 
-    file.write_all(content.as_bytes()).map_err(|err| {
-        log::error!(
-            "Could not write file {:?}: {}",
-            filename.file_name().unwrap(),
-            err
-        )
-    }).expect("");
+    file.write_all(content.as_bytes())
+        .map_err(|err| {
+            log::error!(
+                "Could not write file {:?}: {}",
+                filename.file_name().unwrap(),
+                err
+            )
+        })
+        .expect("");
 }

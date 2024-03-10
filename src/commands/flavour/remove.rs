@@ -1,12 +1,12 @@
 use crate::commands::Command;
 use crate::configuration::Settings;
-use crate::markdown::Flavour;
+use crate::markdown::{Flavour, FlavourSettings};
 
 pub struct FlavourRemoveCommand;
 
 impl Command for FlavourRemoveCommand {
     fn execute(mut settings: Settings, _arguments: Option<Vec<String>>) {
-        let flavours = Flavour::load_flavours(&settings);
+        let flavours = FlavourSettings::load_flavours(&settings);
 
         loop {
             println!("flavour: ");
@@ -27,11 +27,11 @@ impl Command for FlavourRemoveCommand {
             if selected_flavour > 0 && selected_flavour <= flavours.len() {
                 match flavours.get(selected_flavour - 1) {
                     Some(flavour) => {
-                        if settings.flavour == *flavour {
-                            settings.flavour = Flavour::Auto;
+                        if settings.appearance.flavour_settings.flavour == *flavour {
+                            settings.appearance.flavour_settings.flavour = Flavour::Auto;
                         }
-                        Flavour::remove_flavour(settings, flavour.clone());
-                    },
+                        FlavourSettings::remove_flavour(settings, flavour.clone());
+                    }
                     None => {
                         log::error!("Failed removing flavour!");
                         std::process::exit(1);
@@ -41,9 +41,9 @@ impl Command for FlavourRemoveCommand {
             }
             log::warn!("Invalid input! Please provide a valid number within the range.");
         }
+    }
 
-
-        let flavour = Flavour::Auto;
-
+    fn help() {
+        println!("\t\t--remove: Remove an added css file");
     }
 }

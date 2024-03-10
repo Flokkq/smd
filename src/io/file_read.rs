@@ -8,5 +8,5 @@ pub fn read_file(filename: PathBuf) -> Result<String, ()> {
             filename.file_name().unwrap(),
             err,
         )
-    })
+    });
 }

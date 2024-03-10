@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum ConfigurationError {
@@ -22,7 +22,7 @@ pub fn verify_initial_setup() -> Result<(), ConfigurationError> {
 
     let mut config_folder = dirs::config_dir().unwrap().join("smd");
     if !config_folder.exists() {
-        return Err(ConfigurationError::MissingConfiguration)
+        return Err(ConfigurationError::MissingConfiguration);
     }
 
     Ok(())
