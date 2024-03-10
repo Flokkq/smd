@@ -24,7 +24,7 @@ impl WebBrowserSession {
         tab.navigate_to(&file_url)
             .map_err(|_| "Failed to navigate to URL")?;
         tab.wait_until_navigated()
-            .map_err(|_| "Failed to wait for navigation")?;
+            .map_err(|_| "Failed to wait until navigation is done")?;
 
         Ok(WebBrowserSession { browser, tab })
     }
