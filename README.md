@@ -1,8 +1,9 @@
 # Sweet Markdown
 
+Sweet Markdown is a command-line utility designed for converting Markdown files into various formats including PDF, HTML, or images, all while applying the familiar GitHub CSS styling. This tool is ideal for developers, content creators, and anyone interested in distributing their Markdown content in multiple formats without losing the GitHub look and feel.
+
 ## Table of Contents
 
-- [Introduction](#introduction)
 - [Requirements](#requirements)
   - [Cross-Platform Installation Notes](#cross-platform-installation-notes)
 - [Installation](#installation)
@@ -18,10 +19,6 @@
     - [Editing Custom Flavors](#editing-custom-flavors)
     - [Updating Custom Flavors](#updating-custom-flavors)
 - [License](#license)
-
-## Introduction
-
-Sweet Markdown is a command-line utility designed for converting Markdown files into various formats including PDF, HTML, or images, all while applying the familiar GitHub CSS styling. This tool is ideal for developers, content creators, and anyone interested in distributing their Markdown content in multiple formats without losing the GitHub look and feel.
 
 ## Requirements
 
@@ -126,10 +123,6 @@ After customization, add your flavor to the available options with `smd --flavor
 To modify a custom flavor:
 
 ```bash
-smd --flavor --edit [flavor-name]
-
-# Or choose from a list of available flavours
-
 smd --flavour --edit
 
 Select a flavor:
@@ -140,13 +133,14 @@ flavor:
 ```
 
 This command opens the `.yaml` configuration file for editing.
+Note that name changes are prohibited.
 
 #### Updating Custom Flavors
 
 After editing, apply the changes with:
 
 ```bash
-smd --flavor --update /path/to/your/file
+smd --flavor --update
 ```
 
 Note: Sweet Markdown will incorporate the updated `.yaml` file into its configuration directory.
