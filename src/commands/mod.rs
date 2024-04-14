@@ -1,8 +1,4 @@
-mod command;
-mod help;
-mod version;
-pub mod flavour;
-
-pub use command::Command;
-pub use help::HelpCommand;
-pub use version::VersionCommand;
+pub mod command;
+pub mod flavours;
+pub mod help;
+pub mod version;

@@ -1,9 +1,8 @@
 [package]
 name = "smd"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 headless_chrome = "1.0.8"
@@ -11,9 +10,16 @@ env_logger = "0.11.0"
 log = "0.4.20"
 dirs = "5.0.1"
 walkdir = "2.4.0"
-reqwest = "0.11.23"
+reqwest = { version = "0.11", features = ["json"] } 
 url = "2.5.0"
-tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros"] }
+tokio = { version = "1.0.0", features = ["full"] }
 dotenv = "0.15.0"
-serde_json = "1.0"
 serde = "1.0"
+config = "0.14.0"
+anyhow = "1.0.81"
+thiserror = "1.0.58"
+rand = "0.8.5"
+serde_yaml = "0.9.34"
+serde_json = "1.0.115"
+sysinfo = "0.21.0"
+zip = "0.6.6"

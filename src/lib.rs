@@ -1,6 +1,9 @@
+pub mod api;
+pub mod browser;
 pub mod commands;
 pub mod configuration;
-pub mod io;
+pub mod error;
+pub mod file_access;
 pub mod markdown;
-pub mod telemetry;
-pub mod utils;
+pub mod skeleton;
+pub mod startup;

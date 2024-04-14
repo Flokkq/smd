@@ -107,7 +107,7 @@ smd --input README.md --output pdf --flavor light
 
 #### Creating Custom Flavors
 
-Generate your own custom flavors with `--flavor --create [flavor-name]`, starting from a template:
+Generate your own custom flavors with `--flavor --new [flavor-name]`, starting from a template:
 
 ```yaml
 # Flavor name

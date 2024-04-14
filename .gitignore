@@ -1,6 +1,11 @@
-# Added by cargo
-/target
-/scripts
-/server
+__MACOSX/
+target/
+server/
+old/
 *.html
 *.pdf
+*.png
+*.webp
+*.jpg
+dev.md
+.env

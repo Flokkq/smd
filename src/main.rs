@@ -1,37 +1,46 @@
 use env_logger::Env;
-use smd::commands::{flavour::flavour_base::FlavourCommand, Command, HelpCommand, VersionCommand};
-use smd::configuration::startup;
-use smd::markdown;
-use smd::utils::invalid_argument_message;
-use std::io::Write;
-use std::path::PathBuf;
+use smd::{
+    commands::{
+        command::Command, flavours::flavour::FlavourCommand, help::HelpCommand,
+        version::VersionCommand,
+    },
+    error::invalid_argument_message,
+    markdown::parser::parse,
+    startup::startup,
+};
+use std::{io::Write, path::PathBuf};
 
 #[tokio::main]
 async fn main() {
     let args: Vec<_> = std::env::args().collect();
-    env_logger::Builder::from_env(Env::default().default_filter_or("info"))
-        .format(|buf, record| writeln!(buf, "{}: {}", record.level(), record.args()))
+    env_logger::Builder::from_env(Env::default().default_filter_or("smd=info"))
+        .format(|buf, record| {
+            writeln!(buf, "{}: {}", record.level(), record.args())
+        })
         .init();
 
-    if args.len() < 2 {
+    if args.len() < 1 || args.len() > 7 {
         invalid_argument_message();
     }
 
-    let settings = startup().await;
+    let settings = startup().await.unwrap();
     match args.len() {
+        1 => {
+            HelpCommand::execute(settings, None);
+        }
         2 => match args.get(1).unwrap().as_str() {
-            "--help" => HelpCommand::help(),
+            "--help" => HelpCommand::execute(settings, None),
             "--version" => VersionCommand::execute(settings, None),
-            _ => invalid_argument_message(),
+            _ => HelpCommand::execute(settings, None),
         },
-        3 => match args.get(1).unwrap().as_str() {
+        3 | 4 => match args.get(1).unwrap().as_str() {
             "--flavour" => FlavourCommand::execute(settings, Some(args)),
-            _ => invalid_argument_message(),
+            _ => HelpCommand::execute(settings, None),
         },
         5 => match args.get(1).unwrap().as_str() {
             "--input" => {
                 if args.get(3).unwrap().as_str() == "--output" {
-                    markdown::parse(
+                    parse(
                         settings,
                         PathBuf::from(args.get(2).unwrap().to_string()),
                         args.get(4).unwrap(),
@@ -39,12 +48,12 @@ async fn main() {
                     )
                     .await;
                 } else {
-                    invalid_argument_message();
+                    HelpCommand::execute(settings, None);
                 }
             }
             "--output" => {
                 if args.get(3).unwrap().as_str() == "--input" {
-                    markdown::parse(
+                    parse(
                         settings,
                         PathBuf::from(args.get(4).unwrap().to_string()),
                         args.get(2).unwrap(),
@@ -52,30 +61,44 @@ async fn main() {
                     )
                     .await;
                 } else {
-                    invalid_argument_message();
+                    HelpCommand::execute(settings, None);
                 }
             }
-            _ => invalid_argument_message(),
+            _ => HelpCommand::execute(settings, None),
         },
         7 => match args.get(1).unwrap().as_str() {
             "--input" => {
                 if args.get(3).unwrap().as_str() == "--output"
                     && args.get(5).unwrap().as_str() == "--specific"
                 {
+                    parse(
+                        settings,
+                        PathBuf::from(args.get(2).unwrap().to_string()),
+                        args.get(4).unwrap(),
+                        Some(args.get(6).unwrap()),
+                    )
+                    .await;
                 } else {
-                    invalid_argument_message();
+                    HelpCommand::execute(settings, None);
                 }
             }
             "--output" => {
                 if args.get(3).unwrap().as_str() == "--input"
                     && args.get(5).unwrap().as_str() == "--specific"
                 {
+                    parse(
+                        settings,
+                        PathBuf::from(args.get(4).unwrap().to_string()),
+                        args.get(2).unwrap(),
+                        Some(args.get(6).unwrap()),
+                    )
+                    .await;
                 } else {
-                    invalid_argument_message();
+                    HelpCommand::execute(settings, None);
                 }
             }
-            _ => invalid_argument_message(),
+            _ => HelpCommand::execute(settings, None),
         },
-        _ => invalid_argument_message(),
+        _ => HelpCommand::execute(settings, None),
     }
 }

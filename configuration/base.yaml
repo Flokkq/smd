@@ -1,0 +1,4 @@
+version: "v.0.0.0"
+api: 
+  host: "localhost"
+  port: 8080

@@ -1,6 +1,7 @@
 mod add;
 mod edit;
-pub mod flavour_base;
+pub mod flavour;
+mod new;
 mod remove;
 mod set;
 mod update;

@@ -1,24 +1,17 @@
-use headless_chrome::types::PrintToPdfOptions;
-use reqwest::Client;
-
-use crate::configuration::Settings;
-use crate::io::{read_file, write_file};
-use crate::utils::WebBrowserSession;
-use std::error::Error;
 use std::{path::PathBuf, process::exit};
 
-// TODO: allow multiple arguments for --input:
-//      smd --input readme.md test/testCase.md ../mylittlepony.md --output img --specific png
+use headless_chrome::{
+    protocol::cdp::Page::CaptureScreenshotFormatOption,
+    types::PrintToPdfOptions,
+};
 
-// TODO: implement margin for page end
-// TODO: capture entire screen for img, or multiple screen sized images
-// TODO: implement correct handling of files including
-//      slashes
-//      dots
-//      etc.
-// TODO: add a yaml file, to customize font, color, etc. and build the css file from that.
-//     - this would make flavours/github-markdown.css the 'standard'
-//     - meaning that a css and yaml file will be in smd/flavours
+use crate::{
+    api::APICommunicator,
+    browser::WebBrowserSession,
+    configuration::configuration::{APIConfiguration, Settings},
+    error::invalid_argument_message,
+    file_access::{FileAccess, WriteOperation},
+};
 
 pub async fn parse(
     settings: Settings,
@@ -39,27 +32,32 @@ pub async fn parse(
         exit(1);
     }
 
-    let html_content = match read_file(path.clone()) {
+    let markdown_content = match FileAccess::read_file(path.clone()) {
         Ok(content) => content,
-        Err(err) => {
-            log::error!(
-                "Could not read contents from {} : {:?}",
-                path.to_str().unwrap(),
-                err
-            );
+        Err(_) => {
             exit(1);
         }
     };
 
-    let html_filename = format!("{}.html", path.file_stem().unwrap().to_str().unwrap());
-    parse_md_to_html(settings, html_filename.clone().into(), html_content).await;
+    let html_filename =
+        format!("{}.html", path.file_stem().unwrap().to_str().unwrap());
+
+    parse_md_to_html(
+        &settings.application.configuration_dir,
+        settings.api,
+        PathBuf::from(&html_filename),
+        markdown_content,
+    )
+    .await;
 
     match output_type {
         "html" => (),
         "pdf" => {
-            let session = WebBrowserSession::initialize(html_filename.into())
-                .await
-                .unwrap();
+            let session =
+                WebBrowserSession::initialize(&PathBuf::from(html_filename))
+                    .await
+                    .unwrap();
+
             let options = PrintToPdfOptions {
                 margin_top: Some(0.0),
                 margin_bottom: Some(0.0),
@@ -71,25 +69,44 @@ pub async fn parse(
 
             if let Ok(pdf) = session.tab.print_to_pdf(Some(options)) {
                 std::fs::write(
-                    format!("{}.pdf", path.file_stem().unwrap().to_str().unwrap()),
+                    format!(
+                        "{}.pdf",
+                        path.file_stem().unwrap().to_str().unwrap()
+                    ),
                     pdf,
                 )
-                .expect("Could not write pdf file");
+                .unwrap()
             } else {
-                log::error!("Could not convert html to pdf");
+                log::error!("Could not convert markdown to pdf");
                 exit(1);
             }
         }
-        "img" => {}
-        _ => (),
+        "img" => {
+            if let Some(specific_type) = specific_type {
+                convert_md_to_image(
+                    &PathBuf::from(html_filename),
+                    specific_type.to_string(),
+                )
+                .await;
+            }
+        }
+        _ => invalid_argument_message(),
     }
 }
 
-async fn parse_md_to_html(settings: Settings, path: PathBuf, content: String) {
-    let html_content = match render_markdown(&content).await {
+async fn parse_md_to_html(
+    configuration_dir: &PathBuf,
+    api_configuration: APIConfiguration,
+    path: PathBuf,
+    content: String,
+) {
+    let html_content = match render_markdown(api_configuration, content).await {
         Ok(content) => content,
         Err(err) => {
-            log::error!("{}", format!("Could not parse markdown to html: {:?}", err));
+            log::error!(
+                "{}",
+                format!("Could not parse markdown to html: {:?}", err)
+            );
             exit(1);
         }
     };
@@ -116,31 +133,60 @@ async fn parse_md_to_html(settings: Settings, path: PathBuf, content: String) {
                     </main>\n\
              </body>\n\
              ",
-        settings.config_folder.join("current-flavour.css"),
+        configuration_dir.join("current-flavour.css"),
         html_content
     );
-    write_file(path, html_structure);
+    FileAccess::write_file(path, html_structure, WriteOperation::Write)
+        .unwrap();
 }
 
-async fn render_markdown(content: &str) -> Result<String, Box<dyn Error>> {
-    let client = Client::new();
-    let response = client
-        .post("http:127.0.0.1:8080/render")
-        .body(content.to_string())
-        .send()
-        .await?;
+async fn render_markdown(
+    api_configuration: APIConfiguration,
+    content: String,
+) -> Result<String, anyhow::Error> {
+    let api_communitacor = APICommunicator::build(api_configuration);
+    api_communitacor.post_markdown(&content).await
+}
 
-    if response.status().is_success() {
-        Ok(response.text().await.unwrap())
-    } else {
-        let error_message = format!(
-            "Failed to fetch HTML content: {} - {}",
-            response.status(),
-            response.text().await?
-        );
-        Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            error_message,
-        )))
-    }
+async fn convert_md_to_image(path: &PathBuf, image_type: String) {
+    let web_browser_session =
+        WebBrowserSession::initialize(&PathBuf::from(path))
+            .await
+            .expect("Failed creating img");
+
+    let capture_screenshot = |options: CaptureScreenshotFormatOption| {
+        let img_data = web_browser_session
+            .tab
+            .capture_screenshot(options, None, None, true);
+
+        match img_data {
+            Ok(png_data) => png_data,
+            Err(err) => {
+                eprintln!("ERROR: could not generate image data: {}", err);
+                exit(1);
+            }
+        }
+    };
+
+    let img_data = match image_type.as_str() {
+        "png" => capture_screenshot(CaptureScreenshotFormatOption::Png),
+        "jpg" | "jpeg" => {
+            capture_screenshot(CaptureScreenshotFormatOption::Jpeg)
+        }
+        "webp" => capture_screenshot(CaptureScreenshotFormatOption::Webp),
+        _ => {
+            log::warn!("Not a valid option");
+            exit(1);
+        }
+    };
+
+    std::fs::write(
+        format!(
+            "{}.{}",
+            path.file_stem().unwrap().to_str().unwrap(),
+            image_type
+        ),
+        img_data,
+    )
+    .expect("Failed saving image");
 }
