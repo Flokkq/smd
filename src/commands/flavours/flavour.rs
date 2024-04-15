@@ -4,7 +4,8 @@ use crate::{
     commands::{
         command::Command,
         flavours::{
-            add::FlavourAddCommand, edit::FlavourEditCommand,
+            add::FlavourAddCommand, current::FlavourCurrentCommand,
+            edit::FlavourEditCommand, list::FlavourListCommand,
             remove::FlavourRemoveCommand, set::FlavourSetCommand,
             update::FlavourUpdateCommand,
         },
@@ -36,6 +37,8 @@ impl Command for FlavourCommand {
                 "--update" => {
                     FlavourUpdateCommand::execute(settings, Some(arguments))
                 }
+                "--list" => FlavourListCommand::execute(settings, None),
+                "--current" => FlavourCurrentCommand::execute(settings, None),
                 "" => FlavourCommand::help(),
                 _ => invalid_argument_message(),
             },
@@ -51,6 +54,10 @@ impl Command for FlavourCommand {
         FlavourRemoveCommand::help();
         FlavourEditCommand::help();
         FlavourUpdateCommand::help();
+        FlavourListCommand::help();
+        FlavourCurrentCommand::help();
+
+        println!("");
     }
 }
 

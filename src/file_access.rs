@@ -11,7 +11,7 @@ pub enum WriteOperation {
 pub struct FileAccess;
 
 impl FileAccess {
-    pub fn read_file(filename: PathBuf) -> Result<String, ()> {
+    pub fn read_file(filename: &PathBuf) -> Result<String, ()> {
         return fs::read_to_string(&filename).map_err(|err| {
             log::error!(
                 "Could not open file {:?}: {}",
@@ -26,7 +26,7 @@ impl FileAccess {
         content: String,
         operation: WriteOperation,
     ) -> io::Result<()> {
-        let mut file = match operation {
+        let file = match operation {
             WriteOperation::Append => {
                 OpenOptions::new().append(true).create(true).open(&filename)
             }

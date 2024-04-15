@@ -46,7 +46,7 @@ impl FlavourSettings {
     pub fn load_flavours(configuration_dir: &PathBuf) -> Vec<Flavour> {
         let mut flavours = vec![Flavour::Light, Flavour::Dark, Flavour::Auto];
         let content =
-            FileAccess::read_file(configuration_dir.join("flavours.txt"));
+            FileAccess::read_file(&configuration_dir.join("flavours.txt"));
 
         match content {
             Ok(content) => {
@@ -62,7 +62,7 @@ impl FlavourSettings {
 
     pub fn set_flavour(configuration_dir: &PathBuf, flavour: Flavour) {
         let content = FileAccess::read_file(
-            configuration_dir.join(flavour.to_css_format()),
+            &configuration_dir.join(flavour.to_css_format()),
         )
         .unwrap();
 
@@ -86,7 +86,7 @@ impl FlavourSettings {
         };
 
         let skeleton =
-            FileAccess::read_file(configuration_dir.join(skeleton_file_path))
+            FileAccess::read_file(&configuration_dir.join(skeleton_file_path))
                 .unwrap();
 
         let current_dir = std::env::current_dir().unwrap();
@@ -219,7 +219,7 @@ impl FlavourSettings {
             std::env::current_dir().unwrap().join(path_to_flavour)
         };
 
-        let content = FileAccess::read_file(file_path).unwrap();
+        let content = FileAccess::read_file(&file_path).unwrap();
         let skeleton =
             Skeleton::new(SkeletonSyntax::from_yaml(&content).unwrap());
 

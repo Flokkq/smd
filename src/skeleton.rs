@@ -96,7 +96,7 @@ impl Skeleton {
         css: &str,
     ) -> Result<String, anyhow::Error> {
         let base_css = FileAccess::read_file(
-            configuration_dir.join("flavours").join("scaffolding.css"),
+            &configuration_dir.join("flavours").join("scaffolding.css"),
         )
         .unwrap();
 

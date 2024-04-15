@@ -123,7 +123,7 @@ pub async fn initialize(
 
     Initializer::initialization_step("Applying Default Settings", 100, || {
         let standard_flavour = FileAccess::read_file(
-            configuration_dir.join("flavours").join("dark.css"),
+            &configuration_dir.join("flavours").join("dark.css"),
         )
         .unwrap();
 

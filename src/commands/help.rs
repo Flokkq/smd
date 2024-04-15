@@ -19,9 +19,8 @@ impl Command for HelpCommand {
 
     fn help() {
         println!(
-            "Usage: smd --input <input_file> --output <output_type> --specific <?specific_type>"
+            "Usage: smd --input <input_file> --output <output_type> [--specific <specific_type>] [--apply-flavour <flavour_name>]"
         );
-        println!("\t--init: Initializes the tool. Is required to be run when using smd for the first time\n");
         println!(
             "\t--input: provide a markdown file or a path to a markdown file\n"
         );
@@ -33,5 +32,6 @@ impl Command for HelpCommand {
         println!("\t\tpng");
         println!("\t\twebp");
         println!("\t\tjpeg\n");
+        println!("\t--apply-flavour: Is ONLY used when you want to apply a specific flavour for a single conversion\n");
     }
 }

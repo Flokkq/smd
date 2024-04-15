@@ -18,6 +18,7 @@ pub async fn parse(
     path: PathBuf,
     output_type: &str,
     specific_type: Option<&str>,
+    flavour_candidate: Option<&str>,
 ) {
     if !path.exists() {
         log::error!("File {} does not exist", path.to_str().unwrap());
@@ -32,7 +33,7 @@ pub async fn parse(
         exit(1);
     }
 
-    let markdown_content = match FileAccess::read_file(path.clone()) {
+    let markdown_content = match FileAccess::read_file(&path.clone()) {
         Ok(content) => content,
         Err(_) => {
             exit(1);
@@ -47,6 +48,7 @@ pub async fn parse(
         settings.api,
         PathBuf::from(&html_filename),
         markdown_content,
+        flavour_candidate,
     )
     .await;
 
@@ -97,8 +99,9 @@ pub async fn parse(
 async fn parse_md_to_html(
     configuration_dir: &PathBuf,
     api_configuration: APIConfiguration,
-    path: PathBuf,
+    out_path: PathBuf,
     content: String,
+    flavour_candidate: Option<&str>,
 ) {
     let html_content = match render_markdown(api_configuration, content).await {
         Ok(content) => content,
@@ -108,6 +111,26 @@ async fn parse_md_to_html(
                 format!("Could not parse markdown to html: {:?}", err)
             );
             exit(1);
+        }
+    };
+
+    let flavour_path = configuration_dir.join("current-flavour.css");
+    let path = match flavour_candidate {
+        Some(flavour) => {
+            let path = configuration_dir
+                .join("flavours")
+                .join(format!("{}.css", flavour));
+
+            if path.exists() {
+                path.to_owned()
+            } else {
+                log::info!("Could not find flavour");
+                flavour_path.to_owned()
+            }
+        }
+        None => {
+            log::info!("Could not find flavour");
+            flavour_path.to_owned()
         }
     };
 
@@ -132,11 +155,10 @@ async fn parse_md_to_html(
                         {}\n\
                     </main>\n\
              </body>\n\
-             ",
-        configuration_dir.join("current-flavour.css"),
-        html_content
+             ", path, html_content
     );
-    FileAccess::write_file(path, html_structure, WriteOperation::Write)
+
+    FileAccess::write_file(out_path, html_structure, WriteOperation::Write)
         .unwrap();
 }
 

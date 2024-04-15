@@ -37,8 +37,8 @@ impl Command for FlavourUpdateCommand {
     }
 
     fn help() {
-        println!("\t\t--add: Provide a path to a modified yaml file that you recieved from smd --flavour --edit.");
-        println!("\t\tNote that a copy of the file will be made.")
+        println!("\t\t--update: Select a flavour to update after running smd --flavour --edit.");
+        println!("\t\t\tNote that a copy of the file will be made.")
     }
 }
 

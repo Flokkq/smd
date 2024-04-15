@@ -37,68 +37,88 @@ async fn main() {
             "--flavour" => FlavourCommand::execute(settings, Some(args)),
             _ => HelpCommand::execute(settings, None),
         },
-        5 => match args.get(1).unwrap().as_str() {
-            "--input" => {
-                if args.get(3).unwrap().as_str() == "--output" {
-                    parse(
-                        settings,
-                        PathBuf::from(args.get(2).unwrap().to_string()),
-                        args.get(4).unwrap(),
-                        None,
-                    )
-                    .await;
-                } else {
-                    HelpCommand::execute(settings, None);
-                }
+        5 => {
+            if let Some(parsed) = parse_arguments(&args, 5) {
+                parse(
+                    settings,
+                    PathBuf::from(parsed.input),
+                    &parsed.output,
+                    parsed.specific.as_deref(),
+                    parsed.flavour.as_deref(),
+                )
+                .await;
+            } else {
+                HelpCommand::execute(settings, None);
             }
-            "--output" => {
-                if args.get(3).unwrap().as_str() == "--input" {
-                    parse(
-                        settings,
-                        PathBuf::from(args.get(4).unwrap().to_string()),
-                        args.get(2).unwrap(),
-                        None,
-                    )
-                    .await;
-                } else {
-                    HelpCommand::execute(settings, None);
-                }
+        }
+        7 => {
+            if let Some(parsed) = parse_arguments(&args, 7) {
+                parse(
+                    settings,
+                    PathBuf::from(parsed.input),
+                    &parsed.output,
+                    parsed.specific.as_deref(),
+                    parsed.flavour.as_deref(),
+                )
+                .await;
+            } else {
+                HelpCommand::execute(settings, None);
             }
-            _ => HelpCommand::execute(settings, None),
-        },
-        7 => match args.get(1).unwrap().as_str() {
-            "--input" => {
-                if args.get(3).unwrap().as_str() == "--output"
-                    && args.get(5).unwrap().as_str() == "--specific"
-                {
-                    parse(
-                        settings,
-                        PathBuf::from(args.get(2).unwrap().to_string()),
-                        args.get(4).unwrap(),
-                        Some(args.get(6).unwrap()),
-                    )
-                    .await;
-                } else {
-                    HelpCommand::execute(settings, None);
-                }
+        }
+        9 => {
+            if let Some(parsed) = parse_arguments(&args, 9) {
+                parse(
+                    settings,
+                    PathBuf::from(parsed.input),
+                    &parsed.output,
+                    parsed.specific.as_deref(),
+                    parsed.flavour.as_deref(),
+                )
+                .await;
+            } else {
+                HelpCommand::execute(settings, None);
             }
-            "--output" => {
-                if args.get(3).unwrap().as_str() == "--input"
-                    && args.get(5).unwrap().as_str() == "--specific"
-                {
-                    parse(
-                        settings,
-                        PathBuf::from(args.get(4).unwrap().to_string()),
-                        args.get(2).unwrap(),
-                        Some(args.get(6).unwrap()),
-                    )
-                    .await;
-                } else {
-                    HelpCommand::execute(settings, None);
-                }
-            }
-            _ => HelpCommand::execute(settings, None),
-        },
+        }
         _ => HelpCommand::execute(settings, None),
     }
+}
+
+fn parse_arguments(
+    args: &[String],
+    arg_count: usize,
+) -> Option<ArgParseResult> {
+    let mut input = String::new();
+    let mut output = String::new();
+    let mut specific = None;
+    let mut flavour = None;
+
+    let mut i = 1;
+    while i < arg_count {
+        match args[i].as_str() {
+            "--input" if i + 1 < arg_count => input = args[i + 1].clone(),
+            "--output" if i + 1 < arg_count => output = args[i + 1].clone(),
+            "--specific" if i + 1 < arg_count => {
+                specific = Some(args[i + 1].clone())
+            }
+            "--apply-flavour" if i + 1 < arg_count => {
+                flavour = Some(args[i + 1].clone())
+            }
+            _ => return None,
+        }
+        i += 2;
+    }
+
+    Some(ArgParseResult {
+        input,
+        output,
+        specific,
+        flavour,
+    })
+}
+
+struct ArgParseResult {
+    input: String,
+    output: String,
+    specific: Option<String>,
+    flavour: Option<String>,
 }
