@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::exit};
+use std::{fs::remove_file, path::PathBuf, process::exit};
 
 use headless_chrome::{
     protocol::cdp::Page::CaptureScreenshotFormatOption,
@@ -43,10 +43,12 @@ pub async fn parse(
     let html_filename =
         format!("{}.html", path.file_stem().unwrap().to_str().unwrap());
 
+    let html_filename = PathBuf::from(&html_filename);
+
     parse_md_to_html(
         &settings.application.configuration_dir,
         settings.api,
-        PathBuf::from(&html_filename),
+        &html_filename,
         markdown_content,
         flavour_candidate,
     )
@@ -56,9 +58,7 @@ pub async fn parse(
         "html" => (),
         "pdf" => {
             let session =
-                WebBrowserSession::initialize(&PathBuf::from(html_filename))
-                    .await
-                    .unwrap();
+                WebBrowserSession::initialize(&html_filename).await.unwrap();
 
             let options = PrintToPdfOptions {
                 margin_top: Some(0.0),
@@ -82,15 +82,16 @@ pub async fn parse(
                 log::error!("Could not convert markdown to pdf");
                 exit(1);
             }
+
+            remove_html_file(&html_filename);
         }
         "img" => {
             if let Some(specific_type) = specific_type {
-                convert_md_to_image(
-                    &PathBuf::from(html_filename),
-                    specific_type.to_string(),
-                )
-                .await;
+                convert_md_to_image(&html_filename, specific_type.to_string())
+                    .await;
             }
+
+            remove_html_file(&html_filename);
         }
         _ => invalid_argument_message(),
     }
@@ -99,7 +100,7 @@ pub async fn parse(
 async fn parse_md_to_html(
     configuration_dir: &PathBuf,
     api_configuration: APIConfiguration,
-    out_path: PathBuf,
+    out_path: &PathBuf,
     content: String,
     flavour_candidate: Option<&str>,
 ) {
@@ -158,8 +159,12 @@ async fn parse_md_to_html(
              ", path, html_content
     );
 
-    FileAccess::write_file(out_path, html_structure, WriteOperation::Write)
-        .unwrap();
+    FileAccess::write_file(
+        out_path.to_owned(),
+        html_structure,
+        WriteOperation::Write,
+    )
+    .unwrap();
 }
 
 async fn render_markdown(
@@ -211,4 +216,8 @@ async fn convert_md_to_image(path: &PathBuf, image_type: String) {
         img_data,
     )
     .expect("Failed saving image");
+}
+
+fn remove_html_file(path: &PathBuf) {
+    remove_file(path).unwrap();
 }
