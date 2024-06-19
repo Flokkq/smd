@@ -1,6 +1,5 @@
 use crate::{
-    commands::{flavours::flavour::FlavourCommand, version::VersionCommand},
-    configuration::configuration::Settings,
+    commands::{flavours::flavour::FlavourCommand, version::VersionCommand}, configuration::configuration::Settings,
 };
 
 use super::command::Command;

@@ -29,6 +29,8 @@ async fn main() {
             HelpCommand::execute(settings, None);
         }
         2 => match args.get(1).unwrap().as_str() {
+            // TODO Add short version of commands
+            "-h" => HelpCommand::execute(settings, None),
             "--help" => HelpCommand::execute(settings, None),
             "--version" => VersionCommand::execute(settings, None),
             _ => HelpCommand::execute(settings, None),

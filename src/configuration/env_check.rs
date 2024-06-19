@@ -1,5 +1,5 @@
-use std::{borrow::Borrow, path::PathBuf};
 use std::convert::Infallible;
+use std::{borrow::Borrow, path::PathBuf};
 
 use sysinfo::{ProcessorExt, SystemExt};
 
@@ -25,7 +25,9 @@ pub fn verify_initial_setup(
     Ok(())
 }
 
-pub async fn is_update_available(settings: &Settings) -> Result<Option<UpdateInfo>, anyhow::Error> {
+pub async fn is_update_available(
+    settings: &Settings,
+) -> Result<Option<UpdateInfo>, anyhow::Error> {
     let api_communicator = APICommunicator::build(settings.api.clone());
 
     let mut system = sysinfo::System::new_all();
@@ -46,3 +48,4 @@ pub async fn is_update_available(settings: &Settings) -> Result<Option<UpdateInf
 
     return Ok(Some(response));
 }
+
