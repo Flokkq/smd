@@ -7,6 +7,7 @@ pub struct Token {
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TokenType {
     Header(usize),
+    Paragraph,
     Text,
     EOF,
     ILLEGAL,
