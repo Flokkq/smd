@@ -7,8 +7,7 @@ pub struct Token {
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TokenType {
     Header,
-    Paragraph,
-    Word, // [A-Za-z0-9_]
+    String, // \S
     EOF,
     ILLEGAL,
 }
