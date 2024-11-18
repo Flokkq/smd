@@ -8,7 +8,11 @@ pub struct Token {
 pub enum TokenType {
     NewLine,
     Header,
-    String, // \S
+    Bold,
+    Italic,
+    BoldItalic,
+    String,
     EOF,
     ILLEGAL,
+    Strikethrough,
 }

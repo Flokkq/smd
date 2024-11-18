@@ -12,22 +12,22 @@ Github-flavoured markdown as a pdf or for your blog? smd is exactly what you nee
   - [ ] Transpiler
   - [ ] CSS
 - Bold Text (`**bold**` or `__bold__`)
-  - [ ] Lexer
+  - [x] Lexer
   - [ ] Parser
   - [ ] Transpiler
   - [ ] CSS
 - Italic Text (`*italic*` or `_italic_`)
-  - [ ] Lexer
+  - [x] Lexer
   - [ ] Parser
   - [ ] Transpiler
   - [ ] CSS
 - Strikethrough Text (`~~strikethrough~~`)
-  - [ ] Lexer
+  - [x] Lexer
   - [ ] Parser
   - [ ] Transpiler
   - [ ] CSS
 - Bold and Italic Text (`***bold and italic***`)
-  - [ ] Lexer
+  - [x] Lexer
   - [ ] Parser
   - [ ] Transpiler
   - [ ] CSS

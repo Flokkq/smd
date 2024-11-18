@@ -69,6 +69,62 @@ impl Lexer {
                     literal: "\n".to_string(),
                 }
             }
+            Some('*') => {
+                let mut depth = 0;
+                while let Some('*') = self.current_char {
+                    depth += 1;
+                    self.read_char();
+                }
+
+                let token_type = match depth {
+                    3 => TokenType::BoldItalic,
+                    2 => TokenType::Bold,
+                    1 => TokenType::Italic,
+                    _ => TokenType::ILLEGAL, // TODO: weird edge cases
+                };
+
+                Token {
+                    token_type,
+                    literal: "*".repeat(depth),
+                }
+            }
+            Some('_') => {
+                let mut depth = 0;
+                while let Some('_') = self.current_char {
+                    depth += 1;
+                    self.read_char();
+                }
+
+                let token_type = match depth {
+                    3 => TokenType::BoldItalic,
+                    2 => TokenType::Bold,
+                    1 => TokenType::Italic,
+                    _ => TokenType::ILLEGAL, // TODO: weird edge cases
+                };
+
+                Token {
+                    token_type,
+                    literal: "_".repeat(depth),
+                }
+            }
+            Some('~') => {
+                let mut depth = 0;
+                while let Some('~') = self.current_char {
+                    depth += 1;
+                    self.read_char();
+                }
+
+                let token_type = if depth == 2 {
+                    TokenType::Strikethrough
+                } else {
+                    TokenType::ILLEGAL
+                };
+
+                Token {
+                    token_type,
+                    literal: "~".repeat(depth),
+                }
+            }
             Some(_) => {
                 let literal = self.read_word();
                 Token {
@@ -96,7 +152,7 @@ impl Lexer {
     fn read_word(&mut self) -> String {
         let start_position = self.position - 1;
         while let Some(c) = self.current_char {
-            if c.is_whitespace() {
+            if c.is_whitespace() || c == '*' || c == '_' || c == '~' {
                 break;
             }
             self.read_char();
@@ -120,6 +176,8 @@ mod tests {
         let input = String::from(
             "# Header 1\n\
         Some text below header.\n\
+        **Bold Text** _Italic Text_ ***Bold and Italic Text***\n\
+        ~~Strikethrough~~\n\
         ## Subheader 1\n\
         - Bullet 1\n\
         - Bullet 2\n\n\
@@ -161,6 +219,82 @@ mod tests {
             TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "header.",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::Bold,
+                expected_literal: "**",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Bold",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Text",
+            },
+            TestCase {
+                expected_type: TokenType::Bold,
+                expected_literal: "**",
+            },
+            TestCase {
+                expected_type: TokenType::Italic,
+                expected_literal: "_",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Italic",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Text",
+            },
+            TestCase {
+                expected_type: TokenType::Italic,
+                expected_literal: "_",
+            },
+            TestCase {
+                expected_type: TokenType::BoldItalic,
+                expected_literal: "***",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Bold",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "and",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Italic",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Text",
+            },
+            TestCase {
+                expected_type: TokenType::BoldItalic,
+                expected_literal: "***",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::Strikethrough,
+                expected_literal: "~~",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Strikethrough",
+            },
+            TestCase {
+                expected_type: TokenType::Strikethrough,
+                expected_literal: "~~",
             },
             TestCase {
                 expected_type: TokenType::NewLine,
@@ -277,6 +411,90 @@ mod tests {
             TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "file.",
+            },
+            TestCase {
+                expected_type: TokenType::EOF,
+                expected_literal: "",
+            },
+        ];
+
+        let mut lexer = Lexer::new(input);
+
+        for (i, test) in tests.iter().enumerate() {
+            let tok = lexer.next_token();
+            assert_eq!(
+                tok.token_type, test.expected_type,
+                "tests[{}] - tokentype wrong",
+                i
+            );
+            assert_eq!(
+                tok.literal, test.expected_literal,
+                "tests[{}] - literal wrong",
+                i
+            );
+        }
+    }
+
+    #[test]
+    fn test_format() {
+        let input = String::from("***bold and italic*** **bold** _italic_ ~~strikethrough~~");
+
+        let tests = vec![
+            TestCase {
+                expected_type: TokenType::BoldItalic,
+                expected_literal: "***",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "bold",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "and",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "italic",
+            },
+            TestCase {
+                expected_type: TokenType::BoldItalic,
+                expected_literal: "***",
+            },
+            TestCase {
+                expected_type: TokenType::Bold,
+                expected_literal: "**",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "bold",
+            },
+            TestCase {
+                expected_type: TokenType::Bold,
+                expected_literal: "**",
+            },
+            TestCase {
+                expected_type: TokenType::Italic,
+                expected_literal: "_",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "italic",
+            },
+            TestCase {
+                expected_type: TokenType::Italic,
+                expected_literal: "_",
+            },
+            TestCase {
+                expected_type: TokenType::Strikethrough,
+                expected_literal: "~~",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "strikethrough",
+            },
+            TestCase {
+                expected_type: TokenType::Strikethrough,
+                expected_literal: "~~",
             },
             TestCase {
                 expected_type: TokenType::EOF,
