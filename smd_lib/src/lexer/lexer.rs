@@ -150,14 +150,27 @@ impl Lexer {
     }
 
     fn read_word(&mut self) -> String {
-        let start_position = self.position - 1;
+        let mut result = String::new();
+
         while let Some(c) = self.current_char {
             if c.is_whitespace() || c == '*' || c == '_' || c == '~' {
                 break;
             }
-            self.read_char();
+
+            if c == '\\' {
+                self.read_char();
+                if let Some(escaped_char) = self.current_char {
+                    result.push(escaped_char);
+                    self.read_char();
+                    continue;
+                }
+            } else {
+                result.push(c);
+                self.read_char();
+            }
         }
-        self.input[start_position..self.position - 1].to_string()
+
+        result
     }
 }
 
@@ -436,6 +449,58 @@ mod tests {
     }
 
     #[test]
+    fn test_escaped_characters() {
+        let input = String::from(r"\*escaped asterisk\* \_escaped underscore\_ \~escaped tilde\~");
+
+        let tests = vec![
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "*escaped",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "asterisk*",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "_escaped",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "underscore_",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "~escaped",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "tilde~",
+            },
+            TestCase {
+                expected_type: TokenType::EOF,
+                expected_literal: "",
+            },
+        ];
+
+        let mut lexer = Lexer::new(input);
+
+        for (i, test) in tests.iter().enumerate() {
+            let tok = lexer.next_token();
+            assert_eq!(
+                tok.token_type, test.expected_type,
+                "tests[{}] - tokentype wrong",
+                i
+            );
+            assert_eq!(
+                tok.literal, test.expected_literal,
+                "tests[{}] - literal wrong",
+                i
+            );
+        }
+    }
+
+    #[test]
     fn test_format() {
         let input = String::from("***bold and italic*** **bold** _italic_ ~~strikethrough~~");
 
@@ -637,7 +702,7 @@ mod tests {
 
     #[test]
     fn test_lexer_word() {
-        let input = String::from("A\t1234 Numbers_and_underscores4");
+        let input = String::from("A\t1234 Numbers\\_and\\_underscores4");
 
         let tests = vec![
             TestCase {
