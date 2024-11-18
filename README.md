@@ -1,48 +1,113 @@
-# git-cliff template
+# smd
 
-Template repo for using [git-cliff](https://github.com/orhun/git-cliff)
+Github-flavoured markdown as a pdf or for your blog? smd is exactly what you need.
 
-## Prerequisites
+## Roadmap
 
-Before you begin, ensure that you have the following tools installed:
+### Transpiler
 
-- **gpg**: For signing commits and tags.
-- **git-cliff**: For generating changelogs based on commit messages.
-- **nix**: Each assignment comes with a flake.nix (easily install dependencies)  
-
-### Installing Dependencies
-
-You can install all necessary tools using Nix by running:
-
-```bash
-nix develop .
-```
-
-This command will set up the development environment with `gpg` and `git-cliff` installed, as specified in the `flake.nix` file.
-
-## Commit Message Guidelines
-
-To maintain a consistent and meaningful commit history, adhere to the following commit message conventions. Each commit message should start with one of the predefined prefixes:
-
-| Prefix     | Description                  |
-|------------|------------------------------|
-| `feat`     | :sparkles: **Features**      |
-| `fix`      | :bug: **Bug Fixes**          |
-| `refactor` | :tractor: **Refactoring**    |
-| `init`     | :tada: **Initial Commit**    |
-| `style`    | :art: **Styling**            |
-| `revert`   | :rewind: **Reverts**         |
-| `chore`    | :wrench: **Chore**           |
-
-**Note:** Use lowercase letters for prefixes and follow them with a colon and a space.
-
-## Release Process
-
-Releasing a new assignment version is straightforward. Follow these steps to create a new release:
-
-```bash
-    ./release.sh vx.y.z-assignmentName
-    git push && git push --tags
-```
-
-If you are encountering any issues feel free to look at the [git-cliff docs](https://github.com/orhun/git-cliff.git)
+- Headers (`#` to `######`)
+  - [x] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Bold Text (`**bold**` or `__bold__`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Italic Text (`*italic*` or `_italic_`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Strikethrough Text (`~~strikethrough~~`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Bold and Italic Text (`***bold and italic***`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Subscript (`<sub>text</sub>`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Superscript (`<sup>text</sup>`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Underlined Text (`<ins>text</ins>`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Blockquotes (`> quote`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Inline Code (`\`code\``)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Code Blocks (```` ``` code ``` ````)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Lists (ordered and unordered)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Nested Lists
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Task Lists (`- [x] task`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Mentions (`@username`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Links
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Images
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Emojis (`:emoji:`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Footnotes
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Alerts (`> [!NOTE]`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
+- Comments (`<!-- comment -->`)
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Transpiler
+  - [ ] CSS
