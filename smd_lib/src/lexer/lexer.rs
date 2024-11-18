@@ -69,44 +69,7 @@ impl Lexer {
                     literal: "\n".to_string(),
                 }
             }
-            Some('*') => {
-                let mut depth = 0;
-                while let Some('*') = self.current_char {
-                    depth += 1;
-                    self.read_char();
-                }
-
-                let token_type = match depth {
-                    3 => TokenType::BoldItalic,
-                    2 => TokenType::Bold,
-                    1 => TokenType::Italic,
-                    _ => TokenType::ILLEGAL, // TODO: weird edge cases
-                };
-
-                Token {
-                    token_type,
-                    literal: "*".repeat(depth),
-                }
-            }
-            Some('_') => {
-                let mut depth = 0;
-                while let Some('_') = self.current_char {
-                    depth += 1;
-                    self.read_char();
-                }
-
-                let token_type = match depth {
-                    3 => TokenType::BoldItalic,
-                    2 => TokenType::Bold,
-                    1 => TokenType::Italic,
-                    _ => TokenType::ILLEGAL, // TODO: weird edge cases
-                };
-
-                Token {
-                    token_type,
-                    literal: "_".repeat(depth),
-                }
-            }
+            Some('*') | Some('_') => self.process_formatting_token(),
             Some('~') => {
                 let mut depth = 0;
                 while let Some('~') = self.current_char {
@@ -171,6 +134,29 @@ impl Lexer {
         }
 
         result
+    }
+
+    fn process_formatting_token(&mut self) -> Token {
+        let char_type = self.current_char;
+        let mut depth = 0;
+
+        while self.current_char == char_type {
+            depth += 1;
+            self.read_char();
+        }
+
+        // Validate and assign the correct token type
+        let token_type = match depth {
+            3 => TokenType::BoldItalic,
+            2 => TokenType::Bold,
+            1 => TokenType::Italic,
+            _ => TokenType::ILLEGAL, // Handle edge cases
+        };
+
+        Token {
+            token_type,
+            literal: char_type.unwrap().to_string().repeat(depth),
+        }
     }
 }
 
