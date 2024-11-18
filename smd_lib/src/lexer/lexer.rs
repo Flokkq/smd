@@ -50,7 +50,6 @@ impl Lexer {
                 }
 
                 if level > 6 {
-                    // handle like normal text
                     let literal = self.read_text();
                     Token {
                         token_type: TokenType::Text,
@@ -63,13 +62,6 @@ impl Lexer {
                         token_type: TokenType::Header(level),
                         literal,
                     }
-                }
-            }
-            Some(c) if c.is_alphanumeric() || c == '\n' => {
-                let literal = self.read_paragraph();
-                Token {
-                    token_type: TokenType::Paragraph,
-                    literal,
                 }
             }
             Some(_) => {
@@ -107,25 +99,6 @@ impl Lexer {
         let text = self.input[start_position..self.position - 1].to_string();
 
         text
-    }
-
-    fn read_paragraph(&mut self) -> String {
-        let mut result = String::new();
-        let mut newline_count = 0;
-
-        while let Some(c) = self.current_char {
-            if c == '\n' {
-                newline_count += 1;
-                if newline_count >= 2 {
-                    break;
-                }
-            } else {
-                newline_count = 0;
-            }
-            result.push(c);
-            self.read_char();
-        }
-        result.trim().to_string()
     }
 }
 
@@ -184,44 +157,6 @@ mod tests {
                     i, test.expected_literal, tok.literal
                 );
             }
-        }
-    }
-
-    #[test]
-    fn test_lexer_paragraphs() {
-        let input = String::from(
-            "This is a paragraph.\nThis continues the paragraph.\n\nThis is a new paragraph.\n",
-        );
-
-        let tests = vec![
-            TestCase {
-                expected_type: TokenType::Paragraph,
-                expected_literal: "This is a paragraph.\nThis continues the paragraph.",
-            },
-            TestCase {
-                expected_type: TokenType::Paragraph,
-                expected_literal: "This is a new paragraph.",
-            },
-            TestCase {
-                expected_type: TokenType::EOF,
-                expected_literal: "",
-            },
-        ];
-
-        let mut lexer = Lexer::new(input);
-
-        for (i, test) in tests.iter().enumerate() {
-            let tok = lexer.next_token();
-            assert_eq!(
-                tok.token_type, test.expected_type,
-                "tests[{}] - tokentype wrong",
-                i
-            );
-            assert_eq!(
-                tok.literal, test.expected_literal,
-                "tests[{}] - literal wrong",
-                i
-            );
         }
     }
 }
