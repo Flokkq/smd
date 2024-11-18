@@ -6,6 +6,7 @@ pub struct Token {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum TokenType {
+    NewLine,
     Header,
     String, // \S
     EOF,

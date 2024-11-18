@@ -62,6 +62,13 @@ impl Lexer {
                     }
                 }
             }
+            Some('\n') => {
+                self.read_char();
+                Token {
+                    token_type: TokenType::NewLine,
+                    literal: "\n".to_string(),
+                }
+            }
             Some(_) => {
                 let literal = self.read_word();
                 Token {
@@ -78,7 +85,7 @@ impl Lexer {
 
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.current_char {
-            if c.is_whitespace() {
+            if c == ' ' || c == '\t' {
                 self.read_char();
             } else {
                 break;
@@ -109,6 +116,74 @@ mod tests {
     }
 
     #[test]
+    fn test_lexer_newlines() {
+        let input = String::from("\n\nLine 1\n\nLine 2\n\n");
+
+        let tests = vec![
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Line",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "1",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Line",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "2",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::EOF,
+                expected_literal: "",
+            },
+        ];
+
+        let mut lexer = Lexer::new(input);
+
+        for (i, test) in tests.iter().enumerate() {
+            let tok = lexer.next_token();
+            assert_eq!(
+                tok.token_type, test.expected_type,
+                "tests[{}] - tokentype wrong",
+                i
+            );
+            assert_eq!(
+                tok.literal, test.expected_literal,
+                "tests[{}] - literal wrong",
+                i
+            );
+        }
+    }
+
+    #[test]
     fn test_lexer_header() {
         let input = String::from("#\n######\n#######");
 
@@ -118,12 +193,24 @@ mod tests {
                 expected_literal: "#",
             },
             TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
                 expected_type: TokenType::Header,
                 expected_literal: "######",
             },
             TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "#######",
+            },
+            TestCase {
+                expected_type: TokenType::EOF,
+                expected_literal: "",
             },
         ];
 
@@ -147,7 +234,7 @@ mod tests {
     #[test]
     fn test_lexer_word() {
         let input =
-            String::from("A space seperates a word.\n1234 Numbers_and_underscores are\talso cool and work t2g3th_er");
+            String::from("A space separates a word.\n1234 Numbers_and_underscores are\nalso cool");
 
         let tests = vec![
             TestCase {
@@ -160,7 +247,7 @@ mod tests {
             },
             TestCase {
                 expected_type: TokenType::String,
-                expected_literal: "seperates",
+                expected_literal: "separates",
             },
             TestCase {
                 expected_type: TokenType::String,
@@ -169,6 +256,10 @@ mod tests {
             TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "word.",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
             },
             TestCase {
                 expected_type: TokenType::String,
@@ -183,24 +274,16 @@ mod tests {
                 expected_literal: "are",
             },
             TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "also",
             },
             TestCase {
                 expected_type: TokenType::String,
                 expected_literal: "cool",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "and",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "work",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "t2g3th_er",
             },
             TestCase {
                 expected_type: TokenType::EOF,
