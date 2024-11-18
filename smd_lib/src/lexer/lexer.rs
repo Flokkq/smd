@@ -116,7 +116,193 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_newlines() {
+    fn test_comprehensive() {
+        let input = String::from(
+            "# Header 1\n\
+        Some text below header.\n\
+        ## Subheader 1\n\
+        - Bullet 1\n\
+        - Bullet 2\n\n\
+        Another paragraph here.\n\
+        ###### Small Header\n\
+        ####### Invalid Header\n\
+        End of file.",
+        );
+
+        let tests = vec![
+            TestCase {
+                expected_type: TokenType::Header,
+                expected_literal: "#",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Header",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "1",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Some",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "text",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "below",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "header.",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::Header,
+                expected_literal: "##",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Subheader",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "1",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "-",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Bullet",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "1",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "-",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Bullet",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "2",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Another",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "paragraph",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "here.",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::Header,
+                expected_literal: "######",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Small",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Header",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "#######",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Invalid",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "Header",
+            },
+            TestCase {
+                expected_type: TokenType::NewLine,
+                expected_literal: "\n",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "End",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "of",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "file.",
+            },
+            TestCase {
+                expected_type: TokenType::EOF,
+                expected_literal: "",
+            },
+        ];
+
+        let mut lexer = Lexer::new(input);
+
+        for (i, test) in tests.iter().enumerate() {
+            let tok = lexer.next_token();
+            assert_eq!(
+                tok.token_type, test.expected_type,
+                "tests[{}] - tokentype wrong",
+                i
+            );
+            assert_eq!(
+                tok.literal, test.expected_literal,
+                "tests[{}] - literal wrong",
+                i
+            );
+        }
+    }
+
+    #[test]
+    fn test_newlines() {
         let input = String::from("\n\nLine 1\n\nLine 2\n\n");
 
         let tests = vec![
@@ -184,7 +370,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lexer_header() {
+    fn test_header() {
         let input = String::from("#\n######\n#######");
 
         let tests = vec![
@@ -233,8 +419,7 @@ mod tests {
 
     #[test]
     fn test_lexer_word() {
-        let input =
-            String::from("A space separates a word.\n1234 Numbers_and_underscores are\nalso cool");
+        let input = String::from("A\t1234 Numbers_and_underscores4");
 
         let tests = vec![
             TestCase {
@@ -243,47 +428,11 @@ mod tests {
             },
             TestCase {
                 expected_type: TokenType::String,
-                expected_literal: "space",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "separates",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "a",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "word.",
-            },
-            TestCase {
-                expected_type: TokenType::NewLine,
-                expected_literal: "\n",
-            },
-            TestCase {
-                expected_type: TokenType::String,
                 expected_literal: "1234",
             },
             TestCase {
                 expected_type: TokenType::String,
-                expected_literal: "Numbers_and_underscores",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "are",
-            },
-            TestCase {
-                expected_type: TokenType::NewLine,
-                expected_literal: "\n",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "also",
-            },
-            TestCase {
-                expected_type: TokenType::String,
-                expected_literal: "cool",
+                expected_literal: "Numbers_and_underscores4",
             },
             TestCase {
                 expected_type: TokenType::EOF,
