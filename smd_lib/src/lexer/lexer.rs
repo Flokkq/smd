@@ -42,6 +42,26 @@ impl Lexer {
         self.skip_whitespace();
 
         match self.current_char {
+            Some('#') => {
+                let mut level = 0;
+                while let Some('#') = self.current_char {
+                    level += 1;
+                    self.read_char();
+                }
+
+                let literal = "#".repeat(level);
+                if level > 6 {
+                    Token {
+                        token_type: TokenType::String,
+                        literal,
+                    }
+                } else {
+                    Token {
+                        token_type: TokenType::Header,
+                        literal,
+                    }
+                }
+            }
             Some(_) => {
                 let literal = self.read_word();
                 Token {
@@ -86,6 +106,42 @@ mod tests {
     struct TestCase<'a> {
         expected_type: TokenType,
         expected_literal: &'a str,
+    }
+
+    #[test]
+    fn test_lexer_header() {
+        let input = String::from("#\n######\n#######");
+
+        let tests = vec![
+            TestCase {
+                expected_type: TokenType::Header,
+                expected_literal: "#",
+            },
+            TestCase {
+                expected_type: TokenType::Header,
+                expected_literal: "######",
+            },
+            TestCase {
+                expected_type: TokenType::String,
+                expected_literal: "#######",
+            },
+        ];
+
+        let mut lexer = Lexer::new(input);
+
+        for (i, test) in tests.iter().enumerate() {
+            let tok = lexer.next_token();
+            assert_eq!(
+                tok.token_type, test.expected_type,
+                "tests[{}] - tokentype wrong",
+                i
+            );
+            assert_eq!(
+                tok.literal, test.expected_literal,
+                "tests[{}] - literal wrong",
+                i
+            );
+        }
     }
 
     #[test]
