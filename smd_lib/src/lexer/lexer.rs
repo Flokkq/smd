@@ -137,25 +137,37 @@ impl Lexer {
     }
 
     fn process_formatting_token(&mut self) -> Token {
-        let char_type = self.current_char;
+        let char_type = self.current_char.unwrap_or('\0');
         let mut depth = 0;
 
-        while self.current_char == char_type {
+        while let Some(current_char) = self.current_char {
+            if current_char != char_type {
+                break;
+            }
+
             depth += 1;
             self.read_char();
         }
 
-        // Validate and assign the correct token type
-        let token_type = match depth {
+        let token_type: TokenType;
+        // if self.peek_char().unwrap_or_default().is_whitespace() {
+        //     if
+        //     /* previous_is_only_whitespace */
+        //     true && depth == 1 {
+        //         token_type = TokenType::List;
+        //     }
+        // }
+
+        token_type = match depth {
             3 => TokenType::BoldItalic,
             2 => TokenType::Bold,
             1 => TokenType::Italic,
-            _ => TokenType::ILLEGAL, // Handle edge cases
+            _ => TokenType::ILLEGAL,
         };
 
         Token {
             token_type,
-            literal: char_type.unwrap().to_string().repeat(depth),
+            literal: char_type.to_string().repeat(depth),
         }
     }
 }
