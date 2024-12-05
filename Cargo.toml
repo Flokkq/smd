@@ -1,24 +1,28 @@
-[package]
-name = "smd"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = ["smd-core", "smd"]
 
-[[bin]]
-path = "src/main.rs"
-name = "smd"
+[workspace.dependencies]
+log = "0.4.21"
 
 [profile.dev]
-incremental = true
-opt-level = 1
+opt-level = 0
+debug = true
+panic = "abort"
 
-[profile.dev.package."*"]
-opt-level = 3
+[profile.test]
+opt-level = 0
+debug = true
 
 [profile.release]
 opt-level = 3
+debug = false
+panic = "unwind"
+lto = true
+codegen-units = 1
+strip = true
 
-[workspace]
-members = [".", "smd_lib"]
-
-[dependencies]
-smd_lib = { path = "smd_lib" }
+[profile.bench]
+opt-level = 3
+debug = true # used by the profiler
+strip = false # keep symbols for the profiler

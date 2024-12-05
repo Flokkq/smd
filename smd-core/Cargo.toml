@@ -1,6 +1,8 @@
 [package]
-name = "smd_lib"
+name = "smd-core"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+thiserror = "2.0.4"
+log.workspace = true
