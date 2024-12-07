@@ -1,7 +1,3 @@
 mod iter;
-mod lexer;
+pub mod lexer;
 mod token;
-
-use iter::*;
-use lexer::*;
-use token::*;

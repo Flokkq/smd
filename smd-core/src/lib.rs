@@ -1,2 +1,5 @@
+/// Library related error management
 pub mod error;
-mod gfm;
+
+/// Transpililing markdown to github flavoured markdown
+pub mod gfm;
