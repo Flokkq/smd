@@ -1,4 +1,4 @@
-<h2 align="center">:crab: Sweet Markdown :crab:</h2>
+<h2 align="center">:lollipop: Sweet Markdown :lollipop:</h2>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png" width="400" />
