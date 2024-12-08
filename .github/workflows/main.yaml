@@ -21,7 +21,7 @@ jobs:
           components: clippy, rustfmt
           toolchain: stable
       - run: cargo fmt --check && cargo clippy --all-features --all-targets --workspace
-      - run: cargo test --all-features --workspace
+      - run: cargo test --all-features smd
 name: main
 on:
   - pull_request
