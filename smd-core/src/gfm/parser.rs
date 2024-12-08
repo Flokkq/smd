@@ -49,6 +49,12 @@ impl Parser {
                     in_paragraph = true;
                     html.push_str("<p>")
                 }
+                Token::CodeBlock(_, _) | Token::Newline | Token::Header(_, _, _)
+                    if in_paragraph =>
+                {
+                    in_paragraph = false;
+                    html.push_str("</p>\n")
+                }
                 _ => {}
             }
 
@@ -86,6 +92,23 @@ impl Parser {
                     } else {
                         html.push_str(&Self::sanitize_display_text(t.trim_start_matches('\n')))
                     }
+                }
+                Token::Header(l, t, lbl) => {
+                    match lbl {
+                        Some(lbl_text) => html.push_str(
+                            format!(
+                                "<h{level} id=\"{id}\">{text}</h{level}>\n",
+                                level = l,
+                                text = t,
+                                id = Self::sanitize_display_text(&lbl_text.replace(" ", "-")) // TODO:
+                                                                                              // is id necessary?
+                            )
+                            .as_str(),
+                        ),
+                        None => html.push_str(
+                            format!("<h{level}>{text}</h{level}>\n", level = l, text = t).as_str(),
+                        ),
+                    };
                 }
                 _ => {}
             }
