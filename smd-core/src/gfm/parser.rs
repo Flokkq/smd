@@ -12,18 +12,18 @@ impl Parser {
     pub(crate) fn render_ignore(source: &str, ignore: &[char]) -> String {
         return Self::parse(&Self::lex(source, ignore));
     }
-
-    fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token> {
+    
+    fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
         let mut l = Lexer::new(source);
         let mut tokens = Vec::new();
 
         while let Some(token) = l.next_token(ignore) {
             tokens.push(token);
         }
-        return tokens;
+
+        tokens
     }
 
-    fn parse(_tokens: &[Token]) -> String {
-        return String::new();
+    fn parse<'a>(tokens: &[Token<'a>]) -> String {
     }
 }

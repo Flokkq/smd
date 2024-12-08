@@ -18,7 +18,7 @@ impl<'a> Lexer<'a> {
     }
 
     /// Produces the next token or returns None when done.
-    pub fn next_token(&mut self, ignore: &[char]) -> Option<Token> {
+    pub fn next_token(&mut self, ignore: &[char]) -> Option<Token<'a>> {
         while self.iter.peek().is_some() {
             match self.iter.peek().unwrap() {
                 "#" if !ignore.contains(&'#') => {
@@ -37,7 +37,7 @@ impl<'a> Lexer<'a> {
         None
     }
 
-    fn lex_heading(&mut self) -> Result<Token, ParseError<'a>> {
+    fn lex_heading(&mut self) -> Result<Token<'a>, ParseError<'a>> {
         let hashes = self
             .iter
             .consume_while_case_holds(&|c| c == "#")
