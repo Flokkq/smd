@@ -27,13 +27,20 @@ impl Parser {
     fn parse<'a>(tokens: &[Token<'a>]) -> String {
         let mut html = String::with_capacity(tokens.len() * 100);
         let mut quote_level = 0;
+        let mut in_task_list = false;
         let mut in_paragraph = false;
+        let mut in_ordered_list = false;
+        let mut in_unordered_list = false;
         let mut token_iter = tokens.iter().peekable();
 
         // multi-liners
         while let Some(token) = token_iter.next() {
             match token {
                 Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
+                Token::Tab | Token::DoubleTab => {}
+                Token::OrderedListEntry(_) | Token::UnorderedListEntry(_) | Token::Newline
+                    if in_ordered_list | in_unordered_list => {}
+                Token::TaskListItem(_, _) | Token::Newline if in_task_list => {}
                 Token::Plaintext(_)
                 | Token::Italic(_)
                 | Token::Bold(_)
@@ -49,6 +56,13 @@ impl Parser {
                     in_paragraph = true;
                     html.push_str("<p>")
                 }
+                Token::CodeBlock(_, _) | Token::Newline | Token::Header(_, _, _)
+                    if in_paragraph =>
+                {
+                    in_paragraph = false;
+                    html.push_str("</p>\n")
+                }
+                Token::BlockQuote(_, _) | Token::Newline if quote_level > 0 => {}
                 Token::CodeBlock(_, _) | Token::Newline | Token::Header(_, _, _)
                     if in_paragraph =>
                 {
@@ -110,6 +124,9 @@ impl Parser {
                         ),
                     };
                 }
+                Token::Newline => {}
+                Token::Tab => html.push('\t'),
+                Token::DoubleTab => html.push_str("\t\t"),
                 _ => {}
             }
         }
