@@ -12,7 +12,7 @@ impl Parser {
     pub(crate) fn render_ignore(source: &str, ignore: &[char]) -> String {
         return Self::parse(&Self::lex(source, ignore));
     }
-    
+
     fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
         let mut l = Lexer::new(source);
         let mut tokens = Vec::new();
@@ -33,15 +33,22 @@ impl Parser {
         // multi-liners
         while let Some(token) = token_iter.next() {
             match token {
-                Token::Plaintext(t) if t.trim().is_empty() => {}, // ignore
-            Token::Plaintext(_) | Token::Italic(_) | Token::Bold(_) | Token::BoldItalic(_) | Token::Strikethrough(_) | Token::Link(_, _, _) if !in_paragraph => {
-                for _i in 0..quote_level {
+                Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
+                Token::Plaintext(_)
+                | Token::Italic(_)
+                | Token::Bold(_)
+                | Token::BoldItalic(_)
+                | Token::Strikethrough(_)
+                | Token::Link(_, _, _)
+                    if !in_paragraph =>
+                {
+                    for _i in 0..quote_level {
                         html.push_str("</blockquote>");
-                        quote_level-=1;
+                        quote_level -= 1;
+                    }
+                    in_paragraph = true;
+                    html.push_str("<p>")
                 }
-                in_paragraph = true;
-                html.push_str("<p>")
-            },
                 _ => {}
             }
 
@@ -68,10 +75,12 @@ impl Parser {
                                 let tok = tok.trim_end().trim_end_matches(']');
                                 s.push_str(format!(
                                     "<sup id=\"fnref:{reference}\" role=\"doc-noteref\"><a href=\"#fn:{reference}\" class=\"footnote\" rel=\"footnote\">{ref_count}</a></sup>", 
-                                    reference = Self::sanitize_display_text(tok), 
+                                    reference = Self::sanitize_display_text(tok),
                                     ref_count = count).as_str());
-                                count+=1;
-                            } else {s.push_str(tok)}
+                                count += 1;
+                            } else {
+                                s.push_str(tok)
+                            }
                         }
                         html.push_str(&s);
                     } else {
@@ -86,7 +95,7 @@ impl Parser {
             html.push_str("</p>\n");
         }
         if quote_level > 0 {
-            for _i in (0..quote_level).rev(){
+            for _i in (0..quote_level).rev() {
                 html.push_str("</blockquote>\n");
             }
         }
@@ -96,9 +105,10 @@ impl Parser {
 
         html
     }
-    
+
     pub(crate) fn sanitize_display_text(source: &str) -> String {
-        source.replace('&', "&amp;")
+        source
+            .replace('&', "&amp;")
             .replace('<', "&lt;")
             .replace('>', "&gt;")
             .replace('"', "&quot;")
