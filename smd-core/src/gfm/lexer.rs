@@ -27,6 +27,12 @@ impl<'a> Lexer<'a> {
                         Err(e) => Some(Token::Plaintext(e.content.to_string())),
                     };
                 }
+                "\n" => {
+                    return match self.lex_newlines() {
+                        Ok(t) => Some(t),
+                        Err(e) => Some(Token::Plaintext(e.content.to_string())),
+                    }
+                }
                 _ => {
                     if let Some(c) = self.iter.next() {
                         return Some(Token::Plaintext(c.to_string()));
@@ -78,5 +84,13 @@ impl<'a> Lexer<'a> {
         .to_string();
 
         return Ok(Token::Header(hashes.len(), parsed_line, None));
+    }
+
+    pub(crate) fn lex_newlines(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+        match self.iter.consume_while_case_holds(&|c| c == "\n") {
+            Some(s) if s.len() >= 2 => return Ok(Token::Newline),
+            Some(s) if s.len() < 2 => return Err(ParseError { content: s }),
+            _ => return Err(ParseError { content: "" }),
+        }
     }
 }
