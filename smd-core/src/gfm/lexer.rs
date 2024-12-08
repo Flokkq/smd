@@ -1,4 +1,4 @@
-use super::{iter::MarkdownIter, token::Token};
+use super::{iter::MarkdownIter, parser::Parser, token::Token};
 
 pub struct Lexer<'a> {
     iter: MarkdownIter<'a>,
@@ -71,11 +71,12 @@ impl<'a> Lexer<'a> {
             return Ok(Token::Header(hashes.len(), "".to_string(), None));
         }
 
-        // TODO: render inline styles
-        return Ok(Token::Header(
-            hashes.len(),
-            line_without_optional_trailing_hash_sequence.to_string(),
-            None,
-        ));
+        let parsed_line = Parser::render_ignore(
+            line_without_optional_trailing_hash_sequence.trim_end_matches(&[' ', '\t']),
+            &['#'],
+        )
+        .to_string();
+
+        return Ok(Token::Header(hashes.len(), parsed_line, None));
     }
 }

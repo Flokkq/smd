@@ -9,7 +9,7 @@ impl Parser {
         return Self::parse(&Self::lex(source, &[]));
     }
 
-    pub(crate) fn _render_ignore(source: &str, ignore: &[char]) -> String {
+    pub(crate) fn render_ignore(source: &str, ignore: &[char]) -> String {
         return Self::parse(&Self::lex(source, ignore));
     }
 
