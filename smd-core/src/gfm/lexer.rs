@@ -92,7 +92,7 @@ impl<'a> Lexer<'a> {
         return Ok(Token::Header(hashes.len(), parsed_line, None));
     }
 
-    pub(crate) fn lex_newlines(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+    fn lex_newlines(&mut self) -> Result<Token<'a>, ParseError<'a>> {
         match self.iter.consume_while_case_holds(&|c| c == "\n") {
             Some(s) if s.len() >= 2 => return Ok(Token::Newline),
             Some(s) if s.len() < 2 => return Err(ParseError { content: s }),
