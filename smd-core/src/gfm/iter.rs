@@ -47,7 +47,10 @@ impl<'a> MarkdownIter<'a> {
         None
     }
 
-    pub fn consume_while_case_holds(&mut self, func: &dyn Fn(&str) -> bool) -> Option<&'a str> {
+    pub fn consume_while_case_holds(
+        &mut self,
+        func: &dyn Fn(&str) -> bool,
+    ) -> Option<&'a str> {
         let start_index = self.index;
         while self.peek().is_some() && func(self.peek().unwrap()) {
             self.next();
@@ -101,7 +104,9 @@ impl<'a> MarkdownIter<'a> {
     pub fn peek_line_ahead(&self) -> Option<&'a str> {
         match self.find_next("\n") {
             Some(newline_index) => {
-                return self.the_str.get(self.index..=(self.index + newline_index))
+                return self
+                    .the_str
+                    .get(self.index..=(self.index + newline_index))
             }
             None if self.peek().is_some() => {
                 return self.the_str.get(self.index..=(self.the_str.len() - 1))
@@ -113,12 +118,14 @@ impl<'a> MarkdownIter<'a> {
     pub fn consume_line_ahead(&mut self) -> Option<&'a str> {
         match self.find_next("\n") {
             Some(newline_index) => {
-                let ret = self.the_str.get(self.index..=(self.index + newline_index));
+                let ret =
+                    self.the_str.get(self.index..=(self.index + newline_index));
                 self.update_index_to(self.index + newline_index + 1);
                 return ret;
             }
             None if self.peek().is_some() => {
-                let ret = self.the_str.get(self.index..=(self.the_str.len() - 1));
+                let ret =
+                    self.the_str.get(self.index..=(self.the_str.len() - 1));
                 self.update_index_to(self.the_str.len());
                 return ret;
             }
@@ -228,7 +235,10 @@ mod tests {
             Some("jkfsgbkfgbdklfdsbh gkhsdfbg <details>"),
             other_text_iter.consume_until_tail_is("<details>")
         );
-        assert_eq!(Some(" and more chars"), other_text_iter.consume_until_end());
+        assert_eq!(
+            Some(" and more chars"),
+            other_text_iter.consume_until_end()
+        );
         assert_eq!(None, other_text_iter.peek());
     }
 

@@ -3,7 +3,8 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_491_simple_strikethrough() {
     let test_html = Parser::render("~~Hi~~ Hello, ~there~ world!");
-    let reference_html = "<p><del>Hi</del> Hello, <del>there</del> world!</p>\n";
+    let reference_html =
+        "<p><del>Hi</del> Hello, <del>there</del> world!</p>\n";
     assert_eq!(test_html, reference_html);
 }
 

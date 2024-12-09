@@ -269,7 +269,8 @@ fn gfm_test_397_unicode_text_with_strong_emphasis() {
 #[test]
 fn gfm_test_398_nested_strong_emphasis() {
     let test_html = Parser::render("__foo, __bar__, baz__");
-    let reference_html = "<p><strong>foo, <strong>bar</strong>, baz</strong></p>\n";
+    let reference_html =
+        "<p><strong>foo, <strong>bar</strong>, baz</strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -313,7 +314,8 @@ fn gfm_test_403_combined_emphasis_with_citations() {
 #[test]
 fn gfm_test_404_emphasis_with_quotes() {
     let test_html = Parser::render("**foo \"*bar*\" foo**");
-    let reference_html = "<p><strong>foo &quot;<em>bar</em>&quot; foo</strong></p>\n";
+    let reference_html =
+        "<p><strong>foo &quot;<em>bar</em>&quot; foo</strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -474,14 +476,16 @@ fn gfm_test_426_nested_emphasis_with_unbalanced_delimiters() {
 #[test]
 fn gfm_test_427_multilevel_nested_emphasis() {
     let test_html = Parser::render("*foo **bar *baz* bim** bop*");
-    let reference_html = "<p><em>foo <strong>bar <em>baz</em> bim</strong> bop</em></p>\n";
+    let reference_html =
+        "<p><em>foo <strong>bar <em>baz</em> bim</strong> bop</em></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_428_nested_emphasis_with_links() {
     let test_html = Parser::render("*foo [*bar*](/url)*");
-    let reference_html = "<p><em>foo <a href=\"/url\"><em>bar</em></a></em></p>\n";
+    let reference_html =
+        "<p><em>foo <a href=\"/url\"><em>bar</em></a></em></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -502,7 +506,8 @@ fn gfm_test_430_no_empty_strong_emphasis() {
 #[test]
 fn gfm_test_431_strong_emphasis_with_links() {
     let test_html = Parser::render("**foo [bar](/url)**");
-    let reference_html = "<p><strong>foo <a href=\"/url\">bar</a></strong></p>\n";
+    let reference_html =
+        "<p><strong>foo <a href=\"/url\">bar</a></strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -523,7 +528,8 @@ fn gfm_test_433_nested_emphasis_in_strong_emphasis() {
 #[test]
 fn gfm_test_434_double_nested_strong_emphasis() {
     let test_html = Parser::render("__foo __bar__ baz__");
-    let reference_html = "<p><strong>foo <strong>bar</strong> baz</strong></p>\n";
+    let reference_html =
+        "<p><strong>foo <strong>bar</strong> baz</strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -579,7 +585,8 @@ fn gfm_test_441_multilevel_nested_emphasis_and_strong_emphasis() {
 #[test]
 fn gfm_test_442_nested_emphasis_with_links_in_strong_emphasis() {
     let test_html = Parser::render("**foo [*bar*](/url)**");
-    let reference_html = "<p><strong>foo <a href=\"/url\"><em>bar</em></a></strong></p>\n";
+    let reference_html =
+        "<p><strong>foo <a href=\"/url\"><em>bar</em></a></strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -810,7 +817,8 @@ fn gfm_test_474_double_nested_strong_emphasis_variant() {
 #[test]
 fn gfm_test_475_triple_nested_strong_emphasis() {
     let test_html = Parser::render("******foo******");
-    let reference_html = "<p><strong><strong><strong>foo</strong></strong></strong></p>\n";
+    let reference_html =
+        "<p><strong><strong><strong>foo</strong></strong></strong></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -824,7 +832,8 @@ fn gfm_test_476_emphasis_with_strong_emphasis() {
 #[test]
 fn gfm_test_477_triple_nested_emphasis_and_strong_emphasis() {
     let test_html = Parser::render("_____foo_____");
-    let reference_html = "<p><em><strong><strong>foo</strong></strong></em></p>\n";
+    let reference_html =
+        "<p><em><strong><strong>foo</strong></strong></em></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -838,7 +847,8 @@ fn gfm_test_478_mismatched_emphasis_delimiters() {
 #[test]
 fn gfm_test_479_mixed_emphasis_and_strong_emphasis() {
     let test_html = Parser::render("*foo __bar *baz bim__ bam*");
-    let reference_html = "<p><em>foo <strong>bar *baz bim</strong> bam</em></p>\n";
+    let reference_html =
+        "<p><em>foo <strong>bar *baz bim</strong> bam</em></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -908,13 +918,15 @@ fn gfm_test_488_emphasis_with_inline_code_and_underscore() {
 #[test]
 fn gfm_test_489_strong_emphasis_with_autolink() {
     let test_html = Parser::render("**a<http://foo.bar/?q=**>");
-    let reference_html = "<p>**a<a href=\"http://foo.bar/?q=**\">http://foo.bar/?q=**</a></p>\n";
+    let reference_html =
+        "<p>**a<a href=\"http://foo.bar/?q=**\">http://foo.bar/?q=**</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_490_strong_emphasis_with_autolink_and_underscore() {
     let test_html = Parser::render("__a<http://foo.bar/?q=__>");
-    let reference_html = "<p>__a<a href=\"http://foo.bar/?q=__\">http://foo.bar/?q=__</a></p>\n";
+    let reference_html =
+        "<p>__a<a href=\"http://foo.bar/?q=__\">http://foo.bar/?q=__</a></p>\n";
     assert_eq!(test_html, reference_html);
 }

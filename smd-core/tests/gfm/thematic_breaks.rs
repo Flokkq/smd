@@ -101,7 +101,8 @@ fn gfm_test_26_invalid_mixed_characters_in_thematic_break() {
 #[test]
 fn gfm_test_27_thematic_break_in_list() {
     let test_html = Parser::render("- foo\n***\n- bar\n");
-    let reference_html = "<ul>\n<li>foo</li>\n</ul>\n<hr />\n<ul>\n<li>bar</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>foo</li>\n</ul>\n<hr />\n<ul>\n<li>bar</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -122,7 +123,8 @@ fn gfm_test_29_thematic_break_as_setext_heading() {
 #[test]
 fn gfm_test_30_thematic_break_and_list_item_conflict() {
     let test_html = Parser::render("* Foo\n* * *\n* Bar\n");
-    let reference_html = "<ul>\n<li>Foo</li>\n</ul>\n<hr />\n<ul>\n<li>Bar</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>Foo</li>\n</ul>\n<hr />\n<ul>\n<li>Bar</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 

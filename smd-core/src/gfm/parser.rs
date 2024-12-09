@@ -38,7 +38,9 @@ impl Parser {
             match token {
                 Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
                 Token::Tab | Token::DoubleTab => {}
-                Token::OrderedListEntry(_) | Token::UnorderedListEntry(_) | Token::Newline
+                Token::OrderedListEntry(_)
+                | Token::UnorderedListEntry(_)
+                | Token::Newline
                     if in_ordered_list | in_unordered_list => {}
                 Token::TaskListItem(_, _) | Token::Newline if in_task_list => {}
                 Token::Plaintext(_)
@@ -56,14 +58,19 @@ impl Parser {
                     in_paragraph = true;
                     html.push_str("<p>")
                 }
-                Token::CodeBlock(_, _) | Token::Newline | Token::Header(_, _, _)
+                Token::CodeBlock(_, _)
+                | Token::Newline
+                | Token::Header(_, _, _)
                     if in_paragraph =>
                 {
                     in_paragraph = false;
                     html.push_str("</p>\n")
                 }
-                Token::BlockQuote(_, _) | Token::Newline if quote_level > 0 => {}
-                Token::CodeBlock(_, _) | Token::Newline | Token::Header(_, _, _)
+                Token::BlockQuote(_, _) | Token::Newline if quote_level > 0 => {
+                }
+                Token::CodeBlock(_, _)
+                | Token::Newline
+                | Token::Header(_, _, _)
                     if in_paragraph =>
                 {
                     in_paragraph = false;
@@ -104,7 +111,9 @@ impl Parser {
                         }
                         html.push_str(&s);
                     } else {
-                        html.push_str(&Self::sanitize_display_text(t.trim_start_matches('\n')))
+                        html.push_str(&Self::sanitize_display_text(
+                            t.trim_start_matches('\n'),
+                        ))
                     }
                 }
                 Token::Header(l, t, lbl) => {
@@ -114,13 +123,20 @@ impl Parser {
                                 "<h{level} id=\"{id}\">{text}</h{level}>\n",
                                 level = l,
                                 text = t,
-                                id = Self::sanitize_display_text(&lbl_text.replace(" ", "-")) // TODO:
-                                                                                              // is id necessary?
+                                id = Self::sanitize_display_text(
+                                    &lbl_text.replace(" ", "-")
+                                ) // TODO:
+                                  // is id necessary?
                             )
                             .as_str(),
                         ),
                         None => html.push_str(
-                            format!("<h{level}>{text}</h{level}>\n", level = l, text = t).as_str(),
+                            format!(
+                                "<h{level}>{text}</h{level}>\n",
+                                level = l,
+                                text = t
+                            )
+                            .as_str(),
                         ),
                     };
                 }

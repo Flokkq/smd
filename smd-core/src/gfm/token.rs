@@ -89,7 +89,9 @@ impl<'a> ValidURL<'a> {
         let amp_replace_content = self.content.replace('&', "&amp;");
         match &self.scheme {
             None => return format!("http:{}", amp_replace_content),
-            Some(Scheme::Email(_s)) => return format!("{}", amp_replace_content),
+            Some(Scheme::Email(_s)) => {
+                return format!("{}", amp_replace_content)
+            }
             Some(s) => return format!("{}:{}", s, amp_replace_content),
         }
     }

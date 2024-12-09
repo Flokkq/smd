@@ -34,7 +34,8 @@ fn gfm_test_234_indented_paragraph_in_list() {
 #[test]
 fn gfm_test_235_indented_code_block_after_list_item() {
     let test_html = Parser::render(" -    one\n\n     two\n");
-    let reference_html = "<ul>\n<li>one</li>\n</ul>\n<pre><code> two\n</code></pre>\n";
+    let reference_html =
+        "<ul>\n<li>one</li>\n</ul>\n<pre><code> two\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -75,8 +76,9 @@ fn gfm_test_240_list_item_with_multiple_blank_lines() {
 
 #[test]
 fn gfm_test_241_complex_list_item() {
-    let test_html =
-        Parser::render("1.  foo\n\n    ```\n    bar\n    ```\n\n    baz\n\n    > bam\n");
+    let test_html = Parser::render(
+        "1.  foo\n\n    ```\n    bar\n    ```\n\n    baz\n\n    > bam\n",
+    );
     let reference_html = "<ol>\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n<blockquote>\n<p>bam</p>\n</blockquote>\n</li>\n</ol>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -127,7 +129,8 @@ fn gfm_test_247_negative_number_in_ordered_list() {
 #[test]
 fn gfm_test_248_indented_code_in_list_item() {
     let test_html = Parser::render("- foo\n\n      bar\n");
-    let reference_html = "<ul>\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>\n<p>foo</p>\n<pre><code>bar\n</code></pre>\n</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -141,21 +144,26 @@ fn gfm_test_249_deeply_indented_code_in_list_item() {
 
 #[test]
 fn gfm_test_250_indented_code_outside_list() {
-    let test_html = Parser::render("    indented code\n\nparagraph\n\n    more code\n");
+    let test_html =
+        Parser::render("    indented code\n\nparagraph\n\n    more code\n");
     let reference_html = "<pre><code>indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_251_indented_code_as_list_item() {
-    let test_html = Parser::render("1.     indented code\n\n   paragraph\n\n       more code\n");
+    let test_html = Parser::render(
+        "1.     indented code\n\n   paragraph\n\n       more code\n",
+    );
     let reference_html = "<ol>\n<li>\n<pre><code>indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_252_extra_indent_in_code_block() {
-    let test_html = Parser::render("1.      indented code\n\n   paragraph\n\n       more code\n");
+    let test_html = Parser::render(
+        "1.      indented code\n\n   paragraph\n\n       more code\n",
+    );
     let reference_html = "<ol>\n<li>\n<pre><code> indented code\n</code></pre>\n<p>paragraph</p>\n<pre><code>more code\n</code></pre>\n</li>\n</ol>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -183,7 +191,8 @@ fn gfm_test_255_valid_list_with_correct_indentation() {
 
 #[test]
 fn gfm_test_256_list_with_blank_lines() {
-    let test_html = Parser::render("-\n  foo\n-\n  ```\n  bar\n  ```\n-\n      baz\n");
+    let test_html =
+        Parser::render("-\n  foo\n-\n  ```\n  bar\n  ```\n-\n      baz\n");
     let reference_html = "<ul>\n<li>foo</li>\n<li>\n<pre><code>bar\n</code></pre>\n</li>\n<li>\n<pre><code>baz\n</code></pre>\n</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -305,28 +314,32 @@ fn gfm_test_272_properly_nested_sublists() {
 #[test]
 fn gfm_test_273_insufficiently_nested_sublists() {
     let test_html = Parser::render("- foo\n - bar\n  - baz\n   - boo\n");
-    let reference_html = "<ul>\n<li>foo</li>\n<li>bar</li>\n<li>baz</li>\n<li>boo</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>foo</li>\n<li>bar</li>\n<li>baz</li>\n<li>boo</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_274_sublist_under_wider_marker() {
     let test_html = Parser::render("10) foo\n    - bar\n");
-    let reference_html = "<ol start=\"10\">\n<li>foo\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n";
+    let reference_html =
+        "<ol start=\"10\">\n<li>foo\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_275_insufficient_indentation_with_wider_marker() {
     let test_html = Parser::render("10) foo\n   - bar\n");
-    let reference_html = "<ol start=\"10\">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n";
+    let reference_html =
+        "<ol start=\"10\">\n<li>foo</li>\n</ol>\n<ul>\n<li>bar</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_276_list_as_first_block_in_item() {
     let test_html = Parser::render("- - foo\n");
-    let reference_html = "<ul>\n<li>\n<ul>\n<li>foo</li>\n</ul>\n</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>\n<ul>\n<li>foo</li>\n</ul>\n</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 

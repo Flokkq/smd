@@ -3,7 +3,8 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_77_simple_indented_code_block() {
     let test_html = Parser::render("    a simple\n      indented code block\n");
-    let reference_html = "<pre><code>a simple\n  indented code block\n</code></pre>\n";
+    let reference_html =
+        "<pre><code>a simple\n  indented code block\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -17,21 +18,25 @@ fn gfm_test_78_code_block_vs_list_item_ambiguity() {
 #[test]
 fn gfm_test_79_nested_list_with_indented_code() {
     let test_html = Parser::render("1.  foo\n\n    - bar\n");
-    let reference_html = "<ol>\n<li>\n<p>foo</p>\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n";
+    let reference_html =
+        "<ol>\n<li>\n<p>foo</p>\n<ul>\n<li>bar</li>\n</ul>\n</li>\n</ol>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_80_literal_text_in_code_block() {
     let test_html = Parser::render("    <a/>\n    *hi*\n\n    - one\n");
-    let reference_html = "<pre><code>&lt;a/&gt;\n*hi*\n\n- one\n</code></pre>\n";
+    let reference_html =
+        "<pre><code>&lt;a/&gt;\n*hi*\n\n- one\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_81_multiple_chunks_in_code_block() {
-    let test_html = Parser::render("    chunk1\n\n    chunk2\n  \n \n \n    chunk3\n");
-    let reference_html = "<pre><code>chunk1\n\nchunk2\n\n\n\nchunk3\n</code></pre>\n";
+    let test_html =
+        Parser::render("    chunk1\n\n    chunk2\n  \n \n \n    chunk3\n");
+    let reference_html =
+        "<pre><code>chunk1\n\nchunk2\n\n\n\nchunk3\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -58,7 +63,8 @@ fn gfm_test_84_code_block_and_paragraph() {
 
 #[test]
 fn gfm_test_85_code_block_before_and_after_other_blocks() {
-    let test_html = Parser::render("# Heading\n    foo\nHeading\n------\n    foo\n----\n");
+    let test_html =
+        Parser::render("# Heading\n    foo\nHeading\n------\n    foo\n----\n");
     let reference_html = "<h1>Heading</h1>\n<pre><code>foo\n</code></pre>\n<h2>Heading</h2>\n<pre><code>foo\n</code></pre>\n<hr />\n";
     assert_eq!(test_html, reference_html);
 }

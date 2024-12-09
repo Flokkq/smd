@@ -38,14 +38,16 @@ fn gfm_test_5_nested_list_with_tab_indentation() {
 #[test]
 fn gfm_test_6_block_quote_with_tab_indentation() {
     let test_html = Parser::render(">→→foo");
-    let reference_html = "<blockquote>\n<pre><code>  foo\n</code></pre>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<pre><code>  foo\n</code></pre>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_7_list_item_with_tab_indentation() {
     let test_html = Parser::render("-→→foo");
-    let reference_html = "<ul>\n<li>\n<pre><code>  foo\n</code></pre>\n</li>\n</ul>\n";
+    let reference_html =
+        "<ul>\n<li>\n<pre><code>  foo\n</code></pre>\n</li>\n</ul>\n";
     assert_eq!(test_html, reference_html);
 }
 

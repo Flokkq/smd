@@ -3,20 +3,24 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_622_www_autolink() {
     let test_html = Parser::render("www.commonmark.org");
-    let reference_html = "<p><a href=\"http://www.commonmark.org\">www.commonmark.org</a></p>\n";
+    let reference_html =
+        "<p><a href=\"http://www.commonmark.org\">www.commonmark.org</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_623_www_autolink_with_path() {
-    let test_html = Parser::render("Visit www.commonmark.org/help for more information.");
+    let test_html =
+        Parser::render("Visit www.commonmark.org/help for more information.");
     let reference_html = "<p>Visit <a href=\"http://www.commonmark.org/help\">www.commonmark.org/help</a> for more information.</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_624_trailing_punctuation() {
-    let test_html = Parser::render("Visit www.commonmark.org.\n\nVisit www.commonmark.org/a.b.");
+    let test_html = Parser::render(
+        "Visit www.commonmark.org.\n\nVisit www.commonmark.org/a.b.",
+    );
     let reference_html = "<p>Visit <a href=\"http://www.commonmark.org\">www.commonmark.org</a>.</p>\n<p>Visit <a href=\"http://www.commonmark.org/a.b\">www.commonmark.org/a.b</a>.</p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -64,21 +68,25 @@ fn gfm_test_629_http_https_autolink() {
 #[test]
 fn gfm_test_630_email_autolink() {
     let test_html = Parser::render("foo@bar.baz");
-    let reference_html = "<p><a href=\"mailto:foo@bar.baz\">foo@bar.baz</a></p>\n";
+    let reference_html =
+        "<p><a href=\"mailto:foo@bar.baz\">foo@bar.baz</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_631_email_plus_symbol() {
-    let test_html =
-        Parser::render("hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is.");
+    let test_html = Parser::render(
+        "hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is.",
+    );
     let reference_html = "<p>hello@mail+xyz.example isn't valid, but <a href=\"mailto:hello+xyz@mail.example\">hello+xyz@mail.example</a> is.</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_632_email_special_characters() {
-    let test_html = Parser::render("a.b-c_d@a.b\n\na.b-c_d@a.b.\n\na.b-c_d@a.b-\n\na.b-c_d@a.b_");
+    let test_html = Parser::render(
+        "a.b-c_d@a.b\n\na.b-c_d@a.b.\n\na.b-c_d@a.b-\n\na.b-c_d@a.b_",
+    );
     let reference_html = "<p><a href=\"mailto:a.b-c_d@a.b\">a.b-c_d@a.b</a></p>\n<p><a href=\"mailto:a.b-c_d@a.b\">a.b-c_d@a.b</a>.</p>\n<p>a.b-c_d@a.b-</p>\n<p>a.b-c_d@a.b_</p>\n";
     assert_eq!(test_html, reference_html);
 }

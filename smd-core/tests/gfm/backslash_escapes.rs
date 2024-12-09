@@ -3,7 +3,8 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_308_backslash_escape_ascii_punctuation() {
     let test_html = Parser::render("\\!\\\"\\#\\$\\%\\&\\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~\n");
-    let reference_html = "<p>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~</p>\n";
+    let reference_html =
+        "<p>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -59,8 +60,7 @@ fn gfm_test_315_backslash_in_fenced_code_block() {
 #[test]
 fn gfm_test_316_backslash_in_autolink() {
     let test_html = Parser::render("<http://example.com?find=\\*>");
-    let reference_html =
-        r#"<p><a href="http://example.com?find=%5C*">http://example.com?find=\*</a></p>"#;
+    let reference_html = r#"<p><a href="http://example.com?find=%5C*">http://example.com?find=\*</a></p>"#;
     assert_eq!(test_html, reference_html);
 }
 

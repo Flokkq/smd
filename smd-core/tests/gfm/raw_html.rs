@@ -23,8 +23,9 @@ fn gfm_test_raw_html_638_whitespace_in_tags() {
 
 #[test]
 fn gfm_test_raw_html_639_with_attributes() {
-    let test_html =
-        Parser::render("<a foo=\"bar\" bam = 'baz <em>\"</em>'\n_boolean zoop:33=zoop:33 />");
+    let test_html = Parser::render(
+        "<a foo=\"bar\" bam = 'baz <em>\"</em>'\n_boolean zoop:33=zoop:33 />",
+    );
     let expected_html =
         "<p><a foo=\"bar\" bam = 'baz <em>\"</em>'\n_boolean zoop:33=zoop:33 /></p>\n";
     assert_eq!(test_html, expected_html);
@@ -60,7 +61,8 @@ fn gfm_test_raw_html_643_illegal_attribute_values() {
 
 #[test]
 fn gfm_test_raw_html_644_illegal_whitespace() {
-    let test_html = Parser::render("< a><\nfoo><bar/ >\n<foo bar=baz\nbim!bop />");
+    let test_html =
+        Parser::render("< a><\nfoo><bar/ >\n<foo bar=baz\nbim!bop />");
     let expected_html =
         "<p>&lt; a&gt;&lt;\nfoo&gt;&lt;bar/ &gt;\n&lt;foo bar=baz\nbim!bop /&gt;</p>\n";
     assert_eq!(test_html, expected_html);
@@ -89,22 +91,26 @@ fn gfm_test_raw_html_647_illegal_closing_tag_attributes() {
 
 #[test]
 fn gfm_test_raw_html_648_valid_comment() {
-    let test_html = Parser::render("foo <!-- this is a\ncomment - with hyphen -->");
-    let expected_html = "<p>foo <!-- this is a\ncomment - with hyphen --></p>\n";
+    let test_html =
+        Parser::render("foo <!-- this is a\ncomment - with hyphen -->");
+    let expected_html =
+        "<p>foo <!-- this is a\ncomment - with hyphen --></p>\n";
     assert_eq!(test_html, expected_html);
 }
 
 #[test]
 fn gfm_test_raw_html_649_invalid_comment() {
     let test_html = Parser::render("foo <!-- not a comment -- two hyphens -->");
-    let expected_html = "<p>foo &lt;!-- not a comment -- two hyphens --&gt;</p>\n";
+    let expected_html =
+        "<p>foo &lt;!-- not a comment -- two hyphens --&gt;</p>\n";
     assert_eq!(test_html, expected_html);
 }
 
 #[test]
 fn gfm_test_raw_html_650_not_a_comment() {
     let test_html = Parser::render("foo <!--> foo -->\n\nfoo <!-- foo--->");
-    let expected_html = "<p>foo &lt;!--&gt; foo --&gt;</p>\n<p>foo &lt;!-- foo---&gt;</p>\n";
+    let expected_html =
+        "<p>foo &lt;!--&gt; foo --&gt;</p>\n<p>foo &lt;!-- foo---&gt;</p>\n";
     assert_eq!(test_html, expected_html);
 }
 

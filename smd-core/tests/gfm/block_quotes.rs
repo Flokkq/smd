@@ -3,35 +3,40 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_206_simple_block_quote() {
     let test_html = Parser::render("> # Foo\n> bar\n> baz\n");
-    let reference_html = "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_207_block_quote_without_spaces_after_marker() {
     let test_html = Parser::render("># Foo\n>bar\n> baz\n");
-    let reference_html = "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_208_block_quote_with_indented_marker() {
     let test_html = Parser::render("   > # Foo\n   > bar\n > baz\n");
-    let reference_html = "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_209_block_quote_as_code_block() {
     let test_html = Parser::render("    > # Foo\n    > bar\n    > baz\n");
-    let reference_html = "<pre><code>&gt; # Foo\n&gt; bar\n&gt; baz\n</code></pre>\n";
+    let reference_html =
+        "<pre><code>&gt; # Foo\n&gt; bar\n&gt; baz\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_210_lazy_block_quote_continuation() {
     let test_html = Parser::render("> # Foo\n> bar\nbaz\n");
-    let reference_html = "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<h1>Foo</h1>\n<p>bar\nbaz</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -117,14 +122,16 @@ fn gfm_test_221_single_block_quote_from_consecutive_lines() {
 #[test]
 fn gfm_test_222_block_quote_with_two_paragraphs() {
     let test_html = Parser::render("> foo\n>\n> bar\n");
-    let reference_html = "<blockquote>\n<p>foo</p>\n<p>bar</p>\n</blockquote>\n";
+    let reference_html =
+        "<blockquote>\n<p>foo</p>\n<p>bar</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_223_block_quote_interrupts_paragraph() {
     let test_html = Parser::render("foo\n> bar\n");
-    let reference_html = "<p>foo</p>\n<blockquote>\n<p>bar</p>\n</blockquote>\n";
+    let reference_html =
+        "<p>foo</p>\n<blockquote>\n<p>bar</p>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -145,14 +152,16 @@ fn gfm_test_225_lazy_block_quote_continuation() {
 #[test]
 fn gfm_test_226_block_quote_with_blank_line_and_paragraph() {
     let test_html = Parser::render("> bar\n\nbaz\n");
-    let reference_html = "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n";
+    let reference_html =
+        "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_227_block_quote_with_blank_line_followed_by_text() {
     let test_html = Parser::render("> bar\n>\nbaz\n");
-    let reference_html = "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n";
+    let reference_html =
+        "<blockquote>\n<p>bar</p>\n</blockquote>\n<p>baz</p>\n";
     assert_eq!(test_html, reference_html);
 }
 

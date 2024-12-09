@@ -3,13 +3,15 @@ use smd_core::gfm::parser::Parser;
 #[test]
 fn gfm_test_603_simple_autolink() {
     let test_html = Parser::render("<http://foo.bar.baz>");
-    let reference_html = "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>\n";
+    let reference_html =
+        "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_604_autolink_with_query() {
-    let test_html = Parser::render("<http://foo.bar.baz/test?q=hello&id=22&boolean>");
+    let test_html =
+        Parser::render("<http://foo.bar.baz/test?q=hello&id=22&boolean>");
     let reference_html = "<p><a href=\"http://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean\">http://foo.bar.baz/test?q=hello&amp;id=22&amp;boolean</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -24,7 +26,8 @@ fn gfm_test_605_autolink_with_port() {
 #[test]
 fn gfm_test_606_uppercase_autolink() {
     let test_html = Parser::render("<MAILTO:FOO@BAR.BAZ>");
-    let reference_html = "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>\n";
+    let reference_html =
+        "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -53,7 +56,8 @@ fn gfm_test_609_relative_autolink() {
 #[test]
 fn gfm_test_610_localhost_autolink() {
     let test_html = Parser::render("<localhost:5001/foo>");
-    let reference_html = "<p><a href=\"localhost:5001/foo\">localhost:5001/foo</a></p>\n";
+    let reference_html =
+        "<p><a href=\"localhost:5001/foo\">localhost:5001/foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 

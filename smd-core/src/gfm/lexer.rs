@@ -18,7 +18,11 @@ impl<'a> Lexer<'a> {
     }
 
     /// Produces the next token or returns None when done.
-    pub fn next_token(&mut self, ignore: &[char], tokens: &Vec<Token>) -> Option<Token<'a>> {
+    pub fn next_token(
+        &mut self,
+        ignore: &[char],
+        tokens: &Vec<Token>,
+    ) -> Option<Token<'a>> {
         while self.iter.peek().is_some() {
             match self.iter.peek().unwrap() {
                 "#" if !ignore.contains(&'#') => {
@@ -71,20 +75,22 @@ impl<'a> Lexer<'a> {
             .consume_while_case_holds(&|c| c != "\n")
             .unwrap_or("");
 
-        let line_without_optional_trailing_hash_sequence = match line.trim_end().rsplit_once(' ') {
-            Some((left, right)) => match right.chars().all(|c| c == '#') {
-                true => left,
-                false => line,
-            },
-            None => line,
-        };
+        let line_without_optional_trailing_hash_sequence =
+            match line.trim_end().rsplit_once(' ') {
+                Some((left, right)) => match right.chars().all(|c| c == '#') {
+                    true => left,
+                    false => line,
+                },
+                None => line,
+            };
 
         if line.chars().all(|c| c == '#') {
             return Ok(Token::Header(hashes.len(), "".to_string(), None));
         }
 
         let parsed_line = Parser::render_ignore(
-            line_without_optional_trailing_hash_sequence.trim_end_matches(&[' ', '\t']),
+            line_without_optional_trailing_hash_sequence
+                .trim_end_matches(&[' ', '\t']),
             &['#'],
         )
         .to_string();
@@ -100,7 +106,10 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn lex_tabs_spaces(&mut self, tokens: &Vec<Token>) -> Result<Token<'a>, ParseError<'a>> {
+    fn lex_tabs_spaces(
+        &mut self,
+        tokens: &Vec<Token>,
+    ) -> Result<Token<'a>, ParseError<'a>> {
         let start_index = self.iter.get_index();
         let whitespace = self
             .iter
@@ -111,7 +120,11 @@ impl<'a> Lexer<'a> {
             Some(s) if (1..=3).contains(&s.len()) && !s.contains("\t") => {
                 return Err(ParseError { content: s })
             }
-            Some(s) if s.len() >= 2 && !s.contains("\t") && self.iter.peek() == Some("\n") => {
+            Some(s)
+                if s.len() >= 2
+                    && !s.contains("\t")
+                    && self.iter.peek() == Some("\n") =>
+            {
                 return Ok(Token::LineBreak)
             }
             Some(_s) => {}
@@ -122,18 +135,24 @@ impl<'a> Lexer<'a> {
 
         match whitespace {
             "    "
-                if (matches!(tokens.last(), Some(Token::Plaintext(_))) && line.contains('#')) =>
+                if (matches!(tokens.last(), Some(Token::Plaintext(_)))
+                    && line.contains('#')) =>
             {
                 return Err(ParseError { content: line })
             }
-            "    " if (matches!(tokens.last(), Some(Token::Newline)) && line.contains('#')) => {
+            "    "
+                if (matches!(tokens.last(), Some(Token::Newline))
+                    && line.contains('#')) =>
+            {
                 return Err(ParseError { content: line })
             }
             "\t" if matches!(tokens.last(), Some(Token::Code(_))) => {
                 return Ok(Token::Code(line.to_string()))
             }
             "\t" | "    " | "  \t" => return Ok(Token::Code(line.to_string())),
-            "\t\t" => return Ok(Token::Code("\t".to_owned() + &line.to_string())),
+            "\t\t" => {
+                return Ok(Token::Code("\t".to_owned() + &line.to_string()))
+            }
             _ => {}
         }
 

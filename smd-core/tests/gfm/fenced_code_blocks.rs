@@ -150,20 +150,23 @@ fn gfm_test_109_mismatched_fences() {
 #[test]
 fn gfm_test_110_paragraphs_around_fenced_code_block() {
     let test_html = Parser::render("foo\n```\nbar\n```\nbaz\n");
-    let reference_html = "<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n";
+    let reference_html =
+        "<p>foo</p>\n<pre><code>bar\n</code></pre>\n<p>baz</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_111_blocks_around_fenced_code_block() {
     let test_html = Parser::render("foo\n---\n~~~\nbar\n~~~\n# baz\n");
-    let reference_html = "<h2>foo</h2>\n<pre><code>bar\n</code></pre>\n<h1>baz</h1>\n";
+    let reference_html =
+        "<h2>foo</h2>\n<pre><code>bar\n</code></pre>\n<h1>baz</h1>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_112_code_block_with_language_info_string() {
-    let test_html = Parser::render("```ruby\ndef foo(x)\n  return 3\nend\n```\n");
+    let test_html =
+        Parser::render("```ruby\ndef foo(x)\n  return 3\nend\n```\n");
     let reference_html =
         "<pre><code class=\"language-ruby\">def foo(x)\n  return 3\nend\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
@@ -195,7 +198,8 @@ fn gfm_test_115_invalid_info_string_with_backticks() {
 #[test]
 fn gfm_test_116_info_string_with_backticks_and_tildes() {
     let test_html = Parser::render("~~~ aa ``` ~~~\nfoo\n~~~\n");
-    let reference_html = "<pre><code class=\"language-aa\">foo\n</code></pre>\n";
+    let reference_html =
+        "<pre><code class=\"language-aa\">foo\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 

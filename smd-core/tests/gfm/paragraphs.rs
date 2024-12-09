@@ -30,8 +30,9 @@ fn gfm_test_192_paragraph_with_leading_spaces() {
 
 #[test]
 fn gfm_test_193_paragraph_with_indented_lines_after_first() {
-    let test_html =
-        Parser::render("aaa\n             bbb\n                                       ccc\n");
+    let test_html = Parser::render(
+        "aaa\n             bbb\n                                       ccc\n",
+    );
     let reference_html = "<p>aaa\nbbb\nccc</p>\n";
     assert_eq!(test_html, reference_html);
 }

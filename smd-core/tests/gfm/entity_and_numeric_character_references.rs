@@ -23,8 +23,9 @@ fn gfm_test_323_hexadecimal_numeric_character_references() {
 
 #[test]
 fn gfm_test_324_invalid_and_nonentities() {
-    let test_html =
-        Parser::render("&nbsp &x; &#; &#x;\n&#87654321;\n&#abcdef0;\n&ThisIsNotDefined; &hi?;");
+    let test_html = Parser::render(
+        "&nbsp &x; &#; &#x;\n&#87654321;\n&#abcdef0;\n&ThisIsNotDefined; &hi?;",
+    );
     let reference_html = "<p>&amp;nbsp &amp;x; &amp;#; &amp;#x;\n&amp;#87654321;\n&amp;#abcdef0;\n&amp;ThisIsNotDefined; &amp;hi?;</p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -53,21 +54,25 @@ fn gfm_test_327_entities_in_url() {
 #[test]
 fn gfm_test_328_entities_in_link_title() {
     let test_html = Parser::render("[foo](/f&ouml;&ouml; \"f&ouml;&ouml;\")");
-    let reference_html = "<p><a href=\"/f%C3%B6%C3%B6\" title=\"föö\">foo</a></p>\n";
+    let reference_html =
+        "<p><a href=\"/f%C3%B6%C3%B6\" title=\"föö\">foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_329_entities_in_link_reference() {
-    let test_html = Parser::render("[foo]\n\n[foo]: /f&ouml;&ouml; \"f&ouml;&ouml;\"");
-    let reference_html = "<p><a href=\"/f%C3%B6%C3%B6\" title=\"föö\">foo</a></p>\n";
+    let test_html =
+        Parser::render("[foo]\n\n[foo]: /f&ouml;&ouml; \"f&ouml;&ouml;\"");
+    let reference_html =
+        "<p><a href=\"/f%C3%B6%C3%B6\" title=\"föö\">foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_330_entities_in_info_strings() {
     let test_html = Parser::render("``` f&ouml;&ouml;\nfoo\n```");
-    let reference_html = "<pre><code class=\"language-föö\">foo\n</code></pre>\n";
+    let reference_html =
+        "<pre><code class=\"language-föö\">foo\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 

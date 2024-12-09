@@ -129,7 +129,8 @@ fn gfm_test_355_code_span_with_mixed_symbols() {
 #[test]
 fn gfm_test_356_autolink_with_backticks() {
     let test_html = Parser::render("<http://foo.bar.`baz>`");
-    let reference_html = "<p><a href=\"http://foo.bar.%60baz\">http://foo.bar.`baz</a>`</p>\n";
+    let reference_html =
+        "<p><a href=\"http://foo.bar.%60baz\">http://foo.bar.`baz</a>`</p>\n";
     assert_eq!(test_html, reference_html);
 }
 

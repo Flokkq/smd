@@ -2,7 +2,9 @@ use smd_core::gfm::parser::Parser;
 
 #[test]
 fn gfm_test_32_simple_atx_headings() {
-    let test_html = Parser::render("# foo\n## foo\n### foo\n#### foo\n##### foo\n###### foo");
+    let test_html = Parser::render(
+        "# foo\n## foo\n### foo\n#### foo\n##### foo\n###### foo",
+    );
     let expected_html =
         "<h1>foo</h1>\n<h2>foo</h2>\n<h3>foo</h3>\n<h4>foo</h4>\n<h5>foo</h5>\n<h6>foo</h6>\n";
     assert_eq!(test_html, expected_html);
@@ -38,7 +40,8 @@ fn gfm_test_36_atx_heading_inline_content() {
 
 #[test]
 fn gfm_test_37_atx_heading_trailing_whitespace() {
-    let test_html = Parser::render("#                  foo                      ");
+    let test_html =
+        Parser::render("#                  foo                      ");
     let expected_html = "<h1>foo</h1>\n";
     assert_eq!(test_html, expected_html);
 }
@@ -73,7 +76,9 @@ fn gfm_test_41_atx_heading_closing_hash_sequence() {
 
 #[test]
 fn gfm_test_42_atx_heading_closing_hash_sequence_length() {
-    let test_html = Parser::render("# foo ##################################\n##### foo ##");
+    let test_html = Parser::render(
+        "# foo ##################################\n##### foo ##",
+    );
     let expected_html = "<h1>foo</h1>\n<h5>foo</h5>\n";
     assert_eq!(test_html, expected_html);
 }

@@ -2,8 +2,10 @@ use smd_core::gfm::parser::Parser;
 
 #[test]
 fn gfm_test_50_setext_heading_simple_examples() {
-    let test_html = Parser::render("Foo *bar*\n=========\n\nFoo *bar*\n---------\n");
-    let reference_html = "<h1>Foo <em>bar</em></h1>\n<h2>Foo <em>bar</em></h2>\n";
+    let test_html =
+        Parser::render("Foo *bar*\n=========\n\nFoo *bar*\n---------\n");
+    let reference_html =
+        "<h1>Foo <em>bar</em></h1>\n<h2>Foo <em>bar</em></h2>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -23,14 +25,16 @@ fn gfm_test_52_setext_heading_leading_and_trailing_whitespace() {
 
 #[test]
 fn gfm_test_53_setext_heading_any_length_underlining() {
-    let test_html = Parser::render("Foo\n-------------------------\n\nFoo\n=\n");
+    let test_html =
+        Parser::render("Foo\n-------------------------\n\nFoo\n=\n");
     let reference_html = "<h2>Foo</h2>\n<h1>Foo</h1>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_54_setext_heading_indented_content() {
-    let test_html = Parser::render("   Foo\n---\n\n  Foo\n-----\n\n  Foo\n  ===\n");
+    let test_html =
+        Parser::render("   Foo\n---\n\n  Foo\n-----\n\n  Foo\n  ===\n");
     let reference_html = "<h2>Foo</h2>\n<h2>Foo</h2>\n<h1>Foo</h1>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -79,7 +83,9 @@ fn gfm_test_60_setext_heading_with_backslash_at_end() {
 
 #[test]
 fn gfm_test_61_setext_heading_indicators_of_block_structure() {
-    let test_html = Parser::render("`Foo\n----\n`\n\n<a title=\"a lot\n---\nof dashes\"/>\n");
+    let test_html = Parser::render(
+        "`Foo\n----\n`\n\n<a title=\"a lot\n---\nof dashes\"/>\n",
+    );
     let reference_html =
         "<h2>`Foo</h2>\n<p>`</p>\n<h2>&lt;a title=&quot;a lot</h2>\n<p>of dashes&quot;/&gt;</p>\n";
     assert_eq!(test_html, reference_html);

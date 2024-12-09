@@ -9,36 +9,47 @@ fn gfm_test_161_basic_link_reference_definition() {
 
 #[test]
 fn gfm_test_162_indented_link_reference_definition() {
-    let test_html = Parser::render("   [foo]: \n      /url  \n           'the title'  \n\n[foo]\n");
-    let reference_html = "<p><a href=\"/url\" title=\"the title\">foo</a></p>\n";
+    let test_html = Parser::render(
+        "   [foo]: \n      /url  \n           'the title'  \n\n[foo]\n",
+    );
+    let reference_html =
+        "<p><a href=\"/url\" title=\"the title\">foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_163_complex_link_reference_definition() {
-    let test_html = Parser::render("[Foo*bar\\]]:my_(url) 'title (with parens)'\n\n[Foo*bar\\]]\n");
+    let test_html = Parser::render(
+        "[Foo*bar\\]]:my_(url) 'title (with parens)'\n\n[Foo*bar\\]]\n",
+    );
     let reference_html = "<p><a href=\"my_(url)\" title=\"title (with parens)\">Foo*bar]</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_164_link_reference_definition_with_angle_brackets() {
-    let test_html = Parser::render("[Foo bar]:\n<my url>\n'title'\n\n[Foo bar]\n");
-    let reference_html = "<p><a href=\"my%20url\" title=\"title\">Foo bar</a></p>\n";
+    let test_html =
+        Parser::render("[Foo bar]:\n<my url>\n'title'\n\n[Foo bar]\n");
+    let reference_html =
+        "<p><a href=\"my%20url\" title=\"title\">Foo bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_165_multiline_link_reference_title() {
-    let test_html = Parser::render("[foo]: /url '\ntitle\nline1\nline2\n'\n\n[foo]\n");
-    let reference_html = "<p><a href=\"/url\" title=\"\ntitle\nline1\nline2\n\">foo</a></p>\n";
+    let test_html =
+        Parser::render("[foo]: /url '\ntitle\nline1\nline2\n'\n\n[foo]\n");
+    let reference_html =
+        "<p><a href=\"/url\" title=\"\ntitle\nline1\nline2\n\">foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_166_link_reference_with_blank_line_in_title() {
-    let test_html = Parser::render("[foo]: /url 'title\n\nwith blank line'\n\n[foo]\n");
-    let reference_html = "<p>[foo]: /url 'title</p>\n<p>with blank line'</p>\n<p>[foo]</p>\n";
+    let test_html =
+        Parser::render("[foo]: /url 'title\n\nwith blank line'\n\n[foo]\n");
+    let reference_html =
+        "<p>[foo]: /url 'title</p>\n<p>with blank line'</p>\n<p>[foo]</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -72,7 +83,8 @@ fn gfm_test_170_invalid_title_without_whitespace_separator() {
 
 #[test]
 fn gfm_test_171_backslash_escapes_in_link_reference() {
-    let test_html = Parser::render("[foo]: /url\\bar\\*baz \"foo\\\"bar\\baz\"\n\n[foo]\n");
+    let test_html =
+        Parser::render("[foo]: /url\\bar\\*baz \"foo\\\"bar\\baz\"\n\n[foo]\n");
     let reference_html = "<p><a href=\"/url%5Cbar*baz\" title=\"foo&quot;bar\\baz\">foo</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -143,7 +155,8 @@ fn gfm_test_180_indented_link_reference_definition() {
 #[test]
 fn gfm_test_181_link_reference_inside_code_block() {
     let test_html = Parser::render("```\n[foo]: /url\n```\n\n[foo]\n");
-    let reference_html = "<pre><code>[foo]: /url\n</code></pre>\n<p>[foo]</p>\n";
+    let reference_html =
+        "<pre><code>[foo]: /url\n</code></pre>\n<p>[foo]</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -186,7 +199,8 @@ fn gfm_test_186_multiple_link_references_without_blank_lines() {
 #[test]
 fn gfm_test_187_link_reference_in_blockquote() {
     let test_html = Parser::render("[foo]\n\n> [foo]: /url\n");
-    let reference_html = "<p><a href=\"/url\">foo</a></p>\n<blockquote>\n</blockquote>\n";
+    let reference_html =
+        "<p><a href=\"/url\">foo</a></p>\n<blockquote>\n</blockquote>\n";
     assert_eq!(test_html, reference_html);
 }
 

@@ -36,21 +36,25 @@ fn gfm_test_121_html_block_with_closing_tag() {
 
 #[test]
 fn gfm_test_122_html_block_with_markdown_between_tags() {
-    let test_html = Parser::render("<DIV CLASS=\"foo\">\n\n*Markdown*\n\n</DIV>\n");
-    let reference_html = "<DIV CLASS=\"foo\">\n<p><em>Markdown</em></p>\n</DIV>\n";
+    let test_html =
+        Parser::render("<DIV CLASS=\"foo\">\n\n*Markdown*\n\n</DIV>\n");
+    let reference_html =
+        "<DIV CLASS=\"foo\">\n<p><em>Markdown</em></p>\n</DIV>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_123_partial_opening_tag_html_block() {
-    let test_html = Parser::render("<div id=\"foo\"\n  class=\"bar\">\n</div>\n");
+    let test_html =
+        Parser::render("<div id=\"foo\"\n  class=\"bar\">\n</div>\n");
     let reference_html = "<div id=\"foo\"\n  class=\"bar\">\n</div>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_124_partial_html_tag_with_multiline_attribute() {
-    let test_html = Parser::render("<div id=\"foo\" class=\"bar\n  baz\">\n</div>\n");
+    let test_html =
+        Parser::render("<div id=\"foo\" class=\"bar\n  baz\">\n</div>\n");
     let reference_html = "<div id=\"foo\" class=\"bar\n  baz\">\n</div>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -92,7 +96,8 @@ fn gfm_test_129_inline_html_block_with_markdown() {
 
 #[test]
 fn gfm_test_130_html_block_with_embedded_text() {
-    let test_html = Parser::render("<table><tr><td>\nfoo\n</td></tr></table>\n");
+    let test_html =
+        Parser::render("<table><tr><td>\nfoo\n</td></tr></table>\n");
     let reference_html = "<table><tr><td>\nfoo\n</td></tr></table>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -188,7 +193,8 @@ fn gfm_test_142_html_block_no_matching_end_tag() {
 #[test]
 fn gfm_test_143_html_block_in_blockquote() {
     let test_html = Parser::render("> <div>\n> foo\n\nbar\n");
-    let reference_html = "<blockquote>\n<div>\nfoo\n</blockquote>\n<p>bar</p>\n";
+    let reference_html =
+        "<blockquote>\n<div>\nfoo\n</blockquote>\n<p>bar</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -251,7 +257,8 @@ fn gfm_test_151_html_block_cdata() {
 #[test]
 fn gfm_test_152_indented_html_comment_block() {
     let test_html = Parser::render("  <!-- foo -->\n\n    <!-- foo -->\n");
-    let reference_html = "  <!-- foo -->\n\n<pre><code>&lt;!-- foo --&gt;\n</code></pre>\n";
+    let reference_html =
+        "  <!-- foo -->\n\n<pre><code>&lt;!-- foo --&gt;\n</code></pre>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -299,7 +306,9 @@ fn gfm_test_158_html_block_without_blank_lines() {
 
 #[test]
 fn gfm_test_159_html_block_with_nested_tags() {
-    let test_html = Parser::render("<table>\n\n<tr>\n\n<td>\nHi\n</td>\n\n</tr>\n\n</table>\n");
+    let test_html = Parser::render(
+        "<table>\n\n<tr>\n\n<td>\nHi\n</td>\n\n</tr>\n\n</table>\n",
+    );
     let reference_html = "<table>\n<tr>\n<td>\nHi\n</td>\n</tr>\n</table>\n";
     assert_eq!(test_html, reference_html);
 }

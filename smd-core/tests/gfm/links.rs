@@ -142,8 +142,9 @@ fn gfm_test_513_omitted_destination_with_title() {
 
 #[test]
 fn gfm_test_514_different_quote_types_in_title() {
-    let test_html =
-        Parser::render("[link](/url \"title\")\n[link](/url 'title')\n[link](/url (title))");
+    let test_html = Parser::render(
+        "[link](/url \"title\")\n[link](/url 'title')\n[link](/url (title))",
+    );
     let reference_html = "<p><a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a>\n<a href=\"/url\" title=\"title\">link</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -151,7 +152,8 @@ fn gfm_test_514_different_quote_types_in_title() {
 #[test]
 fn gfm_test_515_escaped_characters_in_title() {
     let test_html = Parser::render("[link](/url \"title \\\"&quot;\")");
-    let reference_html = "<p><a href=\"/url\" title=\"title &quot;&quot;\">link</a></p>\n";
+    let reference_html =
+        "<p><a href=\"/url\" title=\"title &quot;&quot;\">link</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -165,7 +167,8 @@ fn gfm_test_516_unicode_whitespace_in_title() {
 #[test]
 fn gfm_test_517_nested_quotes_in_title() {
     let test_html = Parser::render("[link](/url \"title \"and\" title\")");
-    let reference_html = "<p>[link](/url &quot;title &quot;and&quot; title&quot;)</p>\n";
+    let reference_html =
+        "<p>[link](/url &quot;title &quot;and&quot; title&quot;)</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -229,7 +232,8 @@ fn gfm_test_525_inline_content_in_link_text() {
 #[test]
 fn gfm_test_526_image_inside_link() {
     let test_html = Parser::render("[![moon](moon.jpg)](/uri)");
-    let reference_html = "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n";
+    let reference_html =
+        "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -243,7 +247,8 @@ fn gfm_test_527_nested_links_not_allowed() {
 #[test]
 fn gfm_test_528_nested_emphasis_and_links() {
     let test_html = Parser::render("[foo *[bar [baz](/uri)](/uri)*](/uri)");
-    let reference_html = "<p>[foo <em>[bar <a href=\"/uri\">baz</a>](/uri)</em>](/uri)</p>\n";
+    let reference_html =
+        "<p>[foo <em>[bar <a href=\"/uri\">baz</a>](/uri)</em>](/uri)</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -319,7 +324,8 @@ fn gfm_test_538_escaped_unbalanced_brackets_in_reference() {
 
 #[test]
 fn gfm_test_539_inline_content_in_reference() {
-    let test_html = Parser::render("[link *foo **bar** `#`*][ref]\n\n[ref]: /uri");
+    let test_html =
+        Parser::render("[link *foo **bar** `#`*][ref]\n\n[ref]: /uri");
     let reference_html =
         "<p><a href=\"/uri\">link <em>foo <strong>bar</strong> <code>#</code></em></a></p>\n";
     assert_eq!(test_html, reference_html);
@@ -328,20 +334,23 @@ fn gfm_test_539_inline_content_in_reference() {
 #[test]
 fn gfm_test_540_image_inside_reference() {
     let test_html = Parser::render("[![moon](moon.jpg)][ref]\n\n[ref]: /uri");
-    let reference_html = "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n";
+    let reference_html =
+        "<p><a href=\"/uri\"><img src=\"moon.jpg\" alt=\"moon\" /></a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_541_links_cannot_contain_links_in_reference() {
     let test_html = Parser::render("[foo [bar](/uri)][ref]\n\n[ref]: /uri");
-    let reference_html = "<p>[foo <a href=\"/uri\">bar</a>]<a href=\"/uri\">ref</a></p>\n";
+    let reference_html =
+        "<p>[foo <a href=\"/uri\">bar</a>]<a href=\"/uri\">ref</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_542_emphasis_and_links_in_reference() {
-    let test_html = Parser::render("[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri");
+    let test_html =
+        Parser::render("[foo *bar [baz][ref]*][ref]\n\n[ref]: /uri");
     let reference_html =
         "<p>[foo <em>bar <a href=\"/uri\">baz</a></em>]<a href=\"/uri\">ref</a></p>\n";
     assert_eq!(test_html, reference_html);
@@ -377,7 +386,9 @@ fn gfm_test_546_code_and_reference_grouping() {
 
 #[test]
 fn gfm_test_547_autolink_and_reference_grouping() {
-    let test_html = Parser::render("[foo<http://example.com/?search=][ref]>\n\n[ref]: /uri");
+    let test_html = Parser::render(
+        "[foo<http://example.com/?search=][ref]>\n\n[ref]: /uri",
+    );
     let reference_html = "<p>[foo<a href=\"http://example.com/?search=%5D%5Bref%5D\">http://example.com/?search=][ref]</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -406,20 +417,23 @@ fn gfm_test_550_internal_whitespace_normalized_in_reference() {
 #[test]
 fn gfm_test_551_no_whitespace_between_text_and_label() {
     let test_html = Parser::render("[foo] [bar]\n\n[bar]: /url \"title\"");
-    let reference_html = "<p>[foo] <a href=\"/url\" title=\"title\">bar</a></p>\n";
+    let reference_html =
+        "<p>[foo] <a href=\"/url\" title=\"title\">bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_552_separate_lines_for_reference() {
     let test_html = Parser::render("[foo]\n[bar]\n\n[bar]: /url \"title\"");
-    let reference_html = "<p>[foo]\n<a href=\"/url\" title=\"title\">bar</a></p>\n";
+    let reference_html =
+        "<p>[foo]\n<a href=\"/url\" title=\"title\">bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_553_first_matching_reference_is_used() {
-    let test_html = Parser::render("[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]");
+    let test_html =
+        Parser::render("[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]");
     let reference_html = "<p><a href=\"/url1\">bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
@@ -489,8 +503,10 @@ fn gfm_test_562_collapsed_reference_link() {
 
 #[test]
 fn gfm_test_563_collapsed_reference_with_inline_content() {
-    let test_html = Parser::render("[*foo* bar][]\n\n[*foo* bar]: /url \"title\"");
-    let reference_html = "<p><a href=\"/url\" title=\"title\"><em>foo</em> bar</a></p>\n";
+    let test_html =
+        Parser::render("[*foo* bar][]\n\n[*foo* bar]: /url \"title\"");
+    let reference_html =
+        "<p><a href=\"/url\" title=\"title\"><em>foo</em> bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -504,7 +520,8 @@ fn gfm_test_564_case_insensitive_collapsed_reference_matching() {
 #[test]
 fn gfm_test_565_no_whitespace_between_reference_and_brackets() {
     let test_html = Parser::render("[foo] \n[]\n\n[foo]: /url \"title\"");
-    let reference_html = "<p><a href=\"/url\" title=\"title\">foo</a>\n[]</p>\n";
+    let reference_html =
+        "<p><a href=\"/url\" title=\"title\">foo</a>\n[]</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -517,15 +534,19 @@ fn gfm_test_566_shortcut_reference_link() {
 
 #[test]
 fn gfm_test_567_inline_content_in_shortcut_reference() {
-    let test_html = Parser::render("[*foo* bar]\n\n[*foo* bar]: /url \"title\"");
-    let reference_html = "<p><a href=\"/url\" title=\"title\"><em>foo</em> bar</a></p>\n";
+    let test_html =
+        Parser::render("[*foo* bar]\n\n[*foo* bar]: /url \"title\"");
+    let reference_html =
+        "<p><a href=\"/url\" title=\"title\"><em>foo</em> bar</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_568_unexpected_brackets_in_shortcut_reference() {
-    let test_html = Parser::render("[[*foo* bar]]\n\n[*foo* bar]: /url \"title\"");
-    let reference_html = "<p>[<a href=\"/url\" title=\"title\"><em>foo</em> bar</a>]</p>\n";
+    let test_html =
+        Parser::render("[[*foo* bar]]\n\n[*foo* bar]: /url \"title\"");
+    let reference_html =
+        "<p>[<a href=\"/url\" title=\"title\"><em>foo</em> bar</a>]</p>\n";
     assert_eq!(test_html, reference_html);
 }
 
@@ -601,14 +622,17 @@ fn gfm_test_578_shortcut_reference_precedence_in_sequence() {
 
 #[test]
 fn gfm_test_579_full_reference_precedence_in_sequence() {
-    let test_html = Parser::render("[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2");
-    let reference_html = "<p><a href=\"/url2\">foo</a><a href=\"/url1\">baz</a></p>\n";
+    let test_html =
+        Parser::render("[foo][bar][baz]\n\n[baz]: /url1\n[bar]: /url2");
+    let reference_html =
+        "<p><a href=\"/url2\">foo</a><a href=\"/url1\">baz</a></p>\n";
     assert_eq!(test_html, reference_html);
 }
 
 #[test]
 fn gfm_test_580_no_shortcut_reference_due_to_following_label() {
-    let test_html = Parser::render("[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2");
+    let test_html =
+        Parser::render("[foo][bar][baz]\n\n[baz]: /url1\n[foo]: /url2");
     let reference_html = "<p>[foo][bar][baz]</p>\n";
     assert_eq!(test_html, reference_html);
 }
