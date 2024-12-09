@@ -17,7 +17,7 @@ impl Parser {
         let mut l = Lexer::new(source);
         let mut tokens = Vec::new();
 
-        while let Some(token) = l.next_token(ignore) {
+        while let Some(token) = l.next_token(ignore, &tokens) {
             tokens.push(token);
         }
 
