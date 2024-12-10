@@ -1,0 +1,88 @@
+- **Atx Headers**
+  - [x] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Setext Headers**
+  - [x] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Bold Text**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Italic Text**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Strikethrough Text**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Bold and Italic Text**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Subscript**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Superscript**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Underlined Text**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Blockquotes**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Inline Code**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Code Blocks**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Lists**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Nested Lists**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Task Lists**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Mentions**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Links**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Images**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Emojis** 
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Footnotes**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Alerts**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
+- **Comments**
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] CSS
