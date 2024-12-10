@@ -1,4 +1,4 @@
-use smd_core::gfm::parser::Parser;
+use smd_core::gfm::Parser;
 
 #[test]
 fn gfm_test_161_basic_link_reference_definition() {

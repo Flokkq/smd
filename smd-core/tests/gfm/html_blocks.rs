@@ -1,4 +1,4 @@
-use smd_core::gfm::parser::Parser;
+use smd_core::gfm::Parser;
 
 #[test]
 fn gfm_test_118_html_block_with_embedded_markdown() {

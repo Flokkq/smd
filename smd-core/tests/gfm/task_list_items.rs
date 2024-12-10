@@ -1,4 +1,4 @@
-use smd_core::gfm::parser::Parser;
+use smd_core::gfm::Parser;
 
 #[test]
 fn gfm_test_279_task_list_items_basic() {
