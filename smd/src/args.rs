@@ -113,4 +113,12 @@ mod tests {
     fn verify_cli() {
         Cli::command().debug_assert();
     }
+
+    #[test]
+    fn path_tilde_expansion() {
+        let home_dir =
+            dirs::home_dir().expect("cannot retrieve home directory");
+        let dir = Cli::parse_dir("~/").expect("cannot expand tilde");
+        assert_eq!(home_dir, dir);
+    }
 }
