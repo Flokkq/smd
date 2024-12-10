@@ -23,16 +23,14 @@
               extensions= [ "rust-src" "rust-analyzer" ];
               targets = [];
             }))
+            gnupg
+            git-cliff
+
+            act
 
             pkg-config
             openssl
-            sqlx-cli
-            postgresql_16_jit
             bunyan-rs
-            nodejs_22
-
-            gnupg
-            git-cliff
           ] ++ pkgs.lib.optionals pkg.stdenv.isDarwin [
             darwin.apple_sdk.frameworks.SystemConfiguration
           ];
