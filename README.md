@@ -1,10 +1,6 @@
 <h2 align="center">:lollipop: Sweet Markdown :lollipop:</h2>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png" width="400" />
-</p>
-
-<p align="center">
     <a href="https://github.com/Flokkq/smd/actions">
         <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Flokkq/smd/main.yaml?style=for-the-badge&logo=starship&color=DD7878&logoColor=D9E0EE&labelColor=302D41">
     </a>
