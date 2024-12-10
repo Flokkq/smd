@@ -1,3 +1,10 @@
+use std::process;
+
+use clap::Parser;
+use smd::args::Cli;
+
 fn main() {
-    println!("Markdown is cool!");
+    let _ = Cli::parse();
+
+    process::exit(0);
 }

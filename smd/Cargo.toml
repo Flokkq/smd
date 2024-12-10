@@ -2,7 +2,7 @@
 name = "smd"
 version = "0.1.0" # managed by release.sh
 description = "convert markdown to github flavoured html or pdf 🎨"
-
+authors = ["Flokkq"]
 license = "MIT"
 readme = "../README.md"
 repository = "https://github.com/flokkq/smd"
@@ -27,6 +27,8 @@ opt-level = 3
 
 [dependencies]
 log.workspace = true
+clap = { version = "4.5.21", features = ["derive", "env", "wrap_help", "cargo"] }
+shellexpand = "3.1.0"
 
 [dependencies.smd-core]
 version = "0.1.0" # managed by release.sh
