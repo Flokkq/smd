@@ -1,3 +1,9 @@
+use log::{
+	debug,
+	error,
+	info,
+};
+
 use crate::error::Result;
 use std::{
 	fs,
@@ -16,7 +22,17 @@ pub trait Deserialize: Sized {
 
 /// Reads the contents of a file into a string.
 pub fn read_to_string(path: &PathBuf) -> Result<String> {
-	Ok(fs::read_to_string(path)?)
+	debug!("Attempting to read file: {}", path.display());
+	match fs::read_to_string(path) {
+		Ok(content) => {
+			info!("Successfully read file: {}", path.display());
+			Ok(content)
+		}
+		Err(e) => {
+			error!("Failed to read file: {}. Error: {}", path.display(), e);
+			Err(e.into())
+		}
+	}
 }
 
 /// Serialize an object to a string.
@@ -24,7 +40,17 @@ pub fn encode_to_string<T>(value: &T) -> Result<String>
 where
 	T: Serialize,
 {
-	value.serialize()
+	debug!("Serializing object...");
+	match value.serialize() {
+		Ok(serialized) => {
+			info!("Object serialized successfully.");
+			Ok(serialized)
+		}
+		Err(e) => {
+			error!("Serialization failed: {}", e);
+			Err(e)
+		}
+	}
 }
 
 /// Deserialize an object from a file.
@@ -32,8 +58,18 @@ pub fn decode_from_file<T>(path: PathBuf) -> Result<T>
 where
 	T: Deserialize,
 {
+	debug!("Decoding object from file: {}", path.display());
 	let content = read_to_string(&path)?;
-	T::deserialize(&content)
+	match T::deserialize(&content) {
+		Ok(deserialized) => {
+			info!("Deserialization successful.");
+			Ok(deserialized)
+		}
+		Err(e) => {
+			error!("Deserialization failed: {}", e);
+			Err(e)
+		}
+	}
 }
 
 #[cfg(test)]

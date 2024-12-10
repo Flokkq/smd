@@ -1,3 +1,8 @@
+use log::{
+	debug,
+	warn,
+};
+
 use super::{
 	iter::MarkdownIter,
 	parser::Parser,
@@ -16,6 +21,7 @@ pub(crate) struct ParseError<'a> {
 impl<'a> Lexer<'a> {
 	/// Initializes a new Lexer with the given input.
 	pub fn new(input: &'a str) -> Self {
+		debug!("Initializing Lexer with input of length: {}", input.len());
 		Lexer {
 			iter: MarkdownIter::new(input),
 		}
@@ -28,23 +34,33 @@ impl<'a> Lexer<'a> {
 		tokens: &Vec<Token>,
 	) -> Option<Token<'a>> {
 		while self.iter.peek().is_some() {
+			debug!("Processing character: {:?}", self.iter.peek());
 			match self.iter.peek().unwrap() {
 				"#" if !ignore.contains(&'#') => {
 					return match self.lex_heading() {
 						Ok(t) => Some(t),
-						Err(e) => Some(Token::Plaintext(e.content.to_string())),
+						Err(e) => {
+							warn!("Error while lexing heading: {:?}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
 					};
 				}
 				"\n" => {
 					return match self.lex_newlines() {
 						Ok(t) => Some(t),
-						Err(e) => Some(Token::Plaintext(e.content.to_string())),
+						Err(e) => {
+							warn!("Error while lexing newline: {:?}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
 					}
 				}
 				" " | "\t" => {
 					return match self.lex_tabs_spaces(&tokens) {
 						Ok(t) => Some(t),
-						Err(e) => Some(Token::Plaintext(e.content.to_string())),
+						Err(e) => {
+							warn!("Error while lexing whitespaces: {:?}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
 					}
 				}
 				_ => {
@@ -54,6 +70,8 @@ impl<'a> Lexer<'a> {
 				}
 			}
 		}
+
+		debug!("End of input reached, no more tokens");
 		None
 	}
 

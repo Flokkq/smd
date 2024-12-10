@@ -1,3 +1,5 @@
+use log::debug;
+
 use super::{
 	lexer::Lexer,
 	token::Token,
@@ -9,6 +11,7 @@ impl Parser {
 	/// Render HTML from a source markdown string
 	/// Output is sanitized to prevent script injection
 	pub fn render(source: &str) -> String {
+		debug!("Rendering source of length: {}", source.len());
 		return Self::parse(&Self::lex(source, &[]));
 	}
 
@@ -17,6 +20,7 @@ impl Parser {
 	}
 
 	fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
+		debug!("Lexing source with ignore list: {:?}", ignore);
 		let mut l = Lexer::new(source);
 		let mut tokens = Vec::new();
 
@@ -24,10 +28,12 @@ impl Parser {
 			tokens.push(token);
 		}
 
+		debug!("Lexing completed, total tokens: {}", tokens.len());
 		tokens
 	}
 
 	fn parse<'a>(tokens: &[Token<'a>]) -> String {
+		debug!("Parsing {} tokens", tokens.len());
 		let mut html = String::with_capacity(tokens.len() * 100);
 		let mut quote_level = 0;
 		let mut in_task_list = false;
@@ -38,6 +44,7 @@ impl Parser {
 
 		// multi-liners
 		while let Some(token) = token_iter.next() {
+			debug!("Processing token: {:?}", token);
 			match token {
 				Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
 				Token::Tab | Token::DoubleTab => {}
@@ -172,6 +179,7 @@ impl Parser {
 			html.push('\n');
 		}
 
+		debug!("Parsing completed");
 		html
 	}
 
