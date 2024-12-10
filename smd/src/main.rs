@@ -1,10 +1,18 @@
-use std::process;
-
 use clap::Parser;
 use smd::args::Cli;
+use smd_core::error::Result;
+use std::process;
 
-fn main() {
-	let _ = Cli::parse();
+fn main() -> Result<()> {
+	let args = Cli::parse();
 
-	process::exit(0);
+	let exit_code = match smd::run(args) {
+		Ok(()) => 0,
+		Err(e) => {
+			log::error!("{}", e);
+			1
+		}
+	};
+
+	process::exit(exit_code);
 }

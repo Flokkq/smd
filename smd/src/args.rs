@@ -30,10 +30,11 @@ pub enum OutputFileFormat {
     next_help_heading = Some("FLAGS"),
     disable_help_flag = true,
     disable_version_flag = true,
+    disable_help_subcommand = true,
 )]
 pub struct Cli {
 	#[command(subcommand)]
-	pub command: Commands,
+	pub commands: Commands,
 
 	/// Prints help information.
 	#[arg(
@@ -83,8 +84,9 @@ pub struct ParseArgs {
         value_name = "PATH",
         value_parser = Cli::parse_dir,
         help_heading = Some("OPTIONS"),
+        required=true,
     )]
-	pub input: Option<PathBuf>,
+	pub input: PathBuf,
 
 	/// Sets file format for the output file.
 	#[arg(
