@@ -1,10 +1,16 @@
-use clap::{ArgAction, Args, Parser, Subcommand, ValueEnum};
+use clap::{
+	ArgAction,
+	Args,
+	Parser,
+	Subcommand,
+	ValueEnum,
+};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum OutputFileFormat {
-    Pdf,
-    Html,
+	Pdf,
+	Html,
 }
 
 /// Command-line arguments to parse.
@@ -26,11 +32,11 @@ pub enum OutputFileFormat {
     disable_version_flag = true,
 )]
 pub struct Cli {
-    #[command(subcommand)]
-    pub command: Commands,
+	#[command(subcommand)]
+	pub command: Commands,
 
-    /// Prints help information.
-    #[arg(
+	/// Prints help information.
+	#[arg(
         short,
         long,
         action = ArgAction::Help,
@@ -38,10 +44,10 @@ pub struct Cli {
         help = "Prints help information",
         help_heading = Some("FLAGS"),
     )]
-    pub help: Option<bool>,
+	pub help: Option<bool>,
 
-    /// Prints version information.
-    #[arg(
+	/// Prints version information.
+	#[arg(
         short = 'V',
         long,
         action = ArgAction::Help,
@@ -49,39 +55,39 @@ pub struct Cli {
         help = "Prints version information",
         help_heading = Some("FLAGS"),
     )]
-    pub version: Option<bool>,
+	pub version: Option<bool>,
 
-    /// Increases the logging verbosity.
-    #[arg(
+	/// Increases the logging verbosity.
+	#[arg(
         short,
         long,
         action = ArgAction::Count,
         alias = "debug",
         help_heading = Some("FLAGS"),
     )]
-    pub verbose: u8,
+	pub verbose: u8,
 }
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
-    /// Parse and convert Markdown files.
-    Parse(ParseArgs),
+	/// Parse and convert Markdown files.
+	Parse(ParseArgs),
 }
 
 #[derive(Debug, Args)]
 pub struct ParseArgs {
-    /// Sets the markdown file to convert.
-    #[arg(
+	/// Sets the markdown file to convert.
+	#[arg(
         short,
         long,
         value_name = "PATH",
         value_parser = Cli::parse_dir,
         help_heading = Some("OPTIONS"),
     )]
-    pub input: Option<PathBuf>,
+	pub input: Option<PathBuf>,
 
-    /// Sets file format for the output file.
-    #[arg(
+	/// Sets file format for the output file.
+	#[arg(
         long,
         short,
         value_enum,
@@ -89,36 +95,36 @@ pub struct ParseArgs {
         default_value_t = OutputFileFormat::Pdf,
         help_heading = Some("OPTIONS"),
     )]
-    pub output: OutputFileFormat,
+	pub output: OutputFileFormat,
 }
 
 impl Cli {
-    /// Custom string parser for directories.
-    ///
-    /// Expands the tilde (`~`) character in the beginning of the
-    /// input string into contents of the path returned by [`home_dir`].
-    ///
-    /// [`home_dir`]: dirs::home_dir
-    fn parse_dir(dir: &str) -> Result<PathBuf, String> {
-        Ok(PathBuf::from(shellexpand::tilde(dir).to_string()))
-    }
+	/// Custom string parser for directories.
+	///
+	/// Expands the tilde (`~`) character in the beginning of the
+	/// input string into contents of the path returned by [`home_dir`].
+	///
+	/// [`home_dir`]: dirs::home_dir
+	fn parse_dir(dir: &str) -> Result<PathBuf, String> {
+		Ok(PathBuf::from(shellexpand::tilde(dir).to_string()))
+	}
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use clap::CommandFactory;
+	use super::*;
+	use clap::CommandFactory;
 
-    #[test]
-    fn verify_cli() {
-        Cli::command().debug_assert();
-    }
+	#[test]
+	fn verify_cli() {
+		Cli::command().debug_assert();
+	}
 
-    #[test]
-    fn path_tilde_expansion() {
-        let home_dir =
-            dirs::home_dir().expect("cannot retrieve home directory");
-        let dir = Cli::parse_dir("~/").expect("cannot expand tilde");
-        assert_eq!(home_dir, dir);
-    }
+	#[test]
+	fn path_tilde_expansion() {
+		let home_dir =
+			dirs::home_dir().expect("cannot retrieve home directory");
+		let dir = Cli::parse_dir("~/").expect("cannot expand tilde");
+		assert_eq!(home_dir, dir);
+	}
 }

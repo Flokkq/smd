@@ -4,7 +4,7 @@ use clap::Parser;
 use smd::args::Cli;
 
 fn main() {
-    let _ = Cli::parse();
+	let _ = Cli::parse();
 
-    process::exit(0);
+	process::exit(0);
 }
