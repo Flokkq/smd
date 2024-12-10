@@ -11,6 +11,10 @@ pub enum Error {
 
 	#[error("Deserialization error: `{0}`")]
 	DeserializeError(String),
+
+	/// A possible error while initializing the logger.
+	#[error("Logger error: `{0}`")]
+	LoggerError(String),
 }
 
 /// Result type of the core library.
