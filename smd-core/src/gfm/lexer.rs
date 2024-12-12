@@ -1,3 +1,5 @@
+use core::fmt;
+
 use log::{
 	debug,
 	warn,
@@ -16,6 +18,12 @@ pub struct Lexer<'a> {
 #[derive(Debug)]
 pub(crate) struct ParseError<'a> {
 	pub(crate) content: &'a str,
+}
+
+impl<'a> fmt::Display for ParseError<'a> {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "{:?}", self.content)
+	}
 }
 
 impl<'a> Lexer<'a> {
@@ -40,7 +48,7 @@ impl<'a> Lexer<'a> {
 					return match self.lex_heading() {
 						Ok(t) => Some(t),
 						Err(e) => {
-							warn!("Error while lexing heading: {:?}", e);
+							warn!("Error while lexing heading: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					};
@@ -49,7 +57,7 @@ impl<'a> Lexer<'a> {
 					return match self.lex_newlines() {
 						Ok(t) => Some(t),
 						Err(e) => {
-							warn!("Error while lexing newline: {:?}", e);
+							warn!("Error while lexing newline: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					}
@@ -58,7 +66,7 @@ impl<'a> Lexer<'a> {
 					return match self.lex_tabs_spaces(&tokens) {
 						Ok(t) => Some(t),
 						Err(e) => {
-							warn!("Error while lexing whitespaces: {:?}", e);
+							warn!("Error while lexing whitespaces: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					}
