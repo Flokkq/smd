@@ -12,9 +12,28 @@ pub enum Error {
 	#[error("Deserialization error: `{0}`")]
 	DeserializeError(String),
 
+	/// Error that may occur while parsing the config file.
+	#[error("Cannot parse config: `{0}`")]
+	ConfigReadError(#[from] config::ConfigError),
+
+	/// Error that may occur while writing the config file.
+	#[error("Configuration error: `{0}`")]
+	ConfigWriteError(#[from] toml::ser::Error),
+
+	/// When the config has invalid values.
+	#[error("Invalid config: `{0}`")]
+	ConfigValidatioinError(String),
+
+	/// When the configuration file already exists.
+	#[error("`{0}` already exists! Please back it up before continuing.")]
+	ConfigAlreadyExistsError(String),
+
 	/// A possible error while initializing the logger.
 	#[error("Logger error: `{0}`")]
 	LoggerError(String),
+
+	#[error("Custom error: `{0}`")]
+	CustomError(String),
 }
 
 /// Result type of the core library.

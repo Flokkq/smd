@@ -69,13 +69,17 @@ pub struct Cli {
 	pub verbose: u8,
 }
 
-#[derive(Debug, Subcommand)]
+#[derive(Debug, Subcommand, PartialEq)]
 pub enum Commands {
 	/// Parse and convert Markdown files.
 	Parse(ParseArgs),
+
+	/// Writes the default configuration to the systems configuration
+	/// diretctory
+	Initialize,
 }
 
-#[derive(Debug, Args)]
+#[derive(Debug, Args, PartialEq)]
 pub struct ParseArgs {
 	/// Sets the markdown file to convert.
 	#[arg(

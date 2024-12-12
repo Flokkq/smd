@@ -6,3 +6,9 @@ pub mod gfm;
 
 /// IO with for custom structs
 pub mod fs;
+
+/// Config file parser.
+pub mod config;
+
+/// Default configuration file.
+pub const DEFAULT_CONFIG: &str = "smd/config.toml";

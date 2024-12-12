@@ -4,9 +4,14 @@ use args::{
 };
 use log::info;
 use smd_core::{
-	error::Result,
+	config::Config,
+	error::{
+		Error,
+		Result,
+	},
 	fs,
 	gfm,
+	DEFAULT_CONFIG,
 };
 
 pub mod args;
@@ -16,6 +21,10 @@ const HTML_FILE_ENDING: &str = "html";
 
 /// Runs `smd`.
 pub fn run(cli: Cli) -> Result<()> {
+	if Commands::Initialize == cli.commands {
+		return initialize();
+	}
+
 	match cli.commands {
 		Commands::Parse(args) => {
 			let content = fs::read_to_string(&args.input)?;
@@ -32,6 +41,28 @@ pub fn run(cli: Cli) -> Result<()> {
 				return Ok(());
 			}
 		}
+
+		_ => unreachable!(),
 	}
 	return Ok(());
+}
+
+fn initialize() -> Result<()> {
+	let config = Config::default();
+	let toml = toml::to_string_pretty(&config)?;
+
+	let path = dirs::config_dir().unwrap_or_default().join(DEFAULT_CONFIG);
+
+	if path.exists() {
+		return Err(Error::ConfigAlreadyExistsError(
+			path.to_string_lossy().to_string(),
+		));
+	}
+
+	if let Some(parent) = path.parent() {
+		std::fs::create_dir_all(parent)?;
+	}
+	fs::write_to_file(&path, &toml)?;
+
+	Ok(())
 }
