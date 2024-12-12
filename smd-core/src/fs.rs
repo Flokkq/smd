@@ -6,7 +6,11 @@ use log::{
 
 use crate::error::Result;
 use std::{
-	fs,
+	fs::{
+		self,
+		File,
+	},
+	io::Write,
 	path::PathBuf,
 };
 
@@ -29,7 +33,30 @@ pub fn read_to_string(path: &PathBuf) -> Result<String> {
 			Ok(content)
 		}
 		Err(e) => {
-			error!("Failed to read file: {}. Error: {}", path.display(), e);
+			error!("Failed to read file: {}", path.display());
+			Err(e.into())
+		}
+	}
+}
+
+/// Writes the contents of a string to a file.
+pub fn write_to_file(path: &PathBuf, content: &str) -> Result<()> {
+	let path_str = path.to_string_lossy();
+	let line_count = content.lines().count();
+
+	debug!("Attempting to write file: {}", path_str);
+
+	let mut file = File::create(path)?;
+	match file.write(content.as_bytes()) {
+		Ok(bytes_written) => {
+			info!(
+				"\"{}\" {}L, {}B written",
+				path_str, line_count, bytes_written
+			);
+			Ok(())
+		}
+		Err(e) => {
+			error!("Failed to write file: {}", path_str);
 			Err(e.into())
 		}
 	}
@@ -77,7 +104,6 @@ mod tests {
 	use crate::error::Error;
 
 	use super::*;
-	use std::fs;
 
 	#[derive(Debug, PartialEq)]
 	struct MyStruct {
@@ -138,7 +164,7 @@ mod tests {
 	#[test]
 	fn test_read_to_string() {
 		let test_path = PathBuf::from("test_file.txt");
-		fs::write(&test_path, "Test Content")
+		write_to_file(&test_path, "Test Content")
 			.expect("Failed to write test file");
 		let content = read_to_string(&test_path).expect("Failed to read file");
 		assert_eq!(content, "Test Content");
@@ -158,7 +184,8 @@ mod tests {
 	#[test]
 	fn test_decode_from_file() {
 		let test_path = PathBuf::from("decode_test_file.txt");
-		fs::write(&test_path, "Test:42").expect("Failed to write test file");
+		write_to_file(&test_path, "Test:42")
+			.expect("Failed to write test file");
 
 		let decoded: MyStruct =
 			decode_from_file(test_path.clone()).expect("Decoding failed");
