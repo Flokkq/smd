@@ -96,3 +96,6 @@ tests/rustdoc-gui/src/**.lock
 # already existing elements were commented out
 
 #/target
+
+*.html
+*.pdf
