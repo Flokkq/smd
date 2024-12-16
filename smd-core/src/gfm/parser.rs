@@ -8,8 +8,22 @@ use super::{
 pub struct Parser {}
 
 impl Parser {
-	/// Render HTML from a source markdown string
-	/// Output is sanitized to prevent script injection
+	/// Converts a Markdown string into sanitized HTML.
+	///
+	/// This function takes a Markdown-formatted string and returns its HTML
+	/// representation, ensuring that the output is safe from script injection.
+	///
+	/// ### Example
+	///
+	/// ```rust
+	/// let markdown = "| foo | bar |\n| --- | --- |\n| baz | bim |\n";
+	/// let html = Parser::render(markdown);
+	/// let expected_html = "\
+	/// <table>\n<thead>\n<tr>\n<th>foo</th>\n<th>bar</th>\n</tr>\n</thead>\n<tbody>\\
+	///                      n<tr>\n<td>baz</td>\n<td>bim</td>\n</tr>\n</tbody>\\
+	///                      n</table>\n";
+	/// assert_eq!(html, expected_html);
+	/// ```
 	pub fn render(source: &str) -> String {
 		debug!("Rendering source of length: {}", source.len());
 		return Self::parse(&Self::lex(source, &[]));
