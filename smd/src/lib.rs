@@ -11,7 +11,6 @@ use smd_core::{
 	},
 	fs,
 	gfm,
-	DEFAULT_CONFIG,
 };
 
 pub mod args;
@@ -22,8 +21,11 @@ const HTML_FILE_ENDING: &str = "html";
 /// Runs `smd`.
 pub fn run(cli: Cli) -> Result<()> {
 	if Commands::Initialize == cli.commands {
-		return initialize();
+		return Config::initialize();
 	}
+
+	// TODO: use config in parser & convert trait
+	let _config = Config::load_config()?;
 
 	match cli.commands {
 		Commands::Parse(args) => {
@@ -45,24 +47,4 @@ pub fn run(cli: Cli) -> Result<()> {
 		_ => unreachable!(),
 	}
 	return Ok(());
-}
-
-fn initialize() -> Result<()> {
-	let config = Config::default();
-	let toml = toml::to_string_pretty(&config)?;
-
-	let path = dirs::config_dir().unwrap_or_default().join(DEFAULT_CONFIG);
-
-	if path.exists() {
-		return Err(Error::ConfigAlreadyExistsError(
-			path.to_string_lossy().to_string(),
-		));
-	}
-
-	if let Some(parent) = path.parent() {
-		std::fs::create_dir_all(parent)?;
-	}
-	fs::write_to_file(&path, &toml)?;
-
-	Ok(())
 }

@@ -1,4 +1,10 @@
-use crate::error::Result;
+use crate::error::Error;
+use crate::fs;
+
+use crate::{
+	error::Result,
+	DEFAULT_CONFIG,
+};
 use serde::{
 	Deserialize,
 	Serialize,
@@ -41,6 +47,38 @@ impl Config {
 			.add_source(config::Environment::with_prefix("SMD").separator("__"))
 			.build()?
 			.try_deserialize()?)
+	}
+
+	pub fn load_config() -> Result<Config> {
+		let config_path =
+			dirs::config_dir().unwrap_or_default().join(DEFAULT_CONFIG);
+		if config_path.exists() {
+			let content = fs::read_to_string(&config_path)?;
+			let config = Self::parse_from_str(&content)?;
+			return Ok(config);
+		}
+
+		Ok(Self::default())
+	}
+
+	pub fn initialize() -> Result<()> {
+		let config = Config::default();
+		let toml = toml::to_string_pretty(&config)?;
+
+		let path = dirs::config_dir().unwrap_or_default().join(DEFAULT_CONFIG);
+
+		if path.exists() {
+			return Err(Error::ConfigAlreadyExistsError(
+				path.to_string_lossy().to_string(),
+			));
+		}
+
+		if let Some(parent) = path.parent() {
+			std::fs::create_dir_all(parent)?;
+		}
+		fs::write_to_file(&path, &toml)?;
+
+		Ok(())
 	}
 }
 
