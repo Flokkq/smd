@@ -32,6 +32,10 @@ pub enum Error {
 	#[error("Logger error: `{0}`")]
 	LoggerError(String),
 
+	/// Error that may occur while instatiating a new browser-session
+	#[error("Headless-chrome error: `{0}`")]
+	BrowserError(String),
+
 	#[error("Custom error: `{0}`")]
 	CustomError(String),
 }

@@ -10,5 +10,8 @@ pub mod fs;
 /// Config file parser.
 pub mod config;
 
+/// Wrapper for the headless-chrome crate
+pub mod browser;
+
 /// Default configuration file.
 pub const DEFAULT_CONFIG: &str = "smd/config.toml";
