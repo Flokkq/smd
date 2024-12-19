@@ -10,6 +10,9 @@ pub mod fs;
 /// Config file parser.
 pub mod config;
 
+/// Convert html to other file formats.
+pub mod convert;
+
 /// Wrapper for the headless-chrome crate
 pub mod browser;
 

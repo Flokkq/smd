@@ -62,6 +62,25 @@ pub fn write_to_file(path: &PathBuf, content: &str) -> Result<()> {
 	}
 }
 
+/// Writes bytes to a file.
+pub fn write_bytes(path: &PathBuf, bytes: &Vec<u8>) -> Result<()> {
+	let path_str = path.to_string_lossy();
+
+	debug!("Attempting to write file: {}", path_str);
+
+	let mut file = File::create(path)?;
+	match file.write(bytes) {
+		Ok(bytes_written) => {
+			info!("\"{}\", {}B written", path_str, bytes_written);
+			Ok(())
+		}
+		Err(e) => {
+			error!("Failed to write file: {}", path_str);
+			Err(e.into())
+		}
+	}
+}
+
 /// Serialize an object to a string.
 pub fn encode_to_string<T>(value: &T) -> Result<String>
 where

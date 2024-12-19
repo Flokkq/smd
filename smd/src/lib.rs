@@ -5,6 +5,10 @@ use args::{
 use log::info;
 use smd_core::{
 	config::Config,
+	convert::{
+		self,
+		PDFConverter,
+	},
 	error::{
 		Error,
 		Result,
@@ -17,6 +21,7 @@ pub mod args;
 pub mod logger;
 
 const HTML_FILE_ENDING: &str = "html";
+const PDF_FILE_ENDING: &str = "pdf";
 
 /// Runs `smd`.
 pub fn run(cli: Cli) -> Result<()> {
@@ -42,6 +47,16 @@ pub fn run(cli: Cli) -> Result<()> {
 
 				return Ok(());
 			}
+
+			let converted = match args.output {
+				args::OutputFileFormat::Pdf => {
+					out_path.set_extension(PDF_FILE_ENDING);
+					convert::convert_html::<PDFConverter>(&content)?
+				}
+				_ => unreachable!(),
+			};
+
+			fs::write_bytes(&out_path, &converted)?;
 		}
 
 		_ => unreachable!(),
