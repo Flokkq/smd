@@ -27,6 +27,7 @@
             git-cliff
 
             act
+            cargo-tarpaulin
 
             pkg-config
             openssl
