@@ -71,6 +71,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0" => {
+					return match self.lex_numbers() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing newline: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				_ => {
 					if let Some(c) = self.iter.next() {
 						return Some(Token::Plaintext(c.to_string()));
@@ -204,5 +213,29 @@ impl<'a> Lexer<'a> {
 		return Err(ParseError {
 			content: self.iter.get_substring_from(start_index).unwrap_or(""),
 		});
+	}
+
+	fn lex_numbers(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let c = self.iter.next().unwrap();
+		match self.iter.next_if_eq(".") {
+			Some(".") => {
+				if self.iter.next_if_eq(" ") != Some(&" ") {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+
+				let s = self
+					.iter
+					.consume_while_case_holds(&|c| c != "\n")
+					.unwrap_or("");
+				return Ok(Token::OrderedListEntry(s.to_string()));
+			}
+			_ => return Err(ParseError { content: c }),
+		}
 	}
 }
