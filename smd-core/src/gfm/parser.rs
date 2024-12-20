@@ -174,6 +174,19 @@ impl Parser {
 						),
 					};
 				}
+				Token::OrderedListEntry(t) => {
+					if in_ordered_list == false {
+						in_ordered_list = true;
+						html.push_str(format!("<ol>\n").as_str())
+					}
+					html.push_str(
+						format!(
+							"<li>\n{}</li>\n",
+							Self::sanitize_display_text(t)
+						)
+						.as_str(),
+					)
+				}
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
 				Token::DoubleTab => html.push_str("\t\t"),
