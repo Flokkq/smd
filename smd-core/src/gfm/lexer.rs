@@ -78,7 +78,7 @@ impl<'a> Lexer<'a> {
 					return match self.lex_numbers() {
 						Ok(t) => Some(t),
 						Err(e) => {
-							warn!("Error while lexing newline: {}", e);
+							warn!("Error while lexing number: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					}
