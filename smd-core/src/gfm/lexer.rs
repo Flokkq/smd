@@ -8,7 +8,10 @@ use log::{
 use super::{
 	iter::MarkdownIter,
 	parser::Parser,
-	token::Token,
+	token::{
+		TaskBox,
+		Token,
+	},
 };
 
 pub struct Lexer<'a> {
@@ -80,7 +83,19 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
-
+				"*" | "_" => {
+					return match self.lex_asterisk_underscore() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!(
+								"Error while lexing asterisks and \
+								 underscores: {}",
+								e
+							);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -268,5 +283,98 @@ impl<'a> Lexer<'a> {
 		}
 
 		return Err(ParseError { content: "EOF" });
+	}
+
+	fn lex_asterisk_underscore(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let asterunds = self
+			.iter
+			.consume_while_case_holds(&|c| c == "*" || c == "_" || c == "\t")
+			.unwrap_or("");
+		if asterunds.len() == 1 && self.iter.next_if_eq(&" ").is_some() {
+			let s = self
+				.iter
+				.consume_while_case_holds(&|c| c != "\n")
+				.unwrap_or("");
+			self.iter.next();
+			return Ok(Token::UnorderedListEntry(vec![Token::Plaintext(
+				s.to_string(),
+			)]));
+		}
+		if asterunds.chars().all(|x| x == '*') &&
+			self.iter.peek() == Some(&"\n")
+		{
+			return Ok(Token::HorizontalRule);
+		}
+		match asterunds.len() {
+			1 => {
+				let s = self
+					.iter
+					.consume_while_case_holds(&|c| c != "*" && c != "_")
+					.unwrap_or("");
+				if self.iter.peek() != Some("*") ||
+					self.iter.peek() != Some(&"_")
+				{
+					self.iter.next();
+					return Ok(Token::Italic(s.to_string()));
+				} else {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+			}
+			2 => {
+				let s = self
+					.iter
+					.consume_while_case_holds(&|c| c != "*" && c != "_")
+					.unwrap_or("");
+				let trailing_astunds = self
+					.iter
+					.consume_while_case_holds(&|c| c == "*" || c == "_")
+					.unwrap_or("");
+				if trailing_astunds.len() == 2 {
+					return Ok(Token::Bold(s.to_string()));
+				} else {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+			}
+			3 => {
+				let s = self
+					.iter
+					.consume_while_case_holds(&|c| c != "*" && c != "_")
+					.unwrap_or("");
+				let trailing_astunds = self
+					.iter
+					.consume_while_case_holds(&|c| c == "*" || c == "_")
+					.unwrap_or("");
+				if trailing_astunds.len() == 3 {
+					return Ok(Token::BoldItalic(s.to_string()));
+				} else {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+			}
+			_ => {
+				if asterunds.replace("\t", "").chars().all(|x| x == '*') ||
+					asterunds.chars().all(|x| x == '_')
+				{
+					return Ok(Token::HorizontalRule);
+				} else {
+					return Err(ParseError { content: asterunds });
+				}
+			}
+		}
 	}
 }
