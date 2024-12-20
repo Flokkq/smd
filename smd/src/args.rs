@@ -19,7 +19,7 @@ pub enum OutputFileFormat {
     version,
     rename_all_env = "screaming-snake",
     help_template = "\
-{before-help}{name} {version} by {author-with-newline}
+{before-help}{name} v{version} by {author-with-newline}
 {usage-heading}
   {usage}
 
