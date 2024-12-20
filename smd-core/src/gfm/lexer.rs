@@ -80,6 +80,20 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+
+				// Parse "\" to escape a markdown control character
+				"\\" => {
+					return match self.lex_escaped_character() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!(
+								"Error while lexing escaped character: {}",
+								e
+							);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				_ => {
 					if let Some(c) = self.iter.next() {
 						return Some(Token::Plaintext(c.to_string()));
@@ -237,5 +251,22 @@ impl<'a> Lexer<'a> {
 			}
 			_ => return Err(ParseError { content: c }),
 		}
+	}
+
+	fn lex_escaped_character(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		self.iter.next();
+		if self.iter.peek() == Some(&"#") {
+			let hashes = self
+				.iter
+				.consume_while_case_holds(&|c| c == "#")
+				.unwrap_or("");
+			return Ok(Token::Plaintext(hashes.to_string()));
+		} else if self.iter.peek().is_some() {
+			return Ok(Token::Plaintext(
+				self.iter.next().unwrap_or_default().to_string(),
+			));
+		}
+
+		return Err(ParseError { content: "EOF" });
 	}
 }
