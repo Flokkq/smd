@@ -33,7 +33,7 @@ impl Parser {
 		return Self::parse(&Self::lex(source, ignore));
 	}
 
-	fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
+	pub(crate) fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
 		debug!("Lexing source with ignore list: {:?}", ignore);
 		let mut l = Lexer::new(source);
 		let mut tokens = Vec::new();
@@ -99,6 +99,21 @@ impl Parser {
 				{
 					in_paragraph = false;
 					html.push_str("</p>\n")
+				}
+				Token::Plaintext(_) |
+				Token::Italic(_) |
+				Token::Bold(_) |
+				Token::BoldItalic(_) |
+				Token::Strikethrough(_) |
+				Token::Link(_, _, _)
+					if !in_paragraph =>
+				{
+					for _i in 0..quote_level {
+						html.push_str("</blockquote>");
+						quote_level -= 1;
+					}
+					in_paragraph = true;
+					html.push_str("<p>")
 				}
 				_ => {}
 			}
@@ -187,6 +202,62 @@ impl Parser {
 						.as_str(),
 					)
 				}
+				Token::UnorderedListEntry(toks) => {
+					if in_unordered_list == false {
+						in_unordered_list = true;
+						html.push_str("<ul>\n")
+					}
+
+					html.push_str(format!("<li>").as_str());
+					if toks
+						.into_iter()
+						.all(|t| matches!(t, Token::Plaintext(_)))
+					{
+						html.push_str(format!("\n").as_str());
+					}
+					for token in toks.iter() {
+						match token {
+							Token::Plaintext(text)
+								if text.starts_with("\t\t") =>
+							{
+								html.push_str(
+									&Self::render(
+										&text[1..].trim_start_matches(" "),
+									)
+									.replace("<pre><code>", "<pre><code>  "),
+								);
+							}
+							Token::Plaintext(text) => {
+								let text = &Self::render(
+									&text.trim_start_matches(" "),
+								)
+								.replace("<pre><code>", "<pre><code>  ");
+								html.push_str(text);
+							}
+							_ => {}
+						}
+					}
+					html.push_str(format!("</li>\n").as_str());
+				}
+				Token::Italic(t) => html.push_str(
+					format!("<em>{}</em>", Self::sanitize_display_text(t))
+						.as_str(),
+				),
+				Token::Bold(t) => html.push_str(
+					format!(
+						"<strong>{}</strong>",
+						Self::sanitize_display_text(t)
+					)
+					.as_str(),
+				),
+				Token::BoldItalic(t) => html.push_str(
+					format!(
+						"<strong><em>{}</em></strong>",
+						Self::sanitize_display_text(t)
+					)
+					.as_str(),
+				),
+				Token::HorizontalRule => html.push_str("<hr />\n"),
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
 				Token::DoubleTab => html.push_str("\t\t"),
@@ -201,6 +272,12 @@ impl Parser {
 			for _i in (0..quote_level).rev() {
 				html.push_str("</blockquote>\n");
 			}
+		}
+		if in_task_list | in_unordered_list {
+			html.push_str("</ul>");
+		}
+		if in_ordered_list {
+			html.push_str("</ol>");
 		}
 		if html.chars().last().unwrap_or(' ') != '\n' {
 			html.push('\n');
