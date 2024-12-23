@@ -45,9 +45,9 @@ impl<'a> Lexer<'a> {
 		ignore: &[char],
 		tokens: &Vec<Token>,
 	) -> Option<Token<'a>> {
-		while self.iter.peek().is_some() {
+		while let Some(ch) = self.iter.peek() {
 			debug!("Processing character: {:?}", self.iter.peek());
-			match self.iter.peek().unwrap() {
+			match ch {
 				"#" if !ignore.contains(&'#') => {
 					return match self.lex_heading() {
 						Ok(t) => Some(t),
