@@ -5,9 +5,10 @@ use log::{
 	warn,
 };
 
+use crate::Parser;
+
 use super::{
 	iter::MarkdownIter,
-	parser::Parser,
 	token::{
 		TaskBox,
 		Token,
