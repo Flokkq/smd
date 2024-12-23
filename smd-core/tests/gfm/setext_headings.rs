@@ -18,7 +18,7 @@ fn gfm_test_51_setext_heading_multiline_content() {
 
 #[test]
 fn gfm_test_52_setext_heading_leading_and_trailing_whitespace() {
-	let test_html = Parser::render("  Foo *bar\nbaz*→\n====\n");
+	let test_html = Parser::render("  Foo *bar\nbaz*\t\n====\n");
 	let reference_html = "<h1>Foo <em>bar\nbaz</em></h1>\n";
 	assert_eq!(test_html, reference_html);
 }
