@@ -96,6 +96,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"-" | "+" => {
+					return match self.lex_plus_minus() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing plus or minus: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				">" => {
 					return match self.lex_blockquotes() {
 						Ok(t) => Some(t),
@@ -415,5 +424,78 @@ impl<'a> Lexer<'a> {
 			.unwrap_or("");
 		self.iter.next_if_eq(&"\n");
 		Ok(Token::BlockQuote(right_arrows.len() as u8, s.to_string()))
+	}
+
+	pub(crate) fn lex_plus_minus(
+		&mut self,
+	) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let s = self
+			.iter
+			.consume_while_case_holds(&|c| c == "-" || c == "+")
+			.unwrap_or("");
+		match s.len() {
+			3..=usize::MAX => return Ok(Token::HorizontalRule),
+			2 => {
+				return Err(ParseError {
+					content: self
+						.iter
+						.get_substring_from(start_index)
+						.unwrap_or(""),
+				})
+			}
+			1 => {}
+			_ => {
+				return Err(ParseError {
+					content: "string length error",
+				})
+			}
+		}
+		let line_index = self.iter.get_index();
+		let mut list_element_tokens = vec![Token::Plaintext(
+			self.iter
+				.consume_while_case_holds(&|c| c != "\n")
+				.unwrap_or("")
+				.to_string(),
+		)];
+		while self.iter.get_substring_ahead(3) == Some("\n\n\t") {
+			self.iter.next();
+			self.iter.next();
+			self.iter.next();
+			list_element_tokens.push(Token::Plaintext(
+				self.iter
+					.consume_while_case_holds(&|c| c != "\n")
+					.unwrap_or("")
+					.to_string(),
+			));
+		}
+		let line = self.iter.get_substring_from(line_index).unwrap_or("");
+		self.iter.next_if_eq("\n");
+		if line.starts_with(" [ ] ") {
+			return Ok(Token::TaskListItem(
+				TaskBox::Unchecked,
+				line[5..].to_string(),
+			));
+		} else if line.starts_with(" [x] ") || line.starts_with(" [X] ") {
+			return Ok(Token::TaskListItem(
+				TaskBox::Checked,
+				line[5..].to_string(),
+			));
+		} else {
+			// List entries may contain other lists
+			match self.iter.peek_line_ahead() {
+				Some(s) if s.starts_with("  ") => {
+					let line = self.iter.consume_line_ahead().unwrap_or("");
+					list_element_tokens.append(&mut Parser::lex(line, &[]))
+				}
+				Some(s) if s.starts_with("\t") => {
+					let line = self.iter.consume_line_ahead().unwrap_or("");
+					list_element_tokens
+						.append(&mut Parser::lex(&line[1..], &[]))
+				}
+				_ => {}
+			}
+			return Ok(Token::UnorderedListEntry(list_element_tokens));
+		}
 	}
 }
