@@ -1,5 +1,7 @@
 use log::debug;
 
+use crate::gfm::token::TaskBox;
+
 use super::{
 	lexer::Lexer,
 	token::Token,
@@ -81,6 +83,30 @@ impl Parser {
 					}
 					in_paragraph = true;
 					html.push_str("<p>")
+				}
+				_ if in_ordered_list => {
+					in_ordered_list = false;
+					html.push_str("</ol>\n");
+					if !in_paragraph {
+						in_paragraph = true;
+						html.push_str("<p>")
+					}
+				}
+				_ if in_unordered_list => {
+					in_unordered_list = false;
+					html.push_str("</ul>\n");
+					if !in_paragraph {
+						in_paragraph = true;
+						html.push_str("<p>")
+					}
+				}
+				_ if in_task_list => {
+					in_task_list = false;
+					html.push_str("</ul>\n");
+					if !in_paragraph {
+						in_paragraph = true;
+						html.push_str("<p>")
+					}
 				}
 				Token::CodeBlock(_, _) |
 				Token::Newline |
@@ -287,6 +313,33 @@ impl Parser {
 							))
 							.replace("\t", "  "),
 						);
+					}
+				}
+				Token::TaskListItem(c, t) => {
+					if in_task_list == false {
+						in_task_list = true;
+						html.push_str("<ul class=\"contains-task-list\">")
+					}
+					match c {
+						TaskBox::Checked => html.push_str(
+							format!(
+								"<li class=\"task-list-item\"><input \
+								 type=\"checkbox\" \
+								 class=\"task-list-item-checkbox\" \
+								 checked=\"\">{}</li>",
+								Self::sanitize_display_text(t)
+							)
+							.as_str(),
+						),
+						TaskBox::Unchecked => html.push_str(
+							format!(
+								"<li class=\"task-list-item\"><input \
+								 type=\"checkbox\" \
+								 class=\"task-list-item-checkbox\">{}</li>",
+								Self::sanitize_display_text(t)
+							)
+							.as_str(),
+						),
 					}
 				}
 				Token::HorizontalRule => html.push_str("<hr />\n"),
