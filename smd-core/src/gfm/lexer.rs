@@ -96,6 +96,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				">" => {
+					return match self.lex_blockquotes() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing block quotes: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -376,5 +385,26 @@ impl<'a> Lexer<'a> {
 				}
 			}
 		}
+	}
+
+	pub fn lex_blockquotes(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let right_arrows = self
+			.iter
+			.consume_while_case_holds(&|c| c == ">")
+			.unwrap_or("");
+		match self.iter.peek() {
+			Some(" ") | Some("\t") => {}
+			_ => {
+				return Err(ParseError {
+					content: right_arrows,
+				})
+			}
+		}
+		let s = self
+			.iter
+			.consume_while_case_holds(&|c| c != "\n")
+			.unwrap_or("");
+		self.iter.next_if_eq(&"\n");
+		Ok(Token::BlockQuote(right_arrows.len() as u8, s.to_string()))
 	}
 }
