@@ -135,23 +135,29 @@ impl<'a> Lexer<'a> {
 			.iter
 			.consume_while_case_holds(&|c| c == "#")
 			.unwrap_or("");
-
 		if hashes.len() > 6 {
 			return Err(ParseError { content: hashes });
 		}
-
 		if self.iter.next_if_eq(&" ").is_none() &&
 			self.iter.next_if_eq(&"\t").is_none() &&
 			self.iter.peek() != Some(&"\n")
 		{
 			return Err(ParseError { content: hashes });
 		}
-
-		let line = self
+		let mut line = self
 			.iter
 			.consume_while_case_holds(&|c| c != "\n")
 			.unwrap_or("");
-
+		if line.contains("{#") && line.contains('}') {
+			let (heading, _title) = line.split_once("{").unwrap_or(("", ""));
+			line = line
+				.strip_prefix(&heading)
+				.unwrap()
+				.strip_prefix("{#")
+				.unwrap()
+				.strip_suffix("}")
+				.unwrap();
+		}
 		let line_without_optional_trailing_hash_sequence =
 			match line.trim_end().rsplit_once(' ') {
 				Some((left, right)) => match right.chars().all(|c| c == '#') {
@@ -160,16 +166,19 @@ impl<'a> Lexer<'a> {
 				},
 				None => line,
 			};
-
 		if line.chars().all(|c| c == '#') {
 			return Ok(Token::Header(hashes.len(), "".to_string(), None));
 		}
-
 		let parsed_line = Parser::render_ignore(
 			line_without_optional_trailing_hash_sequence
 				.trim_end_matches(&[' ', '\t']),
 			&['#'],
 		)
+		.strip_prefix("<p>")
+		.unwrap_or("")
+		.strip_suffix("</p>\n")
+		.unwrap_or("")
+		.trim()
 		.to_string();
 
 		return Ok(Token::Header(hashes.len(), parsed_line, None));
