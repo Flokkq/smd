@@ -1,5 +1,5 @@
 /// https://github.github.com/gfm
-/// Vion 0.29-gfm (2019-04-06)
+/// Version 0.29-gfm (2019-04-06)
 mod gfm {
 	mod atx_headings;
 	mod autolinks;
