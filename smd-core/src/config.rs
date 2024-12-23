@@ -17,6 +17,7 @@ pub struct Config {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+#[derive(Default)]
 pub struct ParseConfig {
 	/// Action to take when a parsing error occurs.
 	pub on_parse_error: ParseErrorAction,
@@ -28,13 +29,15 @@ pub struct ParseConfig {
 /// Actions to take when a parsing error occurs.
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum ParseErrorAction {
 	/// Abort the entire process on error.
 	Abort,
 	/// Try to skip the problematic part and continue.
 	Skip,
 	/// Include the problematic part in the output and continue.
-	Serialize,
+	#[default]
+ Serialize,
 }
 
 impl Config {
@@ -82,20 +85,7 @@ impl Config {
 	}
 }
 
-impl Default for ParseErrorAction {
-	fn default() -> Self {
-		ParseErrorAction::Serialize
-	}
-}
 
-impl Default for ParseConfig {
-	fn default() -> Self {
-		Self {
-			on_parse_error:  ParseErrorAction::default(),
-			keep_temp_files: false,
-		}
-	}
-}
 
 #[cfg(test)]
 mod tests {

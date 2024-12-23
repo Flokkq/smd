@@ -104,12 +104,12 @@ impl<'a> MarkdownIter<'a> {
 	pub fn peek_line_ahead(&self) -> Option<&'a str> {
 		match self.find_next("\n") {
 			Some(newline_index) => {
-				return self
+				self
 					.the_str
 					.get(self.index..=(self.index + newline_index))
 			}
 			None if self.peek().is_some() => {
-				return self.the_str.get(self.index..=(self.the_str.len() - 1))
+				self.the_str.get(self.index..=(self.the_str.len() - 1))
 			}
 			_ => None,
 		}
@@ -121,13 +121,13 @@ impl<'a> MarkdownIter<'a> {
 				let ret =
 					self.the_str.get(self.index..=(self.index + newline_index));
 				self.update_index_to(self.index + newline_index + 1);
-				return ret;
+				ret
 			}
 			None if self.peek().is_some() => {
 				let ret =
 					self.the_str.get(self.index..=(self.the_str.len() - 1));
 				self.update_index_to(self.the_str.len());
-				return ret;
+				ret
 			}
 			_ => None,
 		}
@@ -141,7 +141,7 @@ mod tests {
 	#[test]
 	fn peek_does_not_advance() {
 		let some_text = "this is some plaintext";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("t"), some_text_iter.peek());
 		assert_eq!(Some("t"), some_text_iter.peek());
 		assert_eq!(Some("t"), some_text_iter.next());
@@ -150,7 +150,7 @@ mod tests {
 	#[test]
 	fn peek_does_not_advance_utf() {
 		let some_text = "الْأَ";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("ا"), some_text_iter.peek());
 		assert_eq!(Some("ا"), some_text_iter.peek());
 		assert_eq!(Some("ا"), some_text_iter.next());
@@ -160,7 +160,7 @@ mod tests {
 	fn modern_standard_arabic_test() {
 		let some_text = "الْﺦﷺأَ"; // لْ is a weird character. 2 bytes are valid for the base and two more
 						   // add the little circle on top.
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("الْﺦﷺأَ"), some_text_iter.consume_line_ahead());
 		assert_eq!(None, some_text_iter.next());
 	}
@@ -168,7 +168,7 @@ mod tests {
 	#[test]
 	fn consume_until_end_consumes_full_string() {
 		let some_text = "this is some plaintext";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(
 			Some("this is some plaintext"),
 			some_text_iter.consume_until_end()
@@ -179,7 +179,7 @@ mod tests {
 	#[test]
 	fn next_advances_utf_correctly() {
 		let some_text = "اa木b겅c€d𐍈e";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("ا"), some_text_iter.next());
 		assert_eq!(Some("a"), some_text_iter.peek());
 		assert_eq!(Some("a"), some_text_iter.next());
@@ -199,7 +199,7 @@ mod tests {
 	#[test]
 	fn test_slashes() {
 		let slashes = "¯\\\\\\\\\\¯";
-		let mut slash_iter = MarkdownIter::new(&slashes);
+		let mut slash_iter = MarkdownIter::new(slashes);
 		assert_eq!(Some("¯"), slash_iter.peek());
 		assert_eq!(Some("¯"), slash_iter.next());
 		assert_eq!(Some("\\"), slash_iter.peek());
@@ -215,7 +215,7 @@ mod tests {
 	#[test]
 	fn general_iter_test() {
 		let some_text = "this is some plaintext";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("t"), some_text_iter.peek());
 		assert_eq!(Some("t"), some_text_iter.peek());
 		assert_eq!(Some("t"), some_text_iter.next());
@@ -231,7 +231,7 @@ mod tests {
 		assert_eq!(None, some_text_iter.next());
 
 		let other_text = "jkfsgbkfgbdklfdsbh gkhsdfbg <details> and more chars";
-		let mut other_text_iter = MarkdownIter::new(&other_text);
+		let mut other_text_iter = MarkdownIter::new(other_text);
 		assert_eq!(
 			Some("jkfsgbkfgbdklfdsbh gkhsdfbg <details>"),
 			other_text_iter.consume_until_tail_is("<details>")
@@ -247,7 +247,7 @@ mod tests {
 	fn consume_peek_line_test() {
 		let some_text = "this is some plaintext in a line\nAnd a new line \
 		                 with more content";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(
 			Some("this is some plaintext in a line\n"),
 			some_text_iter.peek_line_ahead()
@@ -274,7 +274,7 @@ mod tests {
 	#[test]
 	fn test_degenerate_newlines() {
 		let some_text = "\n\n\n\n\nfoo\n";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("\n"), some_text_iter.peek_line_ahead());
 		assert_eq!(Some("\n"), some_text_iter.consume_line_ahead());
 		assert_eq!(Some("\n"), some_text_iter.consume_line_ahead());
@@ -288,7 +288,7 @@ mod tests {
 	#[test]
 	fn test_mixed_chars() {
 		let some_text = "  - foo\n\n\tbar\n";
-		let mut some_text_iter = MarkdownIter::new(&some_text);
+		let mut some_text_iter = MarkdownIter::new(some_text);
 		assert_eq!(Some("  - foo\n"), some_text_iter.consume_line_ahead());
 		assert_eq!(Some("\n"), some_text_iter.consume_line_ahead());
 		assert_eq!(Some("\tbar\n"), some_text_iter.consume_line_ahead());

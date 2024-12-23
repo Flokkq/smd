@@ -112,9 +112,9 @@ impl Cli {
 	///
 	/// [`home_dir`]: dirs::home_dir
 	fn parse_dir(dir: &str) -> Result<PathBuf, String> {
-		Ok(PathBuf::from(shellexpand::tilde(dir).to_string())
+		PathBuf::from(shellexpand::tilde(dir).to_string())
 			.canonicalize()
-			.map_err(|e| format!("Failed to canonicalize file path: {}", e))?)
+			.map_err(|e| format!("Failed to canonicalize file path: {}", e))
 	}
 }
 

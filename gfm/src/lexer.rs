@@ -24,7 +24,7 @@ pub(crate) struct ParseError<'a> {
 	pub(crate) content: &'a str,
 }
 
-impl<'a> fmt::Display for ParseError<'a> {
+impl fmt::Display for ParseError<'_> {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		write!(f, "{:?}", self.content)
 	}
@@ -67,7 +67,7 @@ impl<'a> Lexer<'a> {
 					}
 				}
 				" " | "\t" => {
-					return match self.lex_tabs_spaces(&tokens) {
+					return match self.lex_tabs_spaces(tokens) {
 						Ok(t) => Some(t),
 						Err(e) => {
 							warn!("Error while lexing whitespaces: {}", e);
@@ -148,9 +148,9 @@ impl<'a> Lexer<'a> {
 		if hashes.len() > 6 {
 			return Err(ParseError { content: hashes });
 		}
-		if self.iter.next_if_eq(&" ").is_none() &&
-			self.iter.next_if_eq(&"\t").is_none() &&
-			self.iter.peek() != Some(&"\n")
+		if self.iter.next_if_eq(" ").is_none() &&
+			self.iter.next_if_eq("\t").is_none() &&
+			self.iter.peek() != Some("\n")
 		{
 			return Err(ParseError { content: hashes });
 		}
@@ -161,7 +161,7 @@ impl<'a> Lexer<'a> {
 		if line.contains("{#") && line.contains('}') {
 			let (heading, _title) = line.split_once("{").unwrap_or(("", ""));
 			line = line
-				.strip_prefix(&heading)
+				.strip_prefix(heading)
 				.unwrap()
 				.strip_prefix("{#")
 				.unwrap()
@@ -181,7 +181,7 @@ impl<'a> Lexer<'a> {
 		}
 		let parsed_line = Parser::render_ignore(
 			line_without_optional_trailing_hash_sequence
-				.trim_end_matches(&[' ', '\t']),
+				.trim_end_matches([' ', '\t']),
 			&['#'],
 		)
 		.strip_prefix("<p>")
@@ -191,14 +191,14 @@ impl<'a> Lexer<'a> {
 		.trim()
 		.to_string();
 
-		return Ok(Token::Header(hashes.len(), parsed_line, None));
+		Ok(Token::Header(hashes.len(), parsed_line, None))
 	}
 
 	fn lex_newlines(&mut self) -> Result<Token<'a>, ParseError<'a>> {
 		match self.iter.consume_while_case_holds(&|c| c == "\n") {
-			Some(s) if s.len() >= 2 => return Ok(Token::Newline),
-			Some(s) if s.len() < 2 => return Err(ParseError { content: s }),
-			_ => return Err(ParseError { content: "" }),
+			Some(s) if s.len() >= 2 => Ok(Token::Newline),
+			Some(s) if s.len() < 2 => Err(ParseError { content: s }),
+			_ => Err(ParseError { content: "" }),
 		}
 	}
 
@@ -247,7 +247,7 @@ impl<'a> Lexer<'a> {
 			}
 			"\t" | "    " | "  \t" => return Ok(Token::Code(line.to_string())),
 			"\t\t" => {
-				return Ok(Token::Code("\t".to_owned() + &line.to_string()))
+				return Ok(Token::Code("\t".to_owned() + line))
 			}
 			_ => {}
 		}
@@ -267,9 +267,9 @@ impl<'a> Lexer<'a> {
 				Ok(_) => return Err(ParseError { content: "" }),
 			}
 		}
-		return Err(ParseError {
+		Err(ParseError {
 			content: self.iter.get_substring_from(start_index).unwrap_or(""),
-		});
+		})
 	}
 
 	fn lex_numbers(&mut self) -> Result<Token<'a>, ParseError<'a>> {
@@ -277,7 +277,7 @@ impl<'a> Lexer<'a> {
 		let c = self.iter.next().unwrap();
 		match self.iter.next_if_eq(".") {
 			Some(".") => {
-				if self.iter.next_if_eq(" ") != Some(&" ") {
+				if self.iter.next_if_eq(" ") != Some(" ") {
 					return Err(ParseError {
 						content: self
 							.iter
@@ -290,15 +290,15 @@ impl<'a> Lexer<'a> {
 					.iter
 					.consume_while_case_holds(&|c| c != "\n")
 					.unwrap_or("");
-				return Ok(Token::OrderedListEntry(s.to_string()));
+				Ok(Token::OrderedListEntry(s.to_string()))
 			}
-			_ => return Err(ParseError { content: c }),
+			_ => Err(ParseError { content: c }),
 		}
 	}
 
 	fn lex_escaped_character(&mut self) -> Result<Token<'a>, ParseError<'a>> {
 		self.iter.next();
-		if self.iter.peek() == Some(&"#") {
+		if self.iter.peek() == Some("#") {
 			let hashes = self
 				.iter
 				.consume_while_case_holds(&|c| c == "#")
@@ -310,7 +310,7 @@ impl<'a> Lexer<'a> {
 			));
 		}
 
-		return Err(ParseError { content: "EOF" });
+		Err(ParseError { content: "EOF" })
 	}
 
 	fn lex_asterisk_underscore(&mut self) -> Result<Token<'a>, ParseError<'a>> {
@@ -319,7 +319,7 @@ impl<'a> Lexer<'a> {
 			.iter
 			.consume_while_case_holds(&|c| c == "*" || c == "_" || c == "\t")
 			.unwrap_or("");
-		if asterunds.len() == 1 && self.iter.next_if_eq(&" ").is_some() {
+		if asterunds.len() == 1 && self.iter.next_if_eq(" ").is_some() {
 			let s = self
 				.iter
 				.consume_while_case_holds(&|c| c != "\n")
@@ -330,7 +330,7 @@ impl<'a> Lexer<'a> {
 			)]));
 		}
 		if asterunds.chars().all(|x| x == '*') &&
-			self.iter.peek() == Some(&"\n")
+			self.iter.peek() == Some("\n")
 		{
 			return Ok(Token::HorizontalRule);
 		}
@@ -341,17 +341,17 @@ impl<'a> Lexer<'a> {
 					.consume_while_case_holds(&|c| c != "*" && c != "_")
 					.unwrap_or("");
 				if self.iter.peek() != Some("*") ||
-					self.iter.peek() != Some(&"_")
+					self.iter.peek() != Some("_")
 				{
 					self.iter.next();
-					return Ok(Token::Italic(s.to_string()));
+					Ok(Token::Italic(s.to_string()))
 				} else {
-					return Err(ParseError {
+					Err(ParseError {
 						content: self
 							.iter
 							.get_substring_from(start_index)
 							.unwrap_or(""),
-					});
+					})
 				}
 			}
 			2 => {
@@ -364,14 +364,14 @@ impl<'a> Lexer<'a> {
 					.consume_while_case_holds(&|c| c == "*" || c == "_")
 					.unwrap_or("");
 				if trailing_astunds.len() == 2 {
-					return Ok(Token::Bold(s.to_string()));
+					Ok(Token::Bold(s.to_string()))
 				} else {
-					return Err(ParseError {
+					Err(ParseError {
 						content: self
 							.iter
 							.get_substring_from(start_index)
 							.unwrap_or(""),
-					});
+					})
 				}
 			}
 			3 => {
@@ -384,23 +384,23 @@ impl<'a> Lexer<'a> {
 					.consume_while_case_holds(&|c| c == "*" || c == "_")
 					.unwrap_or("");
 				if trailing_astunds.len() == 3 {
-					return Ok(Token::BoldItalic(s.to_string()));
+					Ok(Token::BoldItalic(s.to_string()))
 				} else {
-					return Err(ParseError {
+					Err(ParseError {
 						content: self
 							.iter
 							.get_substring_from(start_index)
 							.unwrap_or(""),
-					});
+					})
 				}
 			}
 			_ => {
 				if asterunds.replace("\t", "").chars().all(|x| x == '*') ||
 					asterunds.chars().all(|x| x == '_')
 				{
-					return Ok(Token::HorizontalRule);
+					Ok(Token::HorizontalRule)
 				} else {
-					return Err(ParseError { content: asterunds });
+					Err(ParseError { content: asterunds })
 				}
 			}
 		}
@@ -423,7 +423,7 @@ impl<'a> Lexer<'a> {
 			.iter
 			.consume_while_case_holds(&|c| c != "\n")
 			.unwrap_or("");
-		self.iter.next_if_eq(&"\n");
+		self.iter.next_if_eq("\n");
 		Ok(Token::BlockQuote(right_arrows.len() as u8, s.to_string()))
 	}
 
@@ -473,10 +473,10 @@ impl<'a> Lexer<'a> {
 		let line = self.iter.get_substring_from(line_index).unwrap_or("");
 		self.iter.next_if_eq("\n");
 		if line.starts_with(" [ ] ") {
-			return Ok(Token::TaskListItem(
+			Ok(Token::TaskListItem(
 				TaskBox::Unchecked,
 				line[5..].to_string(),
-			));
+			))
 		} else if line.starts_with(" [x] ") || line.starts_with(" [X] ") {
 			return Ok(Token::TaskListItem(
 				TaskBox::Checked,

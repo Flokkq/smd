@@ -9,10 +9,7 @@ use smd_core::{
 		self,
 		PDFConverter,
 	},
-	error::{
-		Error,
-		Result,
-	},
+	error::Result,
 	fs,
 };
 
@@ -60,5 +57,5 @@ pub fn run(cli: Cli) -> Result<()> {
 
 		_ => unreachable!(),
 	}
-	return Ok(());
+	Ok(())
 }

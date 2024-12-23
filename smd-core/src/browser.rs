@@ -20,9 +20,9 @@ impl BrowserSession {
 	/// Initializes a new browser session.
 	pub fn initialize() -> Result<Self> {
 		let browser = Browser::default().map_err(|_| {
-			return Error::BrowserError(
+			Error::BrowserError(
 				"Failed to initialze headless_chrome session.".to_string(),
-			);
+			)
 		})?;
 
 		Ok(BrowserSession(browser))
@@ -35,19 +35,19 @@ impl BrowserSession {
 		let file_url = format!("file://{}", html_file_path.to_string_lossy());
 
 		let tab = self.0.new_tab().map_err(|_| {
-			return Error::BrowserError("Failed to open new tab.".to_string());
+			Error::BrowserError("Failed to open new tab.".to_string())
 		})?;
 
 		tab.navigate_to(&file_url).map_err(|_| {
-			return Error::BrowserError(
+			Error::BrowserError(
 				"Failed to open html file.".to_string(),
-			);
+			)
 		})?;
 
 		tab.wait_until_navigated().map_err(|_| {
-			return Error::BrowserError(
+			Error::BrowserError(
 				"Failed to wait until navigation is done.".to_string(),
-			);
+			)
 		})?;
 
 		Ok(tab.get_target_id().to_string())

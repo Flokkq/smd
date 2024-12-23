@@ -56,7 +56,7 @@ pub enum Token<'a> {
 	Footnote(String, String),
 }
 
-impl<'a> fmt::Display for Token<'a> {
+impl fmt::Display for Token<'_> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
 			Token::Plaintext(t) => {
@@ -69,7 +69,7 @@ impl<'a> fmt::Display for Token<'a> {
 	}
 }
 
-impl<'a> Token<'a> {
+impl Token<'_> {
 	fn is_usable_in_table(&self) -> bool {
 		match self {
 			Token::Code(_) => true,
@@ -89,15 +89,15 @@ pub struct ValidURL<'a> {
 	scheme:  Option<Scheme<'a>>,
 }
 
-impl<'a> ValidURL<'a> {
+impl ValidURL<'_> {
 	fn fmt_unsafe(&self) -> String {
 		let amp_replace_content = self.content.replace('&', "&amp;");
 		match &self.scheme {
-			None => return format!("http:{}", amp_replace_content),
+			None => format!("http:{}", amp_replace_content),
 			Some(Scheme::Email(_s)) => {
-				return format!("{}", amp_replace_content)
+				amp_replace_content.to_string()
 			}
-			Some(s) => return format!("{}:{}", s, amp_replace_content),
+			Some(s) => format!("{}:{}", s, amp_replace_content),
 		}
 	}
 }
@@ -106,14 +106,14 @@ impl fmt::Display for ValidURL<'_> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match &self.scheme {
 			None => {
-				return write!(
+				write!(
 					f,
 					"http:{}",
 					percent_encode(self.content).replace('&', "&amp;")
 				)
 			}
 			Some(s) => {
-				return write!(
+				write!(
 					f,
 					"{}:{}",
 					s,
@@ -135,10 +135,10 @@ pub(crate) enum Scheme<'a> {
 impl fmt::Display for Scheme<'_> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			Scheme::Http(s) => return write!(f, "{}", s),
-			Scheme::Email(s) => return write!(f, "{}", s),
-			Scheme::Irc(s) => return write!(f, "{}", s),
-			Scheme::Other(s) => return write!(f, "{}", s),
+			Scheme::Http(s) => write!(f, "{}", s),
+			Scheme::Email(s) => write!(f, "{}", s),
+			Scheme::Irc(s) => write!(f, "{}", s),
+			Scheme::Other(s) => write!(f, "{}", s),
 		}
 	}
 }
@@ -177,9 +177,9 @@ pub enum Alignment {
 impl fmt::Display for Alignment {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
-			Alignment::Left => return write!(f, "left"),
-			Alignment::Right => return write!(f, "right"),
-			Alignment::Center => return write!(f, "center"),
+			Alignment::Left => write!(f, "left"),
+			Alignment::Right => write!(f, "right"),
+			Alignment::Center => write!(f, "center"),
 		}
 	}
 }

@@ -29,11 +29,11 @@ impl Parser {
 	/// ```
 	pub fn render(source: &str) -> String {
 		debug!("Rendering source of length: {}", source.len());
-		return Self::parse(&Self::lex(source, &[]));
+		Self::parse(&Self::lex(source, &[]))
 	}
 
 	pub(crate) fn render_ignore(source: &str, ignore: &[char]) -> String {
-		return Self::parse(&Self::lex(source, ignore));
+		Self::parse(&Self::lex(source, ignore))
 	}
 
 	pub(crate) fn lex<'a>(source: &'a str, ignore: &[char]) -> Vec<Token<'a>> {
@@ -49,7 +49,7 @@ impl Parser {
 		tokens
 	}
 
-	fn parse<'a>(tokens: &[Token<'a>]) -> String {
+	fn parse(tokens: &[Token<'_>]) -> String {
 		debug!("Parsing {} tokens", tokens.len());
 		let mut html = String::with_capacity(tokens.len() * 100);
 		let mut quote_level = 0;
@@ -57,10 +57,10 @@ impl Parser {
 		let mut in_paragraph = false;
 		let mut in_ordered_list = false;
 		let mut in_unordered_list = false;
-		let mut token_iter = tokens.iter().peekable();
+		let token_iter = tokens.iter().peekable();
 
 		// multi-liners
-		while let Some(token) = token_iter.next() {
+		for token in token_iter {
 			debug!("Processing token: {:?}", token);
 			match token {
 				Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
@@ -217,9 +217,9 @@ impl Parser {
 					};
 				}
 				Token::OrderedListEntry(t) => {
-					if in_ordered_list == false {
+					if !in_ordered_list {
 						in_ordered_list = true;
-						html.push_str(format!("<ol>\n").as_str())
+						html.push_str("<ol>\n".to_string().as_str())
 					}
 					html.push_str(
 						format!(
@@ -230,17 +230,17 @@ impl Parser {
 					)
 				}
 				Token::UnorderedListEntry(toks) => {
-					if in_unordered_list == false {
+					if !in_unordered_list {
 						in_unordered_list = true;
 						html.push_str("<ul>\n")
 					}
 
-					html.push_str(format!("<li>").as_str());
+					html.push_str("<li>".to_string().as_str());
 					if toks
-						.into_iter()
+						.iter()
 						.all(|t| matches!(t, Token::Plaintext(_)))
 					{
-						html.push_str(format!("\n").as_str());
+						html.push_str("\n".to_string().as_str());
 					}
 					for token in toks.iter() {
 						match token {
@@ -249,14 +249,14 @@ impl Parser {
 							{
 								html.push_str(
 									&Self::render(
-										&text[1..].trim_start_matches(" "),
+										text[1..].trim_start_matches(" "),
 									)
 									.replace("<pre><code>", "<pre><code>  "),
 								);
 							}
 							Token::Plaintext(text) => {
 								let text = &Self::render(
-									&text.trim_start_matches(" "),
+									text.trim_start_matches(" "),
 								)
 								.replace("<pre><code>", "<pre><code>  ");
 								html.push_str(text);
@@ -264,7 +264,7 @@ impl Parser {
 							_ => {}
 						}
 					}
-					html.push_str(format!("</li>\n").as_str());
+					html.push_str("</li>\n".to_string().as_str());
 				}
 				Token::Italic(t) => html.push_str(
 					format!("<em>{}</em>", Self::sanitize_display_text(t))
@@ -310,14 +310,14 @@ impl Parser {
 					if !t.is_empty() {
 						html.push_str(
 							&Self::render(&Self::sanitize_display_text(
-								&t.trim_start_matches(" "),
+								t.trim_start_matches(" "),
 							))
 							.replace("\t", "  "),
 						);
 					}
 				}
 				Token::TaskListItem(c, t) => {
-					if in_task_list == false {
+					if !in_task_list {
 						in_task_list = true;
 						html.push_str("<ul class=\"contains-task-list\">")
 					}
