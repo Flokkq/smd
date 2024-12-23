@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["smd-core", "smd"]
+members = ["smd-core", "smd", "gfm"]
 
 [workspace.dependencies]
 log = "0.4.21"

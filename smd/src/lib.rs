@@ -14,7 +14,6 @@ use smd_core::{
 		Result,
 	},
 	fs,
-	gfm,
 };
 
 pub mod args;
