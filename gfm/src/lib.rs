@@ -236,10 +236,7 @@ impl Parser {
 					}
 
 					html.push_str("<li>".to_string().as_str());
-					if toks
-						.iter()
-						.all(|t| matches!(t, Token::Plaintext(_)))
-					{
+					if toks.iter().all(|t| matches!(t, Token::Plaintext(_))) {
 						html.push_str("\n".to_string().as_str());
 					}
 					for token in toks.iter() {
@@ -255,10 +252,12 @@ impl Parser {
 								);
 							}
 							Token::Plaintext(text) => {
-								let text = &Self::render(
-									text.trim_start_matches(" "),
-								)
-								.replace("<pre><code>", "<pre><code>  ");
+								let text =
+									&Self::render(text.trim_start_matches(" "))
+										.replace(
+											"<pre><code>",
+											"<pre><code>  ",
+										);
 								html.push_str(text);
 							}
 							_ => {}

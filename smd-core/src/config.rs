@@ -16,8 +16,7 @@ pub struct Config {
 	parse: ParseConfig,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-#[derive(Default)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 pub struct ParseConfig {
 	/// Action to take when a parsing error occurs.
 	pub on_parse_error: ParseErrorAction,
@@ -37,7 +36,7 @@ pub enum ParseErrorAction {
 	Skip,
 	/// Include the problematic part in the output and continue.
 	#[default]
- Serialize,
+	Serialize,
 }
 
 impl Config {
@@ -84,8 +83,6 @@ impl Config {
 		Ok(())
 	}
 }
-
-
 
 #[cfg(test)]
 mod tests {

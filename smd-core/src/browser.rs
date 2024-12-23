@@ -39,9 +39,7 @@ impl BrowserSession {
 		})?;
 
 		tab.navigate_to(&file_url).map_err(|_| {
-			Error::BrowserError(
-				"Failed to open html file.".to_string(),
-			)
+			Error::BrowserError("Failed to open html file.".to_string())
 		})?;
 
 		tab.wait_until_navigated().map_err(|_| {

@@ -246,9 +246,7 @@ impl<'a> Lexer<'a> {
 				return Ok(Token::Code(line.to_string()))
 			}
 			"\t" | "    " | "  \t" => return Ok(Token::Code(line.to_string())),
-			"\t\t" => {
-				return Ok(Token::Code("\t".to_owned() + line))
-			}
+			"\t\t" => return Ok(Token::Code("\t".to_owned() + line)),
 			_ => {}
 		}
 
@@ -329,8 +327,7 @@ impl<'a> Lexer<'a> {
 				s.to_string(),
 			)]));
 		}
-		if asterunds.chars().all(|x| x == '*') &&
-			self.iter.peek() == Some("\n")
+		if asterunds.chars().all(|x| x == '*') && self.iter.peek() == Some("\n")
 		{
 			return Ok(Token::HorizontalRule);
 		}

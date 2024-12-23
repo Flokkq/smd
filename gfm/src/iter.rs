@@ -104,9 +104,7 @@ impl<'a> MarkdownIter<'a> {
 	pub fn peek_line_ahead(&self) -> Option<&'a str> {
 		match self.find_next("\n") {
 			Some(newline_index) => {
-				self
-					.the_str
-					.get(self.index..=(self.index + newline_index))
+				self.the_str.get(self.index..=(self.index + newline_index))
 			}
 			None if self.peek().is_some() => {
 				self.the_str.get(self.index..=(self.the_str.len() - 1))
