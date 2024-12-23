@@ -257,6 +257,38 @@ impl Parser {
 					)
 					.as_str(),
 				),
+				Token::BlockQuote(l, t) => {
+					if in_paragraph {
+						html.push_str("</p>");
+						in_paragraph = false;
+					}
+					match quote_level {
+						_ if l == &quote_level => {}
+						_ if l < &quote_level => {
+							let diff = quote_level - l;
+							quote_level = *l;
+							for _i in 0..diff {
+								html.push_str("</blockquote>");
+							}
+						}
+						_ if l > &quote_level => {
+							let diff = l - quote_level;
+							quote_level = *l;
+							for _i in 0..diff {
+								html.push_str("<blockquote>\n");
+							}
+						}
+						_ => {}
+					}
+					if !t.is_empty() {
+						html.push_str(
+							&Self::render(&Self::sanitize_display_text(
+								&t.trim_start_matches(" "),
+							))
+							.replace("\t", "  "),
+						);
+					}
+				}
 				Token::HorizontalRule => html.push_str("<hr />\n"),
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
