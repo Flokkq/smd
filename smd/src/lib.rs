@@ -47,7 +47,7 @@ pub fn run(cli: Cli) -> Result<()> {
 			let converted = match args.output {
 				args::OutputFileFormat::Pdf => {
 					out_path.set_extension(PDF_FILE_ENDING);
-					convert::convert_html::<PDFConverter>(&content)?
+					convert::convert_html::<PDFConverter>(&result)?
 				}
 				_ => unreachable!(),
 			};
