@@ -115,6 +115,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"~" => {
+					return match self.lex_tilde() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while tilde: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -494,6 +503,50 @@ impl<'a> Lexer<'a> {
 				_ => {}
 			}
 			return Ok(Token::UnorderedListEntry(list_element_tokens));
+		}
+	}
+
+	fn lex_tilde(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let lead_tildes =
+			match self.iter.consume_while_case_holds(&|s| s == "~") {
+				Some(s) => s,
+				None => {
+					return Err(ParseError {
+						content: "Failure to parse ~",
+					})
+				}
+			};
+		match lead_tildes.len() {
+			1 => {
+				return Err(ParseError {
+					content: lead_tildes,
+				})
+			}
+			2 => {
+				let line = self
+					.iter
+					.consume_while_case_holds(&|s| s != "~")
+					.unwrap_or("");
+				let tail_tildes = self
+					.iter
+					.consume_while_case_holds(&|s| s == "~")
+					.unwrap_or("");
+				if lead_tildes.len() != tail_tildes.len() {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+				return Ok(Token::Strikethrough(line.to_string()));
+			}
+			_ => {
+				return Err(ParseError {
+					content: lead_tildes,
+				})
+			}
 		}
 	}
 }
