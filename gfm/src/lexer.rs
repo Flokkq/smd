@@ -124,6 +124,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"`" => {
+					return match self.lex_backticks() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing backticks: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -548,5 +557,66 @@ impl<'a> Lexer<'a> {
 				})
 			}
 		}
+	}
+
+	fn lex_backticks(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let leading_ticks = self
+			.iter
+			.consume_while_case_holds(&|c| c == "`")
+			.unwrap_or("");
+		let mut lang = "";
+		if leading_ticks.len() == 3 {
+			if self.iter.next_if_eq("\n") != Some(&"\n") {
+				lang = self
+					.iter
+					.consume_while_case_holds(&|c| c != "\n")
+					.unwrap_or("");
+				self.iter.next();
+			}
+			let s = self
+				.iter
+				.consume_while_case_holds(&|c| c != "`")
+				.unwrap_or("");
+			let trailing_ticks = self
+				.iter
+				.consume_while_case_holds(&|c| c == "`")
+				.unwrap_or("");
+			if leading_ticks.len() != trailing_ticks.len() {
+				return Err(ParseError {
+					content: self
+						.iter
+						.get_substring_from(start_index)
+						.unwrap_or(""),
+				});
+			} else {
+				return Ok(Token::CodeBlock(s.to_string(), lang.to_string()));
+			}
+		}
+
+		// let s = self.iter.consume_while_case_holds(&|c| c != "`" && c!=
+		// "\n").unwrap_or("");
+		let tail = &(0..leading_ticks.len() as u64)
+			.map(|_| "`")
+			.collect::<String>();
+		let s = self.iter.consume_until_tail_is(tail).unwrap_or("");
+		if !s.ends_with(tail) {
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		} else {
+			let s = s.trim_end_matches(tail);
+			if s.starts_with(' ') && s.ends_with(' ') {
+				return Ok(Token::Code(
+					s.trim_start_matches(' ').trim_end_matches(' ').to_string(),
+				));
+			}
+			return Ok(Token::Code(s.to_string()));
+		}
+
+		// leading_ticks.len() == 3. Check for lang
 	}
 }
