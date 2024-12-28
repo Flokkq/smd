@@ -57,10 +57,13 @@ impl Parser {
 		let mut in_paragraph = false;
 		let mut in_ordered_list = false;
 		let mut in_unordered_list = false;
-		let token_iter = tokens.iter().peekable();
+		let mut in_code = false;
+		let mut token_iter = tokens.iter().peekable();
 
 		// multi-liners
-		for token in token_iter {
+		while token_iter.peek().is_some() {
+			let token = token_iter.next().unwrap();
+
 			debug!("Processing token: {:?}", token);
 			match token {
 				Token::Plaintext(t) if t.trim().is_empty() => {} // ignore
@@ -126,6 +129,10 @@ impl Parser {
 				{
 					in_paragraph = false;
 					html.push_str("</p>\n")
+				}
+				Token::Code(_) if !in_code => {
+					html.push_str("<pre><code>");
+					in_code = true;
 				}
 				_ => {}
 			}
@@ -334,6 +341,9 @@ impl Parser {
 					)
 					.as_str(),
 				),
+				Token::Code(t) => html.push_str(
+					format!("{}", Self::sanitize_display_text(t)).as_str(),
+				),
 				Token::HorizontalRule => html.push_str("<hr />\n"),
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
@@ -358,6 +368,13 @@ impl Parser {
 		}
 		if html.chars().last().unwrap_or(' ') != '\n' {
 			html.push('\n');
+		}
+		if in_code && !matches!(token_iter.peek(), Some(Token::Code(_))) {
+			match html.chars().last().unwrap() {
+				'\n' => {}
+				_ => html.push('\n'),
+			}
+			html.push_str("</code></pre>");
 		}
 
 		debug!("Parsing completed");
