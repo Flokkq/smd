@@ -327,6 +327,13 @@ impl Parser {
 						),
 					}
 				}
+				Token::Strikethrough(t) => html.push_str(
+					format!(
+						"<strike>{}</strike>",
+						Self::sanitize_display_text(t)
+					)
+					.as_str(),
+				),
 				Token::HorizontalRule => html.push_str("<hr />\n"),
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
