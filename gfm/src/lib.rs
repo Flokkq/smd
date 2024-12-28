@@ -127,21 +127,6 @@ impl Parser {
 					in_paragraph = false;
 					html.push_str("</p>\n")
 				}
-				Token::Plaintext(_) |
-				Token::Italic(_) |
-				Token::Bold(_) |
-				Token::BoldItalic(_) |
-				Token::Strikethrough(_) |
-				Token::Link(_, _, _)
-					if !in_paragraph =>
-				{
-					for _i in 0..quote_level {
-						html.push_str("</blockquote>");
-						quote_level -= 1;
-					}
-					in_paragraph = true;
-					html.push_str("<p>")
-				}
 				_ => {}
 			}
 
