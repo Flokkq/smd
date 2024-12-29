@@ -140,12 +140,20 @@ impl<'a> Lexer<'a> {
 					return match self.lex_links() {
 						Ok(t) => Some(t),
 						Err(e) => {
-							warn!("Error while lexing links: {}", e);
+							warn!("Error while lexing link: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					}
 				}
-
+				"!" => {
+					return match self.lex_images() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing image: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -758,5 +766,31 @@ impl<'a> Lexer<'a> {
 			}
 		}
 		Err(ParseError { content: "" })
+	}
+
+	pub(crate) fn lex_images(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		if self.iter.next_if_eq("!") != Some(&"!") {
+			return Err(ParseError { content: "" });
+		}
+		let link_result = self.lex_links();
+		match link_result {
+			Err(_e) => {
+				return Err(ParseError {
+					content: self
+						.iter
+						.get_substring_from(start_index)
+						.unwrap_or(""),
+				})
+			}
+			Ok(Token::Link(link, title, _)) => {
+				return Ok(Token::Image(link.content.to_string(), title))
+			}
+			_ => {
+				return Err(ParseError {
+					content: "Non link token returned from lex_links",
+				})
+			}
+		}
 	}
 }

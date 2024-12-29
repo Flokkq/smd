@@ -94,12 +94,12 @@ impl Token<'_> {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct ValidURL<'a> {
-	content: &'a str,
-	scheme:  Option<Scheme<'a>>,
+	pub(crate) content: &'a str,
+	pub(crate) scheme:  Option<Scheme<'a>>,
 }
 
 impl ValidURL<'_> {
-	pub fn fmt_unsafe(&self) -> String {
+	pub(crate) fn fmt_unsafe(&self) -> String {
 		let amp_replace_content = self.content.replace('&', "&amp;");
 		match &self.scheme {
 			None => format!("http:{}", amp_replace_content),
