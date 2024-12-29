@@ -322,6 +322,22 @@ impl Parser {
 						.as_str(),
 					),
 				},
+				Token::Detail(summary, inner_tokens) => {
+					if in_paragraph {
+						html.push_str("</p>\n");
+						in_paragraph = false;
+					}
+					let inner_html = Self::parse(inner_tokens);
+					html.push_str(
+						format!(
+							"<details>\n<summary>{sum}</summary>\n{in_html}\\
+							 n</details>",
+							sum = Self::sanitize_display_text(summary),
+							in_html = inner_html
+						)
+						.as_str(),
+					);
+				}
 				Token::Italic(t) => html.push_str(
 					format!("<em>{}</em>", Self::sanitize_display_text(t))
 						.as_str(),
