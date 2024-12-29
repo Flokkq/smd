@@ -79,7 +79,7 @@ impl fmt::Display for Token<'_> {
 }
 
 impl Token<'_> {
-	fn is_usable_in_table(&self) -> bool {
+	pub(crate) fn is_usable_in_table(&self) -> bool {
 		match self {
 			Token::Code(_) => true,
 			Token::Link(_, _, _) => true,

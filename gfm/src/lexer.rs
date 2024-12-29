@@ -6,7 +6,10 @@ use log::{
 };
 
 use crate::{
-	token::validate_link,
+	token::{
+		validate_link,
+		Alignment,
+	},
 	Parser,
 };
 
@@ -159,6 +162,15 @@ impl<'a> Lexer<'a> {
 						Ok(t) => Some(t),
 						Err(e) => {
 							warn!("Error while lexing side carrot: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
+				"|" => {
+					return match self.lex_pipes() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing pipe: {}", e);
 							Some(Token::Plaintext(e.content.to_string()))
 						}
 					}
@@ -892,5 +904,77 @@ impl<'a> Lexer<'a> {
 			&[],
 		);
 		Ok(Token::Detail(summary_line.to_string(), inner_tokens))
+	}
+
+	pub(crate) fn lex_pipes(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		let mut lines = Vec::new();
+		while self.iter.next_if_eq(&"|") == Some("|") {
+			lines.push(
+				self.iter
+					.consume_while_case_holds(&|c| c != "\n")
+					.unwrap_or(""),
+			);
+			self.iter.next();
+		}
+		if lines.len() < 3 {
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		}
+		if !lines
+			.iter()
+			.all(|l| l.matches("|").count() == lines[0].matches("|").count())
+		{
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		}
+		let headings: Vec<_> = lines
+			.remove(0)
+			.split("|")
+			.filter(|&x| x != "")
+			.map(|x| x.trim().to_string())
+			.collect();
+		let alignments: Vec<_> = lines
+			.remove(0)
+			.split("|")
+			.filter(|&x| x != "")
+			.map(|x| {
+				match (x.trim().starts_with(":"), x.trim().ends_with(":")) {
+					(true, false) => Alignment::Left,
+					(true, true) => Alignment::Center,
+					(false, true) => Alignment::Right,
+					_ => Alignment::Left,
+				}
+			})
+			.collect();
+		let mut rows = Vec::new();
+		for l in lines.into_iter() {
+			let elements: Vec<&str> = l
+				.split("|")
+				.filter(|&x| x != "")
+				.map(|x| x.trim())
+				.collect();
+			let mut r = Vec::new();
+			for e in elements.into_iter() {
+				let mut inner_tokens = Parser::lex(&e, &[]);
+				inner_tokens.retain(|token| token.is_usable_in_table());
+				r.push(inner_tokens);
+			}
+			rows.push(
+				alignments.clone().into_iter().zip(r.into_iter()).collect(),
+			);
+		}
+		Ok(Token::Table(
+			alignments.into_iter().zip(headings.into_iter()).collect(),
+			rows,
+		))
 	}
 }
