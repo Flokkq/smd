@@ -415,6 +415,89 @@ impl Parser {
 						),
 					}
 				}
+				Token::Table(headings, rows) => {
+					if headings.len() != rows[0].len() {
+						continue;
+					}
+					html.push_str(
+						"<table class=\"table \
+						 table-bordered\">\n\t<thead>\n\t<tr>\n",
+					);
+					for h in headings.into_iter() {
+						html.push_str(
+							format!(
+								"\t\t<th style=\"text-align: \
+								 {align}\">{heading}</th>",
+								heading = Self::sanitize_display_text(&h.1),
+								align = h.0
+							)
+							.as_str(),
+						);
+					}
+					html.push_str("\t</tr>\n\t</thead>\n\t<tbody>");
+					for row in rows.iter() {
+						html.push_str("\n\t<tr>");
+						for elem in row.iter() {
+							let mut row_string = String::new();
+							for token in elem.1.iter() {
+								match token {
+									Token::Plaintext(s) => row_string.push_str(
+										&Self::sanitize_display_text(&s),
+									),
+									Token::Italic(t) => row_string.push_str(
+										format!(
+											"<em>{}</em>",
+											Self::sanitize_display_text(t)
+										)
+										.as_str(),
+									),
+									Token::Bold(t) => row_string.push_str(
+										format!(
+											"<strong>{}</strong>",
+											Self::sanitize_display_text(t)
+										)
+										.as_str(),
+									),
+									Token::BoldItalic(t) => row_string
+										.push_str(
+											format!(
+												"<strong><em>{}</em></strong>",
+												Self::sanitize_display_text(t)
+											)
+											.as_str(),
+										),
+									Token::LineBreak => {
+										row_string.push_str("<br>")
+									}
+									Token::HorizontalRule => {
+										row_string.push_str("<hr />")
+									}
+									Token::Strikethrough(t) => row_string
+										.push_str(
+											format!(
+												"<strike>{}</strike>",
+												Self::sanitize_display_text(t)
+											)
+											.as_str(),
+										),
+									_ => row_string
+										.push_str(&Self::parse(&elem.1)),
+								}
+							}
+							html.push_str(
+								format!(
+									"\n\t\t<td style=\"text-align: \
+									 {align}\">{row_text}</td>",
+									align = elem.0,
+									row_text = row_string
+								)
+								.as_str(),
+							);
+						}
+						html.push_str("\n\t</tr>");
+					}
+					html.push_str("\n\t</tbody>\n</table>");
+				}
 				Token::Strikethrough(t) => html.push_str(
 					format!(
 						"<strike>{}</strike>",
