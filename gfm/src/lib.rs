@@ -258,6 +258,35 @@ impl Parser {
 					}
 					html.push_str("</li>\n".to_string().as_str());
 				}
+				Token::Image(l, t) => match (l, t) {
+					(l, None) if l.trim() == "" => {
+						html.push_str("<p><img src=\"data:,\"></p>")
+					}
+					(l, Some(t)) if l.trim() == "" => html.push_str(
+						format!(
+							"<p><img src=\"data:,\" alt=\"{text}\"></p>",
+							text = Self::sanitize_display_text(t)
+						)
+						.as_str(),
+					),
+					(l, None) => html.push_str(
+						format!(
+							"<p><img src=\"{link}\"> \
+							 referrerpolicy=\"no-referrer\"></p>",
+							link = l
+						)
+						.as_str(),
+					),
+					(l, Some(t)) => html.push_str(
+						format!(
+							"<p><img src=\"{link}\" alt=\"{text}\" \
+							 referrerpolicy=\"no-referrer\"></p>",
+							link = l,
+							text = Self::sanitize_display_text(t)
+						)
+						.as_str(),
+					),
+				},
 				Token::Link(l, t, ht) => match (t, ht) {
 					(Some(t), Some(ht)) => html.push_str(
 						format!(
