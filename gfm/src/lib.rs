@@ -58,6 +58,7 @@ impl Parser {
 		let mut in_ordered_list = false;
 		let mut in_unordered_list = false;
 		let mut in_code = false;
+		let mut references = Vec::new();
 		let mut token_iter = tokens.iter().peekable();
 
 		// multi-liners
@@ -383,6 +384,9 @@ impl Parser {
 				Token::Newline => {}
 				Token::Tab => html.push('\t'),
 				Token::DoubleTab => html.push_str("\t\t"),
+				Token::Footnote(ref_id, text) => {
+					references.push((ref_id, text));
+				}
 				_ => {}
 			}
 		}
@@ -410,6 +414,27 @@ impl Parser {
 				_ => html.push('\n'),
 			}
 			html.push_str("</code></pre>");
+		}
+
+		if references.len() > 0 {
+			html.push_str("<div class=\"footnotes\" role=\"doc-endnotes\">\n");
+			html.push_str("\t<ol>\n");
+			for reference in references.iter() {
+				html.push_str("\t\t<li id=\"fn:1\" role=\"doc-endnote\">");
+				html.push_str(
+					format!(
+						"\t\t\t<p>{ref_text}<a href=\"#fnref:{ref_count}\" \
+						 class=\"reversefootnote\" \
+						 role=\"doc-backlink\">↩</a></p>",
+						ref_count = Self::sanitize_display_text(reference.0),
+						ref_text = Self::sanitize_display_text(reference.1)
+					)
+					.as_str(),
+				);
+				html.push_str("\t\t</li>");
+			}
+			html.push_str("\t</ol>\n");
+			html.push_str("</div>\n");
 		}
 
 		debug!("Parsing completed");
