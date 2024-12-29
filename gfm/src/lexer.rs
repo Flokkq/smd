@@ -154,6 +154,15 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"<" => {
+					return match self.lex_side_carrot() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing side carrot: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -792,5 +801,96 @@ impl<'a> Lexer<'a> {
 				})
 			}
 		}
+	}
+	pub(crate) fn lex_side_carrot(
+		&mut self,
+	) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		if self.iter.next_if_eq("<") != Some("<") {
+			return Err(ParseError { content: "" });
+		}
+
+		let s = self
+			.iter
+			.consume_while_case_holds(&|c| c != ">")
+			.unwrap_or("");
+		match (s, self.iter.next_if_eq(">")) {
+			("details", Some(">")) => {
+				self.iter.next_if_eq(&"\r");
+				if !self.iter.next_if_eq(&"\n").is_some() {
+					return Err(ParseError { content: s });
+				}
+				return self.parse_details();
+			}
+			(_, Some(">")) if s.len() >= 1 => {
+				if s.contains(char::is_whitespace) {
+					return Err(ParseError {
+						content: self
+							.iter
+							.get_substring_from(start_index)
+							.unwrap_or(""),
+					});
+				}
+				match validate_link(s) {
+					Ok(vl) if vl.scheme.is_some() => {
+						return Ok(Token::Link(vl, None, None))
+					} // Auto links require a scheme
+					_ => {
+						return Err(ParseError {
+							content: self
+								.iter
+								.get_substring_from(start_index)
+								.unwrap_or(""),
+						})
+					}
+				}
+			}
+			(_, Some(">")) if s.len() == 0 => {
+				return Err(ParseError { content: "<>" })
+			}
+			(_, _) => return Err(ParseError { content: s }),
+		}
+	}
+
+	fn parse_details(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let mut summary_line = self
+			.iter
+			.consume_while_case_holds(&|c| c != "\n" && c != "\r")
+			.unwrap_or("");
+		self.iter.next_if_eq("\r");
+		if (!summary_line.starts_with("<summary>") ||
+			!summary_line.ends_with("</summary>")) &&
+			!summary_line.len() >= 20
+		{
+			return Err(ParseError {
+				content: summary_line,
+			});
+		}
+		summary_line = summary_line
+			.strip_prefix("<summary>")
+			.unwrap()
+			.strip_suffix("</summary>")
+			.unwrap_or("");
+		let remaining_text_index = self.iter.get_index();
+		let mut remaining_text =
+			self.iter.consume_until_tail_is("</details>").unwrap_or("");
+		if remaining_text.contains("<details>") {
+			let mut opens = remaining_text.matches("<details>").count();
+			let mut closes = remaining_text.matches("</details>").count();
+			while opens == closes {
+				self.iter.consume_until_tail_is("</details>").unwrap_or("");
+				remaining_text = self
+					.iter
+					.get_substring_from(remaining_text_index)
+					.unwrap_or("");
+				opens = remaining_text.matches("<details>").count();
+				closes = remaining_text.matches("</details>").count();
+			}
+		}
+		let inner_tokens = Parser::lex(
+			remaining_text.strip_suffix("</details>").unwrap_or(""),
+			&[],
+		);
+		Ok(Token::Detail(summary_line.to_string(), inner_tokens))
 	}
 }
