@@ -257,6 +257,41 @@ impl Parser {
 					}
 					html.push_str("</li>\n".to_string().as_str());
 				}
+				Token::Link(l, t, ht) => match (t, ht) {
+					(Some(t), Some(ht)) => html.push_str(
+						format!(
+							"<a href=>\"{link}\" title=\"{hover}\">{text}</a>",
+							link = l,
+							text = Self::sanitize_display_text(t),
+							hover = ht
+						)
+						.as_str(),
+					),
+					(Some(t), None) => html.push_str(
+						format!(
+							"<a href=\"{link}\">{text}</a>",
+							link = l,
+							text = Self::sanitize_display_text(t)
+						)
+						.as_str(),
+					),
+					(None, Some(ht)) => html.push_str(
+						format!(
+							"<a href=\"{link}\" title=\"{hover}\">{link}</a>",
+							link = l,
+							hover = Self::sanitize_display_text(ht)
+						)
+						.as_str(),
+					),
+					(None, None) => html.push_str(
+						format!(
+							"<a href=\"{link}\">{display}</a>",
+							link = l,
+							display = l.fmt_unsafe()
+						)
+						.as_str(),
+					),
+				},
 				Token::Italic(t) => html.push_str(
 					format!("<em>{}</em>", Self::sanitize_display_text(t))
 						.as_str(),
