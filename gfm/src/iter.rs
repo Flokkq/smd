@@ -1,4 +1,5 @@
 //
+
 pub struct MarkdownIter<'a> {
 	the_str: &'a str,
 	index:   usize,
@@ -128,6 +129,19 @@ impl<'a> MarkdownIter<'a> {
 				ret
 			}
 			_ => None,
+		}
+	}
+
+	/// Clone of [Iterator::skip_while]
+	pub fn skip_while_true<F>(&mut self, predicate: F)
+	where
+		F: Fn(&str) -> bool,
+	{
+		while let Some(c) = self.peek() {
+			if !predicate(c) {
+				break;
+			}
+			self.next();
 		}
 	}
 }

@@ -1,5 +1,14 @@
 use core::fmt;
 
+static COMMONMARK_SCHEME_ASCII: [char; 65] = [
+	//https://spec.commonmark.org/0.30/#scheme
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+	'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
+	'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+	't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8',
+	'9', '0', '+', '.', '-',
+];
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token<'a> {
 	/// String: Body of unstructured text
@@ -90,7 +99,7 @@ pub struct ValidURL<'a> {
 }
 
 impl ValidURL<'_> {
-	fn fmt_unsafe(&self) -> String {
+	pub fn fmt_unsafe(&self) -> String {
 		let amp_replace_content = self.content.replace('&', "&amp;");
 		match &self.scheme {
 			None => format!("http:{}", amp_replace_content),
@@ -180,4 +189,112 @@ impl fmt::Display for Alignment {
 			Alignment::Center => write!(f, "center"),
 		}
 	}
+}
+
+pub(crate) fn validate_link(
+	source: &str,
+) -> Result<ValidURL, SanitizationError> {
+	if !source.is_ascii() || source.contains(char::is_whitespace) {
+		// https://www.rfc-editor.org/rfc/rfc3986#section-2
+		return Err(SanitizationError { content: source });
+	}
+	let (scheme, path) = source.split_at(source.find(':').unwrap_or(0));
+	if scheme.to_lowercase() == "javascript" || !scheme.is_ascii() {
+		return Err(SanitizationError { content: source });
+	}
+	if scheme.to_lowercase() == "data" && !path.starts_with(":image/") {
+		return Err(SanitizationError { content: source });
+	}
+	if scheme.len() != 0 && (scheme.len() < 2 || scheme.len() > 32) {
+		return Err(SanitizationError { content: source });
+	}
+
+	// Scheme defined here https://spec.commonmark.org/0.30/#scheme
+	// char set in COMMONMARK_SCHEME_ASCII. 2 to 32 chars followed by `:`
+	let source_scheme = {
+		let parts: Vec<_> = source.split(":").collect();
+		if source.contains(':') &&
+			parts[0]
+				.chars()
+				.all(|c| COMMONMARK_SCHEME_ASCII.contains(&c)) &&
+			parts[0].len() >= 2 &&
+			parts[0].len() <= 32
+		{
+			match parts[0] {
+				"http" => Some(Scheme::Http(parts[0])),
+				"mailto" => Some(Scheme::Email(parts[0])),
+				"irc" => Some(Scheme::Irc(parts[0])),
+				_ => Some(Scheme::Other(parts[0])),
+			}
+		} else {
+			None
+		}
+	};
+
+	//Check for mail links
+	if source.contains('@') &&
+		source.matches('@').count() == 1 &&
+		!source.contains('\\')
+	{
+		if source_scheme.is_some() {
+			return Ok(ValidURL {
+				scheme:  Some(source_scheme.unwrap_or(Scheme::Email("mailto"))),
+				content: &source.split(":").last().unwrap(),
+			});
+		}
+		return Ok(ValidURL {
+			scheme:  Some(source_scheme.unwrap_or(Scheme::Email("mailto"))),
+			content: &source,
+		});
+	}
+	if source.contains('@') &&
+		source.matches('@').count() == 1 &&
+		source.contains('\\')
+	{
+		return Err(SanitizationError { content: source });
+	}
+
+	match source_scheme {
+		Some(Scheme::Http(s)) => Ok(ValidURL {
+			content: source
+				.strip_prefix(s)
+				.unwrap_or("")
+				.strip_prefix(":")
+				.unwrap_or(""),
+			scheme:  Some(Scheme::Http(s)),
+		}),
+		Some(Scheme::Email(s)) => Ok(ValidURL {
+			content: source
+				.strip_prefix(s)
+				.unwrap_or("")
+				.strip_prefix(":")
+				.unwrap_or(""),
+			scheme:  Some(Scheme::Email(s)),
+		}),
+		Some(Scheme::Irc(s)) => Ok(ValidURL {
+			content: source
+				.strip_prefix(s)
+				.unwrap_or("")
+				.strip_prefix(":")
+				.unwrap_or(""),
+			scheme:  Some(Scheme::Irc(s)),
+		}),
+		Some(Scheme::Other(s)) => Ok(ValidURL {
+			content: source
+				.strip_prefix(s)
+				.unwrap_or("")
+				.strip_prefix(":")
+				.unwrap_or(""),
+			scheme:  Some(Scheme::Other(s)),
+		}),
+		None => Ok(ValidURL {
+			content: source,
+			scheme:  None,
+		}),
+	}
+}
+
+#[derive(Debug)]
+pub(crate) struct SanitizationError<'a> {
+	pub(crate) content: &'a str,
 }

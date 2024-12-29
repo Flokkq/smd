@@ -5,7 +5,10 @@ use log::{
 	warn,
 };
 
-use crate::Parser;
+use crate::{
+	token::validate_link,
+	Parser,
+};
 
 use super::{
 	iter::MarkdownIter,
@@ -133,6 +136,16 @@ impl<'a> Lexer<'a> {
 						}
 					}
 				}
+				"[" => {
+					return match self.lex_links() {
+						Ok(t) => Some(t),
+						Err(e) => {
+							warn!("Error while lexing links: {}", e);
+							Some(Token::Plaintext(e.content.to_string()))
+						}
+					}
+				}
+
 				// Parse "\" to escape a markdown control character
 				"\\" => {
 					return match self.lex_escaped_character() {
@@ -618,5 +631,132 @@ impl<'a> Lexer<'a> {
 		}
 
 		// leading_ticks.len() == 3. Check for lang
+	}
+
+	pub(crate) fn lex_links(&mut self) -> Result<Token<'a>, ParseError<'a>> {
+		let start_index = self.iter.get_index();
+		if self.iter.next_if_eq("[") != Some(&"[") {
+			return Err(ParseError { content: "" });
+		}
+		let title = self
+			.iter
+			.consume_while_case_holds(&|c| c != "]")
+			.unwrap_or("");
+		if self.iter.next_if_eq("]") != Some(&"]") {
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		}
+		// Parse footnotes big and small
+		if title.starts_with("^") && self.iter.next_if_eq(":") == Some(&":") {
+			let ref_id = title.strip_prefix("^").unwrap_or("");
+			let note_index = self.iter.get_index();
+			loop {
+				self.iter.consume_while_case_holds(&|c| c != "\n");
+				self.iter.next();
+				if self.iter.peek() != Some(&" ") &&
+					self.iter.peek() != Some(&"\t")
+				{
+					break;
+				}
+				if self.iter.next_if_eq("\t") == Some(&"\t") {
+					continue;
+				}
+				if self.iter.peek() == Some(&" ") {
+					let spaces = self
+						.iter
+						.consume_while_case_holds(&|c| c == " ")
+						.unwrap_or("");
+					match spaces.len() {
+						2 | 4 => {}
+						_ => {
+							return Err(ParseError {
+								content: self
+									.iter
+									.get_substring_from(start_index)
+									.unwrap_or(""),
+							})
+						}
+					}
+					continue;
+				}
+				break;
+			}
+			if ref_id.contains(char::is_whitespace) {
+				return Err(ParseError {
+					content: self
+						.iter
+						.get_substring_from(start_index)
+						.unwrap_or(""),
+				});
+			}
+			return Ok(Token::Footnote(
+				ref_id.to_string(),
+				self.iter
+					.get_substring_from(note_index)
+					.unwrap_or("")
+					.trim()
+					.to_string(),
+			));
+		}
+		if self.iter.next_if_eq("(") != Some(&"(") {
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		}
+		let link = self
+			.iter
+			.consume_while_case_holds(&|c| c != ")" && c != " ")
+			.unwrap_or("");
+		if self.iter.peek() != Some(&")") && self.iter.peek() != Some(&" ") {
+			return Err(ParseError {
+				content: self
+					.iter
+					.get_substring_from(start_index)
+					.unwrap_or(""),
+			});
+		}
+		if self.iter.next_if_eq(")") == Some(&")") {
+			match validate_link(link) {
+				Ok(vl) => {
+					return Ok(Token::Link(vl, Some(title.to_string()), None))
+				}
+				Err(se) => {
+					return Err(ParseError {
+						content: &se.content,
+					})
+				}
+			}
+		}
+		if self.iter.peek() == Some(&" ") {
+			let hover = self
+				.iter
+				.consume_while_case_holds(&|c| c != ")")
+				.unwrap_or("");
+
+			self.iter.skip_while_true(|c| c != "\n");
+			self.iter.next();
+			match validate_link(link) {
+				Ok(vl) => {
+					return Ok(Token::Link(
+						vl,
+						Some(title.to_string()),
+						Some(hover.to_string()),
+					))
+				}
+				Err(se) => {
+					return Err(ParseError {
+						content: &se.content,
+					})
+				}
+			}
+		}
+		Err(ParseError { content: "" })
 	}
 }
