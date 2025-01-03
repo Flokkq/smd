@@ -11,6 +11,7 @@ use smd_core::{
 	},
 	error::Result,
 	fs,
+	vendor::Vendor,
 };
 
 pub mod args;
@@ -26,7 +27,8 @@ pub fn run(cli: Cli) -> Result<()> {
 	}
 
 	// TODO: use config in parser & convert trait
-	let _config = Config::load_config()?;
+	let config = Config::load_config()?;
+	let _vendor = Vendor::build(&config.vendor);
 
 	match cli.commands {
 		Commands::Parse(args) => {

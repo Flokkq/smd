@@ -1,3 +1,5 @@
+use core::error;
+
 use thiserror::Error as ThisError;
 
 /// Library related errors that are exposing to the rest of the workspaces.
@@ -35,6 +37,14 @@ pub enum Error {
 	/// Error that may occur while instatiating a new browser-session
 	#[error("Headless-chrome error: `{0}`")]
 	BrowserError(String),
+
+	/// No store was provided or found in the configuration.
+	#[error("No store provided or found in the configuration.")]
+	StoreMissingError,
+
+	/// Internal `ureq` error.
+	#[error("Failed executing request: `{0}`")]
+	VendorError(ureq::Error),
 
 	#[error("Custom error: `{0}`")]
 	CustomError(String),
