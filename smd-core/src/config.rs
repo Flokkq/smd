@@ -15,10 +15,10 @@ use serde::{
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct Config {
 	/// Configuration values about gfm generation.
-	parse: ParseConfig,
+	pub parse: ParseConfig,
 
 	/// Configuration values for the about vendor interaction
-	vendor: VendorConfig,
+	pub vendor: VendorConfig,
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
@@ -125,6 +125,11 @@ mod tests {
             [parse]
             on_parse_error = "abort"
             keep_temp_files = true
+
+            [vendor]
+            default_store = "https://smd.flokkq.com/store"
+            trusted_stores = []
+
         "#;
 
 		let config = Config::parse_from_str(toml_content).unwrap();
