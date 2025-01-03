@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::error::Error;
 use crate::fs;
 
@@ -14,6 +16,9 @@ use serde::{
 pub struct Config {
 	/// Configuration values about gfm generation.
 	parse: ParseConfig,
+
+	/// Configuration values for the about vendor interaction
+	vendor: VendorConfig,
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
@@ -37,6 +42,25 @@ pub enum ParseErrorAction {
 	/// Include the problematic part in the output and continue.
 	#[default]
 	Serialize,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct VendorConfig {
+	/// Store to be used for fetches when no other store is specified.
+	pub default_store: Option<url::Url>,
+
+	/// Download from given store without asking for permission.
+	pub trusted_stores: Vec<url::Url>,
+}
+
+impl Default for VendorConfig {
+	fn default() -> Self {
+		Self {
+			default_store:  url::Url::from_str("https://smd.flokkq.com/store")
+				.ok(),
+			trusted_stores: Vec::new(),
+		}
+	}
 }
 
 impl Config {

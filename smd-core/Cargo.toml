@@ -10,6 +10,7 @@ toml.workspace = true
 dirs.workspace = true
 thiserror = "2.0.4"
 headless_chrome = "1.0.15"
+url = { version = "2.5.4", features = ["serde"] }
 
 [dependencies.config]
 version = "0.14.1"
