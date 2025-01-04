@@ -6,6 +6,7 @@ use clap::{
 	ValueEnum,
 };
 use std::path::PathBuf;
+use url::Url;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum OutputFileFormat {
@@ -74,6 +75,10 @@ pub enum Commands {
 	/// Parse and convert Markdown files.
 	Parse(ParseArgs),
 
+	/// Manage external flavor sources (stores) and interact with them.
+	#[command(subcommand)]
+	Vendor(VendorCommands),
+
 	/// Writes the default configuration to the systems configuration
 	/// diretctory
 	Initialize,
@@ -104,6 +109,28 @@ pub struct ParseArgs {
 	pub output: OutputFileFormat,
 }
 
+#[derive(Debug, Subcommand, PartialEq)]
+pub enum VendorCommands {
+	/// Interact with a specific flavour store.
+	#[command(subcommand)]
+	Store(StoreCommands),
+}
+
+#[derive(Debug, Subcommand, PartialEq)]
+pub enum StoreCommands {
+	/// Download a flavour from a store.
+	Get {
+		/// URL of the theme to download.
+		#[arg(
+            value_name = "URL",
+            required = true,
+            value_parser = Cli::parse_url,
+            help = "URL of the flavor store to download the flavor from."
+        )]
+		url: Url,
+	},
+}
+
 impl Cli {
 	/// Custom string parser for directories.
 	///
@@ -115,6 +142,14 @@ impl Cli {
 		PathBuf::from(shellexpand::tilde(dir).to_string())
 			.canonicalize()
 			.map_err(|e| format!("Failed to canonicalize file path: {}", e))
+	}
+
+	/// Custom string parser for URLs.
+	///
+	/// Validates and parses the input string into a [`Url`].
+	fn parse_url(url: &str) -> Result<Url, String> {
+		url.parse::<Url>()
+			.map_err(|e| format!("Failed to parse URL: {}", e))
 	}
 }
 

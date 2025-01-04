@@ -8,10 +8,10 @@ log.workspace = true
 serde.workspace = true
 toml.workspace = true
 dirs.workspace = true
+url.workspace = true
 thiserror = "2.0.4"
 headless_chrome = "1.0.15"
 ureq = "2.12.1"
-url = { version = "2.5.4", features = ["serde"] }
 
 [dependencies.config]
 version = "0.14.1"
