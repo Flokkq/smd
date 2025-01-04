@@ -65,8 +65,11 @@ impl Config {
 
 	pub fn initialize() -> Result<()> {
 		let config = Config::default();
-		let toml = toml::to_string_pretty(&config)?;
-
+		let mut toml = toml::to_string_pretty(&config)?;
+		toml.insert_str(
+			0,
+			"# Documentation for the config is available at\n# <https://docs.rs/smd_core/1.0.0/smd_core/config/struct.Config.html>\n\n",
+		);
 		let path = dirs::config_dir().unwrap_or_default().join(DEFAULT_CONFIG);
 
 		if path.exists() {
