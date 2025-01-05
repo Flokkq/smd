@@ -174,13 +174,13 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --offline --target ${{ matrix.build.TARGET }}
+          args: --release  --target ${{ matrix.build.TARGET }}
       - name: Build (windows)
         if: matrix.build.OS == 'windows-2022'
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --offline --target ${{ matrix.build.TARGET }} # --no-default-features
+          args: --release  --target ${{ matrix.build.TARGET }} # --no-default-features
       - name: Prepare release assets
         shell: bash
         run: |
@@ -377,7 +377,7 @@ jobs:
         run: |
           # https://github.com/kornelski/cargo-deb/pull/62
           sed "/readme = (.*)/d" -E -i smd/Cargo.toml
-          cargo build --release --offline -p smd
+          cargo build --release  -p smd
           mkdir man/
           OUT_DIR=man cargo run --bin smd-mangen
           mkdir completions
@@ -428,7 +428,7 @@ jobs:
         run: cargo install cargo-generate-rpm
       - name: Build RPM package
         run: |
-          cargo build --release --offline -p smd
+          cargo build --release  -p smd
           mkdir man/
           OUT_DIR=man cargo run --bin smd-mangen
           mkdir completions
@@ -476,9 +476,9 @@ jobs:
       - name: Publish the libraries
         run: |
           cargo publish --allow-dirty --manifest-path smd-core/Cargo.toml \
-            --offline --token ${{ secrets.CARGO_TOKEN }}
+             --token ${{ secrets.CARGO_TOKEN }}
           cargo publish --allow-dirty --manifest-path gfm/Cargo.toml \
-            --offline --token ${{ secrets.CARGO_TOKEN }}
+             --token ${{ secrets.CARGO_TOKEN }}
       - name: Wait for library to update
         shell: bash
         run: |
@@ -490,7 +490,7 @@ jobs:
       - name: Publish the binary
         run: |
           cargo publish --allow-dirty --manifest-path smd/Cargo.toml \
-            --offline --token ${{ secrets.CARGO_TOKEN }}
+             --token ${{ secrets.CARGO_TOKEN }}
 
   publish-homebrew:
     name: Publish Homebrew formula
