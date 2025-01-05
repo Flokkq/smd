@@ -477,7 +477,6 @@ jobs:
         run: |
           cargo publish --allow-dirty --manifest-path smd-core/Cargo.toml \
             --locked --token ${{ secrets.CARGO_TOKEN }}
-        run: |
           cargo publish --allow-dirty --manifest-path gfm/Cargo.toml \
             --locked --token ${{ secrets.CARGO_TOKEN }}
       - name: Wait for library to update
