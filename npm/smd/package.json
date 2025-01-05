@@ -1,0 +1,81 @@
+{
+    "name": "smd",
+    "version": "0.1.0",
+    "description": "Want github-flavoured markdown as a pdf or html for your blog? smd is exactly what you need.",
+    "type": "module",
+    "main": "lib/cjs/index.d.cts",
+    "module": "lib/esm/index.d.ts",
+    "types": "lib/cjs/index.d.cts",
+    "bin": "lib/cli/cli.js",
+    "exports": {
+        "./cli": {
+            "import": "./lib/cli/cli.js"
+        },
+        ".": {
+            "import": {
+                "types": "./lib/esm/index.d.ts",
+                "default": "./lib/esm/index.js"
+            },
+            "require": {
+                "types": "./lib/cjs/index.d.cts",
+                "default": "./lib/cjs/index.cjs"
+            }
+        }
+    },
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "typecheck": "tsc",
+        "lint": "eslint src",
+        "lint:fix": "eslint src --fix",
+        "build": "tsup",
+        "dev": "yarn build && node lib/cli/cli.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/flokkq/smd.git"
+    },
+    "keywords": [
+        "smd",
+        "git",
+        "markdown",
+        "gfm",
+        "rust"
+    ],
+    "author": "Clemens Weber <office@flokkq.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/flokkq/smd/issues"
+    },
+    "homepage": "https://github.com/flokkq/smd#readme",
+    "dependencies": {
+        "execa": "^8.0.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.11.0",
+        "@types/eslint__js": "^8.42.3",
+        "@types/node": "^20.16.5",
+        "@typescript-eslint/eslint-plugin": "^8.6.0",
+        "@typescript-eslint/parser": "^8.6.0",
+        "eslint": "^9.11.0",
+        "tsup": "^8.3.0",
+        "typescript": "^5.6.2",
+        "typescript-eslint": "^8.6.0"
+    },
+    "optionalDependencies": {
+        "smd-darwin-arm64": "2.7.0",
+        "smd-darwin-x64": "2.7.0",
+        "smd-linux-arm64": "2.7.0",
+        "smd-linux-x64": "2.7.0",
+        "smd-windows-arm64": "2.7.0",
+        "smd-windows-x64": "2.7.0"
+    },
+    "packageManager": "yarn@4.1.0",
+    "publishConfig": {
+        "access": "public"
+    },
+    "engines": {
+        "node": ">=18.19 || >=20.6 || >=21"
+    }
+}
