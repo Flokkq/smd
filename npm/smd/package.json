@@ -1,6 +1,6 @@
 {
     "name": "smd",
-    "version": "0.1.0",
+    "version": "0.1.0-pre",
     "description": "Want github-flavoured markdown as a pdf or html for your blog? smd is exactly what you need.",
     "type": "module",
     "main": "lib/cjs/index.d.cts",
@@ -64,12 +64,12 @@
         "typescript-eslint": "^8.6.0"
     },
     "optionalDependencies": {
-        "smd-darwin-arm64": "2.7.0",
-        "smd-darwin-x64": "2.7.0",
-        "smd-linux-arm64": "2.7.0",
-        "smd-linux-x64": "2.7.0",
-        "smd-windows-arm64": "2.7.0",
-        "smd-windows-x64": "2.7.0"
+        "smd-darwin-arm64": "0.1.0-pre",
+        "smd-darwin-x64": "0.1.0-pre",
+        "smd-linux-arm64": "0.1.0-pre",
+        "smd-linux-x64": "0.1.0-pre",
+        "smd-windows-arm64": "0.1.0-pre",
+        "smd-windows-x64": "0.1.0-pre"
     },
     "packageManager": "yarn@4.1.0",
     "publishConfig": {
