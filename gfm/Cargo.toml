@@ -1,8 +1,16 @@
 [package]
 name = "gfm"
-description = "Transpililing markdown to github flavoured markdown (html)"
 version = "0.1.0"
+description = "Transpililing markdown to github flavoured markdown (html)"
+license = "MIT"
+readme = "../README.md"
+repository = "https://github.com/flokkq/smd"
+keywords = ["markdown", "gfm", "convert", "md2html"]
 edition = "2021"
 
 [dependencies]
 log.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

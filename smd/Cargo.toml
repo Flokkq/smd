@@ -15,6 +15,14 @@ edition = "2021"
 path = "src/main.rs"
 name = "smd"
 
+[[bin]]
+name = "smd-mangen"
+path = "src/bin/mangen.rs"
+
+[[bin]]
+name = "smd-completions"
+path = "src/bin/completion.rs"
+
 [profile.dev]
 incremental = true
 opt-level = 1
@@ -32,6 +40,8 @@ toml.workspace = true
 clap = { version = "4.5.21", features = ["derive", "env", "wrap_help", "cargo"] }
 shellexpand = "3.1.0"
 env_logger = "=0.10.2"
+clap_mangen = "0.2.23"
+clap_complete = "4.5.19"
 
 [dependencies.smd-core]
 version = "0.1.0" # managed by release.sh
@@ -40,3 +50,53 @@ path = "../smd-core"
 [dependencies.gfm]
 version = "0.1.0" # managed by release.sh
 path = "../gfm"
+
+[package.metadata.generate-rpm]
+assets = [
+  { source = "target/release/smd", dest = "/usr/bin/smd", mode = "755" },
+  { source = "LICENSE", dest = "/usr/share/doc/smd/LICENSE", mode = "644" },
+  { source = "README.md", dest = "/usr/share/doc/smd/README.md", mode = "644" },
+  { source = "man/smd.1", dest = "/usr/share/man/man1/smd.1", mode = "644", doc = true },
+  { source = "completions/smd.bash", dest = "/usr/share/bash-completion/completions/smd", mode = "644" },
+  { source = "completions/smd.fish", dest = "/usr/share/fish/vendor_completions.d/smd.fish", mode = "644" },
+  { source = "completions/_smd", dest = "/usr/share/zsh/vendor-completions/", mode = "644" },
+]
+
+[package.metadata.deb]
+assets = [
+  [
+    "target/release/smd",
+    "usr/bin/",
+    "755",
+  ],
+  [
+    "../LICENSE",
+    "/usr/share/doc/smd/LICENSE",
+    "644",
+  ],
+  [
+    "../README.md",
+    "usr/share/doc/smd/README",
+    "644",
+  ],
+  [
+    "../man/smd.1",
+    "/usr/share/man/man1/smd.1",
+    "644",
+  ],
+  [
+    "../completions/smd.bash",
+    "/usr/share/bash-completion/completions/smd",
+    "644",
+  ],
+  [
+    "../completions/smd.fish",
+    "/usr/share/fish/vendor_completions.d/smd.fish",
+    "644",
+  ],
+  [
+    "../completions/_smd",
+    "/usr/share/zsh/vendor-completions/",
+    "644",
+  ],
+]
