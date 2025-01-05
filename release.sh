@@ -13,6 +13,11 @@ fi
 echo "Preparing $1..."
 msg="# managed by release.sh"
 
+sed -E -i "s/^version = .* $msg$/version = \"${1#v}\" $msg/" smd*/Cargo.toml
+sed -E -i "s/^version = .* $msg$/version = \"${1#v}\" $msg/" gfm/Cargo.toml
+sed -E -i "s/\"version\": \".+\"/\"version\": \"${1#v}\"/" npm/smd/package.json
+sed -E -i "s/\"(smd-.+)\": \".+\"/\"\1\": \"${1#v}\"/g" npm/smd/package.json
+
 # update the changelog
 git-cliff --config .cliff/default.toml --tag "$1" > CHANGELOG.md
 git add -A && git commit -m "chore(release): prepare for $1"
