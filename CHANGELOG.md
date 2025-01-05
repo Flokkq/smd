@@ -1,7 +1,7 @@
 # Changelog
 
 
-## [0.1.2-pre](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/compare/v0.1.0-pre..v0.1.2-pre) - 2025-01-05
+## [0.1.3-pre](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/compare/v0.1.0-pre..v0.1.3-pre) - 2025-01-05
 
 
 
@@ -13,6 +13,7 @@
 
 ### 🔧Chores
 
+- *(release)* Prepare for v0.1.2-pre - ([1d53654](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/1d53654751bac41ed8cd4aa36b813b9395c212ff))
 - *(release)* Prepare for v0.1.1-pre - ([39451d6](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/39451d6daec9e467aec1ff3540abdaef23fc8ba2))
 
 
