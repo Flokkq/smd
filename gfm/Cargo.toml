@@ -1,6 +1,6 @@
 [package]
 name = "gfm"
-version = "0.1.0-pre"
+version = "0.1.1-pre"
 description = "Transpililing markdown to github flavoured markdown (html)"
 license = "MIT"
 readme = "../README.md"

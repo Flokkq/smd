@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [0.1.1-pre](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/compare/v0.1.0-pre..v0.1.1-pre) - 2025-01-05
+
+
+
+
+### 🐛 Bug Fixes
+
+- *(ci)* Attempt to fix pipeline issues - ([1100a7c](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/1100a7c46937617fc6ecddf75ff6399c3cc9c18c))
+
+
 ## [0.1.0-pre] - 2025-01-05
 
 
@@ -108,6 +118,7 @@
 
 ### 🔧Chores
 
+- *(release)* Prepare for v0.1.0-pre - ([aaa47e5](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/aaa47e5fb3f1255acfeb92210a15380a66f3d63e))
 - *(release)* Prepare for v0.1.0-pre - ([a67dc0a](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/a67dc0abe84a4b3129878be693fb81c357bcb258))
 - *(release)* Remove unwanted LICENSE - ([1f58785](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/1f587850a5c5cc838c5959183e05fc97712172d1))
 - *(release)* Auto replace versions in config files - ([7518fe5](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/7518fe52ee348be306821a6d5bc19c5926f591e3))
