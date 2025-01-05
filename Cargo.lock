@@ -449,7 +449,7 @@ dependencies = [
 
 [[package]]
 name = "gfm"
-version = "0.1.2-pre"
+version = "0.1.3-pre"
 dependencies = [
  "log",
 ]
@@ -1038,7 +1038,7 @@ checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
 
 [[package]]
 name = "smd"
-version = "0.1.2-pre"
+version = "0.1.3-pre"
 dependencies = [
  "clap",
  "clap_complete",
@@ -1054,7 +1054,7 @@ dependencies = [
 
 [[package]]
 name = "smd-core"
-version = "0.1.2-pre"
+version = "0.1.3-pre"
 dependencies = [
  "config",
  "dirs",
