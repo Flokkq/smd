@@ -96,6 +96,7 @@
 
 ### 🐛 Bug Fixes
 
+- *(ci)* Remove duplicate keey - ([720bf56](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/720bf56d82f5c5e2d7221ec7bcfcf1f1f8096beb))
 - *(run)* Convert parsed result instead of raw file content - ([eb542e2](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/eb542e207d07d9e4e51677adfc9a36f3f88b6bfa))
 - *(parser)* Remove duplicate code - ([c52a7d0](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/c52a7d00952aca45594c020349e137a33b412df0))
 - *(tests)* Replace → with \t - ([62600a6](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/62600a6f6a202189366cfa4331f25fe0a1bb7fe0))
@@ -107,6 +108,7 @@
 
 ### 🔧Chores
 
+- *(release)* Prepare for v0.1.0-pre - ([a67dc0a](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/a67dc0abe84a4b3129878be693fb81c357bcb258))
 - *(release)* Remove unwanted LICENSE - ([1f58785](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/1f587850a5c5cc838c5959183e05fc97712172d1))
 - *(release)* Auto replace versions in config files - ([7518fe5](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/7518fe52ee348be306821a6d5bc19c5926f591e3))
 - *(release)* Add npm stuff idk pray - ([cae5aef](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/cae5aef7baa70ca01a623a644e62e6cd7a4575cf))
