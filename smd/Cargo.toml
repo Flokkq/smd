@@ -1,6 +1,6 @@
 [package]
 name = "smd"
-version = "0.1.0-pre" # managed by release.sh
+version = "0.1.1-pre" # managed by release.sh
 description = "convert markdown to github flavoured html or pdf 🎨"
 authors = ["Flokkq"]
 license = "MIT"
@@ -44,11 +44,11 @@ clap_mangen = "0.2.23"
 clap_complete = "4.5.19"
 
 [dependencies.smd-core]
-version = "0.1.0-pre" # managed by release.sh
+version = "0.1.1-pre" # managed by release.sh
 path = "../smd-core"
 
 [dependencies.gfm]
-version = "0.1.0-pre" # managed by release.sh
+version = "0.1.1-pre" # managed by release.sh
 path = "../gfm"
 
 [package.metadata.generate-rpm]
