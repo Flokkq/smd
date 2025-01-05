@@ -1,14 +1,19 @@
 # Changelog
 
 
-## [0.1.1-pre](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/compare/v0.1.0-pre..v0.1.1-pre) - 2025-01-05
+## [0.1.2-pre](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/compare/v0.1.0-pre..v0.1.2-pre) - 2025-01-05
 
 
 
 
 ### 🐛 Bug Fixes
 
+- *(ci)* -""- - ([ccfb4d2](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/ccfb4d212bd8ece869d70a041ff178a224df78dc))
 - *(ci)* Attempt to fix pipeline issues - ([1100a7c](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/1100a7c46937617fc6ecddf75ff6399c3cc9c18c))
+
+### 🔧Chores
+
+- *(release)* Prepare for v0.1.1-pre - ([39451d6](https://github.com/Flokkq/https://github.com/orhun/git-cliff/blob/main/cliff.toml/commit/39451d6daec9e467aec1ff3540abdaef23fc8ba2))
 
 
 ## [0.1.0-pre] - 2025-01-05
